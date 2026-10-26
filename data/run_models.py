@@ -117,7 +117,7 @@ def summary():
             n, c, cost = agg.get((src, t), [0, 0, 0.0])
             cells.append(f"{(c / n if n else 0):6.1%} n={n:<4d} ${cost:7.4f}")
         print(f"{src:13s}" + "".join(f"{c:>24s}" for c in cells))
-    print(f"\ntotal spend: ${sum(r['cost_usd'] for r in rows):.4f} over {len(rows)} calls")
+    print(f"\nlist-price cost (hypothetical; free-tier calls bill $0): ${sum(r['cost_usd'] for r in rows):.4f} over {len(rows)} calls")
     acc = {t: agg[("ALL", t)][1] / max(1, agg[("ALL", t)][0]) for t in tiers}
     if max(acc.values()) - min(acc.values()) < 0.05:
         print("WARNING: tiers differ by <5 points overall; the routing problem may be trivial. Consider harder prompts.")
