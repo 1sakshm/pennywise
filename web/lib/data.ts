@@ -38,6 +38,10 @@ export type Manifest = {
     cost_vs_large_ci: [number, number];
     large_accuracy: number;
     router_latency_ms: number | null;
+    medium_accuracy?: number;
+    medium_cost_vs_large?: number;
+    vs_large_diff?: number;
+    vs_large_ci?: [number, number];
   };
   measured_savings: { usd: number; requests: number; label: string };
 };

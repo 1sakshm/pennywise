@@ -143,7 +143,9 @@ def main():
         "modes": modes, "n_test": allr["n_test"], "n_prompts": len(tab.ids), "jev": allr["jev"],
         "headline": {"lambda": modes["auto"], "accuracy": a_auto["accuracy"], "accuracy_ci": a_auto["accuracy_ci"],
                      "cost_vs_large": a_auto["cost_vs_large"], "cost_vs_large_ci": a_auto["cost_vs_large_ci"],
-                     "large_accuracy": large["accuracy"], "router_latency_ms": a_auto["router_latency_ms"]},
+                     "large_accuracy": large["accuracy"], "router_latency_ms": a_auto["router_latency_ms"],
+                     "medium_accuracy": get("always-medium")["accuracy"], "medium_cost_vs_large": get("always-medium")["cost_vs_large"],
+                     "vs_large_diff": a_auto["vs_always_large_acc"]["diff"], "vs_large_ci": a_auto["vs_always_large_acc"]["ci"]},
         "measured_savings": {"usd": saved, "requests": int(len(te)), "label": "measured on the held-out test set"},
         "tier_models": tier_models()})
 

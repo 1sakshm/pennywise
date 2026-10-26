@@ -6,7 +6,7 @@ import ParticleRouter from "./ParticleRouter";
 import { useStore } from "./Store";
 
 const p1 = (v: number) => `${(100 * v).toFixed(1)}%`;
-const p0 = (v: number) => `${Math.round(100 * v)}%`;
+const p0 = (v: number) => `${(100 * v).toFixed(1)}%`;
 const ease = [0.2, 0.8, 0.2, 1] as const;
 
 export default function Hero() {
@@ -42,9 +42,15 @@ export default function Hero() {
                   <b><CountUp value={h.accuracy} format={p1} /></b> accuracy at <b><CountUp value={h.cost_vs_large} format={p0} /></b> of the cost of
                   always calling the largest model.
                   <span className="scope">
-                    held-out test set · n = {manifest!.n_test} · 95% CI {pct(h.accuracy_ci[0])}–{pct(h.accuracy_ci[1])} acc, {pct(h.cost_vs_large_ci[0], 0)}–
-                    {pct(h.cost_vs_large_ci[1], 0)} cost · always-large {pct(h.large_accuracy)}
+                    held-out test set · n = {manifest!.n_test} · 95% CI {pct(h.accuracy_ci[0])}–{pct(h.accuracy_ci[1])} acc, {pct(h.cost_vs_large_ci[0])}–{pct(h.cost_vs_large_ci[1])} cost · always-large {pct(h.large_accuracy)}
+                    {h.vs_large_ci && ` · paired Δ ${(100 * h.vs_large_diff!).toFixed(1)} pts [${(100 * h.vs_large_ci[0]).toFixed(1)}, ${(100 * h.vs_large_ci[1]).toFixed(1)}]`}
                   </span>
+                  {h.medium_accuracy != null && (
+                    <span className="honest">
+                      Honest reading: the policy sends most requests to the medium tier, so it lands close to always-medium ({pct(h.medium_accuracy)} at{" "}
+                      {pct(h.medium_cost_vs_large!)}). It hasn&apos;t yet learned to spot the prompts that need the large model.
+                    </span>
+                  )}
                 </p>
               ) : (
                 <p className="result dim">Loading measured results<span className="caret" /></p>
@@ -108,6 +114,7 @@ export default function Hero() {
         .result { font-size: clamp(18px, 2.1vw, 23px); margin: 0 0 14px; max-width: 760px; letter-spacing: -0.015em; line-height: 1.4; }
         .result b { color: var(--accent); font-family: var(--font-mono); font-weight: 500; font-variant-numeric: tabular-nums; }
         .result.dim { color: var(--muted); }
+        .honest { display: block; font-size: 13.5px; color: var(--muted); margin-top: 10px; padding-left: 10px; border-left: 2px solid var(--line-2); letter-spacing: 0; line-height: 1.5; }
         .scope { display: block; font-family: var(--font-mono); font-size: 11.5px; color: var(--dim); margin-top: 8px; letter-spacing: 0.02em; }
         .cta { display: flex; gap: 8px; flex-wrap: wrap; }
         code { font-size: 0.9em; color: var(--text); }
