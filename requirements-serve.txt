@@ -9,3 +9,4 @@ httpx
 fastapi
 uvicorn[standard]
 pydantic>=2
+onnxruntime

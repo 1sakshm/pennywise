@@ -151,8 +151,13 @@ class State:
 
     def load_router(self):
         try:
-            from router.serve_policy import MultiPolicy
-            self.router = MultiPolicy(device=os.environ.get("ROUTER_DEVICE", "cpu"))
+            from router.serve_policy import SERVE_DIR, MultiPolicy
+            backend = os.environ.get("ROUTER_BACKEND", "auto")
+            if backend == "onnx" or (backend == "auto" and (SERVE_DIR / "lower.onnx").exists()):
+                from router.onnx_serve import OnnxMultiPolicy  # same decisions as torch, faster on CPU
+                self.router = OnnxMultiPolicy(SERVE_DIR)
+            else:
+                self.router = MultiPolicy(device=os.environ.get("ROUTER_DEVICE", "cpu"))
         except Exception as e:  # noqa: BLE001 - surfaced via /health
             self.router_error = f"{type(e).__name__}: {e}"
 
