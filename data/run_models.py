@@ -73,20 +73,24 @@ async def call(tier_name, tier, client, rec, gen, sem, state, lock, fout, limite
                 latency = (time.perf_counter() - t0) * 1000
                 break
             except Exception as e:  # noqa: BLE001 - retry anything transient
-                wait = min(60, 2 ** attempt + random.random())
+                rate_limited = "429" in str(e) or type(e).__name__ == "RateLimitError"
+                # free tiers rate-limit some models hard: back off much longer on 429
+                wait = min(90, 15 * (attempt + 1)) + random.random() if rate_limited else min(60, 2 ** attempt + random.random())
                 print(f"  [{tier_name}] {rec['id']} attempt {attempt+1} failed: {type(e).__name__}: {str(e)[:120]} (retry in {wait:.0f}s)")
                 await asyncio.sleep(wait)
         else:
             state["failed"] += 1
             return
         raw = resp.choices[0].message.content or ""
+        finish = resp.choices[0].finish_reason
         u = resp.usage
         tin, tout = (u.prompt_tokens, u.completion_tokens) if u else (0, 0)
         c = cost_usd(tier, tin, tout)
         correct = await asyncio.to_thread(grade, rec, raw)
         row = {"prompt_id": rec["id"], "tier": tier_name, "source": rec["source"], "split": rec["split"],
                "correct": correct, "input_tokens": tin, "output_tokens": tout, "cost_usd": c,
-               "latency_ms": round(latency, 1), "model": tier["model"], "raw_output": raw}
+               "latency_ms": round(latency, 1), "model": tier["model"], "finish_reason": finish,
+               "max_tokens": gen["max_tokens"], "raw_output": raw}
         async with lock:
             fout.write(json.dumps(row) + "\n")
             fout.flush()
@@ -124,6 +128,9 @@ async def main(args):
     gen = tiers.pop("_generation")
     use = args.tiers.split(",")
     recs = [json.loads(l) for l in open(PROMPTS, encoding="utf-8")]
+    if args.per_source:  # deterministic stratified pilot: first N of each source in file order
+        seen = {}
+        recs = [r for r in recs if seen.setdefault(r["source"], []).append(1) or len(seen[r["source"]]) <= args.per_source]
     if args.limit:
         recs = recs[: args.limit]
     done, spend = load_done()
@@ -149,6 +156,7 @@ if __name__ == "__main__":
     ap = argparse.ArgumentParser()
     ap.add_argument("--tiers", default="small,medium,large")
     ap.add_argument("--limit", type=int, default=0)
+    ap.add_argument("--per-source", type=int, default=0, help="pilot: only the first N prompts of each source")
     ap.add_argument("--concurrency", type=int, default=0)
     ap.add_argument("--budget", type=float, default=float(os.environ.get("DATASET_BUDGET_USD", 12)))
     ap.add_argument("--summary", action="store_true", help="only print the summary table")

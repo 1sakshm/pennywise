@@ -168,11 +168,11 @@ export default function LiveMode() {
         .bar.chosen { opacity: 1; }
         .name { font-family: var(--font-mono); text-transform: uppercase; font-size: 13px; letter-spacing: 0.08em; }
         .track { height: 12px; background: rgba(255, 255, 255, 0.05); border-radius: 6px; overflow: hidden; }
-        .fill { height: 100%; border-radius: 6px; }
+        .lm :global(.fill) { height: 100%; border-radius: 6px; }
         .p { text-align: right; font-size: 13px; }
         .answer { border-top: 1px solid var(--line); padding-top: 12px; }
         .txt { white-space: pre-wrap; font-size: 14px; max-height: 260px; overflow: auto; margin-top: 6px; }
-        .cost { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 12px; }
+        .lm :global(.cost) { display: flex; gap: 18px; align-items: center; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 12px; }
         @media (max-width: 960px) { .lm { grid-template-columns: 1fr; } }
       `}</style>
     </div>

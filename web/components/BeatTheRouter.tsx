@@ -208,22 +208,22 @@ export default function BeatTheRouter() {
         .score { margin-left: auto; font-family: var(--font-mono); }
         .timer { height: 3px; background: var(--line); border-radius: 3px; overflow: hidden; margin: 14px 0; }
         .timer :global(div) { height: 100%; background: var(--accent); transform-origin: left; }
-        .prompt { white-space: pre-wrap; font-family: var(--font-mono); font-size: 14px; background: #070910; border: 1px solid var(--line); border-radius: 10px; padding: 14px; margin: 0 0 14px; max-height: 240px; overflow: auto; }
-        .choices { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-        .choice { text-align: left; background: rgba(255, 255, 255, 0.02); border: 1px solid; border-radius: 12px; padding: 14px; cursor: pointer; min-height: 64px; display: flex; flex-direction: column; gap: 6px; }
-        .choice:disabled { cursor: default; }
-        .choice.picked { background: rgba(255, 255, 255, 0.08); }
-        .choice.oracle { box-shadow: 0 0 0 2px var(--accent) inset; }
-        .name { font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.1em; font-size: 14px; }
-        .out { display: flex; flex-direction: column; gap: 2px; font-size: 13px; }
-        .cost { color: var(--muted); font-family: var(--font-mono); }
-        .laya { color: var(--accent); }
-        .best { font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; }
-        .verdict { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-top: 14px; flex-wrap: wrap; }
-        .end { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 12px 0; }
-        .big { font-size: clamp(36px, 7vw, 72px); font-weight: 700; font-family: var(--font-mono); }
-        .big span { color: var(--dim); }
-        .row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+        .btr :global(.prompt) { white-space: pre-wrap; font-family: var(--font-mono); font-size: 14px; background: #070910; border: 1px solid var(--line); border-radius: 10px; padding: 14px; margin: 0 0 14px; max-height: 240px; overflow: auto; }
+        .btr :global(.choices) { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+        .btr :global(.choice) { text-align: left; background: rgba(255, 255, 255, 0.02); border: 1px solid; border-radius: 12px; padding: 14px; cursor: pointer; min-height: 64px; display: flex; flex-direction: column; gap: 6px; }
+        .btr :global(.choice:disabled) { cursor: default; }
+        .btr :global(.choice.picked) { background: rgba(255, 255, 255, 0.08); }
+        .btr :global(.choice.oracle) { box-shadow: 0 0 0 2px var(--accent) inset; }
+        .btr :global(.name) { font-family: var(--font-mono); text-transform: uppercase; letter-spacing: 0.1em; font-size: 14px; }
+        .btr :global(.out) { display: flex; flex-direction: column; gap: 2px; font-size: 13px; }
+        .btr :global(.cost) { color: var(--muted); font-family: var(--font-mono); }
+        .btr :global(.laya) { color: var(--accent); }
+        .btr :global(.best) { font-size: 11px; color: var(--accent); text-transform: uppercase; letter-spacing: 0.08em; }
+        .btr :global(.verdict) { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-top: 14px; flex-wrap: wrap; }
+        .btr :global(.end) { text-align: center; display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 12px 0; }
+        .btr :global(.big) { font-size: clamp(36px, 7vw, 72px); font-weight: 700; font-family: var(--font-mono); }
+        .btr :global(.big span) { color: var(--dim); }
+        .btr :global(.row) { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
         @media (max-width: 600px) { .choices { grid-template-columns: 1fr; } }
       `}</style>
     </div>

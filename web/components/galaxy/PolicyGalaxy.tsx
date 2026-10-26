@@ -23,11 +23,12 @@ export default function PolicyGalaxy({ capture = false, lambdaOverride, stepMs =
   const mobile = useIsMobile();
   const reduced = useReducedMotion();
   const [lowFps, setLowFps] = useState(false);
-  const use2D = mobile || reduced || lowFps;
+  const [force, setForce] = useState<"2d" | "3d" | null>(null);
+  const use2D = force ? force === "2d" : mobile || reduced || lowFps;
 
   useEffect(() => {
     try {
-      if (localStorage.getItem("galaxy2d") === "1") setLowFps(true);
+      if (sessionStorage.getItem("galaxy2d") === "1") setLowFps(true);
     } catch {}
   }, []);
   useEffect(() => {
@@ -72,7 +73,7 @@ export default function PolicyGalaxy({ capture = false, lambdaOverride, stepMs =
             onLowFps={() => {
               setLowFps(true);
               try {
-                localStorage.setItem("galaxy2d", "1");
+                sessionStorage.setItem("galaxy2d", "1");
               } catch {}
             }}
           />
@@ -95,7 +96,11 @@ export default function PolicyGalaxy({ capture = false, lambdaOverride, stepMs =
             </span>
           ))}
           <span className="chip">size = confidence</span>
-          {use2D && !capture && <span className="chip">2D view</span>}
+          {!capture && (
+            <button className="chip" style={{ cursor: "pointer", background: "transparent" }} onClick={() => setForce(use2D ? "3d" : "2d")}>
+              {use2D ? "2D view · switch to 3D" : "3D · switch to 2D"}
+            </button>
+          )}
         </div>
         {capture && (
           <div className="overlay">

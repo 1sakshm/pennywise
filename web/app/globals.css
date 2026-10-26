@@ -17,13 +17,16 @@
   --radius: 14px;
   --gutter: clamp(16px, 4vw, 40px);
   --maxw: 1180px;
-  --font-sans: var(--font-grotesk), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-jbmono), ui-monospace, SFMono-Regular, Menlo, monospace;
   color-scheme: dark;
 }
 
 * { box-sizing: border-box; }
 html, body { margin: 0; padding: 0; overflow-x: hidden; }
+/* next/font defines --font-grotesk / --font-jbmono on <body>, so the font tokens must live there too */
+body {
+  --font-sans: var(--font-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-jbmono), ui-monospace, SFMono-Regular, Menlo, monospace;
+}
 body {
   background: radial-gradient(1200px 600px at 70% -10%, rgba(129, 140, 248, 0.08), transparent 60%),
     radial-gradient(900px 500px at 0% 20%, rgba(45, 212, 191, 0.06), transparent 60%), var(--bg);

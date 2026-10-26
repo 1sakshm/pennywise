@@ -26,5 +26,9 @@
     "@types/react-dom": "^19",
     "@types/three": "^0.180.0",
     "typescript": "^5"
+  },
+  "overrides": {
+    "motion-dom": "12.23.21",
+    "motion-utils": "12.23.6"
   }
 }

@@ -31,7 +31,7 @@ export default function Hero() {
           )}
           <p className="lede">
             An open, 421M-parameter Laya decision model reads each LLM request and picks the cheapest model tier that will still get it right — in
-            {h?.router_latency_ms != null ? ` ~${Math.round(h.router_latency_ms)} ms` : " milliseconds"}. Its output distribution <em>is</em> a policy, so we train
+            {h?.router_latency_ms != null ? ` ~${Math.round(h.router_latency_ms)} ms on a GPU` : " milliseconds"}. Its output distribution <em>is</em> a policy, so we train
             it with RL on real outcomes and you can watch it learn. One <code>base_url</code> change routes your agents through it, lowering
             Alan&apos;s <b>dollars per merged PR</b>.
           </p>

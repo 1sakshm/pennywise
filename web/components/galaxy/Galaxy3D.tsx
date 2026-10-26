@@ -15,7 +15,7 @@ export type GalaxyProps = {
   onLowFps?: () => void;
 };
 
-const SCALE = 6;
+const SCALE = 5;
 
 const vert = /* glsl */ `
   attribute float size;
@@ -25,7 +25,7 @@ const vert = /* glsl */ `
   void main() {
     vColor = color;
     vec4 mv = modelViewMatrix * vec4(position, 1.0);
-    gl_PointSize = size * (300.0 / -mv.z);
+    gl_PointSize = size * (750.0 / -mv.z);
     vFade = clamp(1.25 - (-mv.z - 6.0) / 14.0, 0.25, 1.0); // depth fog
     gl_Position = projectionMatrix * mv;
   }`;
@@ -43,8 +43,14 @@ function Points({ umap, action, prob, onHover }: GalaxyProps) {
   const ref = useRef<THREE.Points>(null);
   const n = umap.xyz.length;
   const { positions, base } = useMemo(() => {
+    // robust per-axis scaling (2nd-98th percentile -> [-SCALE, SCALE]) so outliers don't shrink the galaxy
+    const lim = [0, 1, 2].map((d) => {
+      const v = umap.xyz.map((p) => p[d]).sort((a, b) => a - b);
+      return [v[Math.floor(0.02 * (n - 1))], v[Math.floor(0.98 * (n - 1))]];
+    });
     const p = new Float32Array(n * 3);
-    umap.xyz.forEach(([x, y, z], i) => p.set([x * SCALE, y * SCALE, z * SCALE], i * 3));
+    umap.xyz.forEach((xyz, i) =>
+      p.set(xyz.map((v, d) => ((v - lim[d][0]) / (lim[d][1] - lim[d][0] || 1) * 2 - 1) * SCALE), i * 3));
     return { positions: p, base: new Float32Array(n * 3).fill(0.55) };
   }, [umap, n]);
   const colors = useMemo(() => base.slice(), [base]);
@@ -102,10 +108,11 @@ function FpsWatch({ onLowFps }: { onLowFps?: () => void }) {
     const s = st.current;
     if (s.done) return;
     s.t += dt;
+    if (s.t < 1) return; // ignore shader compile / first frames
     s.frames++;
-    if (s.t > 2.5) {
+    if (s.t > 3.5) {
       s.done = true;
-      if (s.frames / s.t < 40) onLowFps?.();
+      if (s.frames / (s.t - 1) < 40) onLowFps?.();
     }
   });
   return null;
@@ -121,7 +128,7 @@ function RaycastThreshold() {
 
 export default function Galaxy3D(props: GalaxyProps) {
   return (
-    <Canvas camera={{ position: [0, 2, 13], fov: 50 }} dpr={[1, 1.75]} gl={{ antialias: false, powerPreference: "high-performance" }}>
+    <Canvas camera={{ position: [0, 1.5, 12], fov: 50 }} dpr={[1, 1.75]} gl={{ antialias: false, powerPreference: "high-performance" }}>
       <color attach="background" args={["#05060a"]} />
       <RaycastThreshold />
       <Points {...props} />

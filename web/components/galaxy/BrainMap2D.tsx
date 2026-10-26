@@ -9,6 +9,18 @@ export default function BrainMap2D({ umap, action, prob, onHover, animate = true
   const tgt = useRef<{ c: Float32Array; s: Float32Array } | null>(null);
   const cur = useRef<{ c: Float32Array; s: Float32Array } | null>(null);
   const n = umap.xy.length;
+  // robust per-axis bounds (2nd-98th percentile) so a few outliers don't shrink the map
+  const bounds = useRef<[number, number, number, number] | null>(null);
+  if (!bounds.current) {
+    const q = (a: number[], p: number) => a.slice().sort((x, y) => x - y)[Math.floor(p * (a.length - 1))];
+    const xs = umap.xy.map((p) => p[0]), ys = umap.xy.map((p) => p[1]);
+    bounds.current = [q(xs, 0.02), q(xs, 0.98), q(ys, 0.02), q(ys, 0.98)];
+  }
+  const project = (x: number, y: number, w: number, h: number) => {
+    const [x0, x1, y0, y1] = bounds.current!;
+    const pad = 28;
+    return [pad + ((x - x0) / (x1 - x0 || 1)) * (w - 2 * pad), h - pad - ((y - y0) / (y1 - y0 || 1)) * (h - 2 * pad)];
+  };
 
   useEffect(() => {
     const c = new Float32Array(n * 3), s = new Float32Array(n);
@@ -40,13 +52,11 @@ export default function BrainMap2D({ umap, action, prob, onHover, animate = true
       const T = tgt.current, C = cur.current;
       if (T && C) {
         const k = animate ? 1 - Math.exp(-dt * 5) : 1;
-        ctx.globalCompositeOperation = "lighter";
-        const pad = 24, sc = Math.min(w, h) / 2 - pad;
+        ctx.globalCompositeOperation = "source-over";
         for (let i = 0; i < n; i++) {
           for (let j = 0; j < 3; j++) C.c[i * 3 + j] += (T.c[i * 3 + j] - C.c[i * 3 + j]) * k;
           C.s[i] += (T.s[i] - C.s[i]) * k;
-          const [x, y] = umap.xy[i];
-          const px = w / 2 + x * sc, py = h / 2 - y * sc;
+          const [px, py] = project(umap.xy[i][0], umap.xy[i][1], w, h);
           ctx.fillStyle = `rgba(${(C.c[i * 3] * 255) | 0},${(C.c[i * 3 + 1] * 255) | 0},${(C.c[i * 3 + 2] * 255) | 0},0.85)`;
           ctx.beginPath();
           ctx.arc(px, py, C.s[i], 0, Math.PI * 2);
@@ -63,11 +73,10 @@ export default function BrainMap2D({ umap, action, prob, onHover, animate = true
     const cv = ref.current!;
     const r = cv.getBoundingClientRect();
     const mx = e.clientX - r.left, my = e.clientY - r.top;
-    const w = r.width, h = r.height, sc = Math.min(w, h) / 2 - 24;
     let best = -1, bd = 100;
     for (let i = 0; i < n; i++) {
-      const [x, y] = umap.xy[i];
-      const d = (w / 2 + x * sc - mx) ** 2 + (h / 2 - y * sc - my) ** 2;
+      const [px, py] = project(umap.xy[i][0], umap.xy[i][1], r.width, r.height);
+      const d = (px - mx) ** 2 + (py - my) ** 2;
       if (d < bd) {
         bd = d;
         best = i;

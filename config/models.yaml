@@ -14,35 +14,35 @@
 
 tiers:
   small:
-    base_url: FILL_ME            # e.g. https://openrouter.ai/api/v1
-    api_key_env: OPENROUTER_API_KEY
-    model: FILL_ME               # provider's model id
-    price_in_per_m: FILL_ME
-    price_out_per_m: FILL_ME
+    base_url: https://integrate.api.nvidia.com/v1   # NVIDIA free tier (actual spend $0)
+    api_key_env: NVIDIA_API_KEY
+    model: nvidia/nemotron-3.5-lightning-30b-a3b
+    price_in_per_m: 0.07
+    price_out_per_m: 0.20
     supports_tools: true
-    price_source: FILL_ME        # e.g. "OpenRouter list price, 2026-10-26"
+    price_source: "OpenRouter list price for nvidia/nemotron-3.5-lightning, 2026-10-26"
   medium:
-    base_url: FILL_ME
-    api_key_env: OPENROUTER_API_KEY
-    model: FILL_ME
-    price_in_per_m: FILL_ME
-    price_out_per_m: FILL_ME
+    base_url: https://integrate.api.nvidia.com/v1   # NVIDIA free tier (actual spend $0)
+    api_key_env: NVIDIA_API_KEY
+    model: minimaxai/minimax-m3.1-flash
+    price_in_per_m: 0.15
+    price_out_per_m: 0.60
     supports_tools: true
-    price_source: FILL_ME
+    price_source: "OpenRouter list price for minimax/minimax-m3.1-flash, 2026-10-26"
   large:
-    base_url: FILL_ME
-    api_key_env: OPENROUTER_API_KEY
-    model: FILL_ME
-    price_in_per_m: FILL_ME
-    price_out_per_m: FILL_ME
+    base_url: https://integrate.api.nvidia.com/v1   # NVIDIA free tier (actual spend $0)
+    api_key_env: NVIDIA_API_KEY
+    model: nvidia/nemotron-3-ultra-550b-a55b
+    price_in_per_m: 0.60
+    price_out_per_m: 2.40
     supports_tools: true
-    price_source: FILL_ME
+    price_source: "OpenRouter list price for nvidia/nemotron-3-ultra-550b-a55b, 2026-10-26"
 
 # Request defaults used for dataset generation (Phase 2)
 generation:
   temperature: 0.0
-  max_tokens: 1024
-  timeout_s: 120
+  max_tokens: 4096               # reasoning-style models think in the answer; 1024 truncated them in the pilot
+  timeout_s: 240
   concurrency: 8
-  max_retries: 5
-  rpm: 36                        # stay under a ~40 RPM free tier; 0 = unlimited
+  max_retries: 8
+  rpm: 30                        # NVIDIA free tier ~40 RPM, stricter on some models; 0 = unlimited

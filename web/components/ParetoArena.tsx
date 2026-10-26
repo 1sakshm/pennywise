@@ -73,7 +73,7 @@ export default function ParetoArena() {
                 strokeDasharray={p.kind === "oracle" ? "2 2" : undefined}
               />
               {["always-small", "always-medium", "always-large", "oracle", "zero-shot Laya"].includes(p.name) && (
-                <text x={d.x(p.cost_vs_large) + 8} y={d.y(p.accuracy) - 8} fill="#cbd5e1" fontSize="11">{p.name}</text>
+                <text x={d.x(p.cost_vs_large) + (p.cost_vs_large > 0.8 ? -8 : 8)} y={d.y(p.accuracy) - 8} fill="#cbd5e1" fontSize="11" textAnchor={p.cost_vs_large > 0.8 ? "end" : "start"}>{p.name}</text>
               )}
             </g>
           ))}
