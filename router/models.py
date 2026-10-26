@@ -15,7 +15,9 @@ def _load_dotenv():
             line = line.strip()
             if line and not line.startswith("#") and "=" in line:
                 k, v = line.split("=", 1)
-                os.environ.setdefault(k.strip(), v.strip())
+                v = v.split(" #", 1)[0].strip()  # drop inline comments ("120   # per IP")
+                if v:
+                    os.environ.setdefault(k.strip(), v)
 
 
 def load_tiers(require_tools: bool = False):

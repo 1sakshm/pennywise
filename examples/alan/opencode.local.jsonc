@@ -1,0 +1,17 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  // laya-router: RL-trained model router (local proxy). Added for the Openfire hackathon project.
+  "provider": {
+    "laya-router": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "Laya Router",
+      "options": { "baseURL": "http://127.0.0.1:8000/v1", "apiKey": "local" },
+      "models": {
+        "auto": { "name": "Laya auto (RL-routed)", "limit": { "context": 128000, "output": 8192 } },
+        "auto-cheap": { "name": "Laya auto-cheap", "limit": { "context": 128000, "output": 8192 } },
+        "auto-quality": { "name": "Laya auto-quality", "limit": { "context": 128000, "output": 8192 } },
+        "large": { "name": "Large tier, no routing (before runs)", "limit": { "context": 128000, "output": 8192 } }
+      }
+    }
+  }
+}
