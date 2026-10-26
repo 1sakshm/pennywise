@@ -27,3 +27,12 @@ Run each task twice, (a) with model `laya-router/large` and (b) with `laya-route
 
 ## 5. If Alan's Sync MCP overwrites our entry
 Re-add the `laya-router` block under `mcp` after syncing, and record the behaviour in `docs/ALAN_FEEDBACK.md`.
+
+## 6. Route B: Alan custom MCP connector (if Rescan doesn't list custom OpenCode models)
+Check #2 failed on 2026-10-26: Alan's **Rescan models** doesn't list models from OpenCode's own config (see `docs/ALAN_NOTES.md`). Alan *does* support your own MCP servers, so agents can call the router as a tool instead:
+1. Run the router + proxy (`uvicorn server.app:app --port 8000`) and the MCP server over HTTP:
+   `python -m integrations.mcp.server --http --port 8765` → endpoint `http://127.0.0.1:8765/mcp`
+2. In Alan: MCP tab → **Add custom connector** → URL `http://127.0.0.1:8765/mcp` (for local sessions; cloud sessions need a public URL).
+3. Agents get `route(prompt)` and `ask_routed(prompt, mode)`.
+
+Tested with the official MCP client: `tests/mcp_http_test.py`.

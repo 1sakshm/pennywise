@@ -66,4 +66,14 @@ async def ask_routed(prompt: str, mode: str = "auto") -> dict:
 
 
 if __name__ == "__main__":
-    mcp.run(transport="stdio")
+    import argparse
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--http", action="store_true",
+                    help="serve over streamable HTTP (for remote connectors, e.g. Alan 'Add custom connector')")
+    ap.add_argument("--host", default="127.0.0.1")
+    ap.add_argument("--port", type=int, default=8765)
+    a = ap.parse_args()
+    if a.http:  # endpoint: http://<host>:<port>/mcp
+        mcp.run(transport="streamable-http", host=a.host, port=a.port, stateless_http=True)
+    else:
+        mcp.run(transport="stdio")
