@@ -1,0 +1,29 @@
+# secrets
+.env
+.env.*
+!.env.example
+
+# python
+__pycache__/
+*.pyc
+.venv/
+venv/
+.pytest_cache/
+
+# data / models (large)
+data/raw/
+data/cache/
+router/checkpoints/
+*.safetensors
+*.pt
+*.bin
+hf_cache/
+
+# node
+node_modules/
+web/.next/
+web/out/
+
+# os
+.DS_Store
+Thumbs.db
