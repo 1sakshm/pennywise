@@ -7,6 +7,7 @@ Usage: python data/build_prompts.py
 import ast
 import json
 import random
+import re
 import sys
 from collections import Counter
 from concurrent.futures import ThreadPoolExecutor
@@ -151,6 +152,7 @@ def inject(rows, kinds_quota, rng):
     def run(c):
         r, kind, b = c
         ok, out = run_python(tests_program(b, {"tests": r["test_list"], "test_setup": r["test_setup_code"]}))
+        out = re.sub(r'File "[^"]*prog\.py"', 'File "prog.py"', out)  # no local temp paths in the dataset
         return None if ok else (r, kind, b, out)
 
     with ThreadPoolExecutor(8) as ex:
