@@ -19,13 +19,14 @@ const SCALE = 5;
 
 const vert = /* glsl */ `
   attribute float size;
+  uniform float uDpr;
   attribute vec3 color;
   varying vec3 vColor;
   varying float vFade;
   void main() {
     vColor = color;
     vec4 mv = modelViewMatrix * vec4(position, 1.0);
-    gl_PointSize = size * (750.0 / -mv.z);
+    gl_PointSize = clamp(size * uDpr * (950.0 / -mv.z), 1.5, 13.0 * uDpr); // capped: near points must not blow up
     vFade = clamp(1.25 - (-mv.z - 6.0) / 14.0, 0.25, 1.0); // depth fog
     gl_Position = projectionMatrix * mv;
   }`;
@@ -55,10 +56,24 @@ function Points({ umap, action, prob, onHover }: GalaxyProps) {
   }, [umap, n]);
   const colors = useMemo(() => base.slice(), [base]);
   const sizes = useMemo(() => new Float32Array(n).fill(0.12), [n]);
+  const uniforms = useMemo(() => ({ uDpr: { value: typeof window !== "undefined" ? Math.min(2, window.devicePixelRatio) : 1 } }), []);
   const target = useRef({ c: base.slice(), s: new Float32Array(n).fill(0.12) });
+  const prev = useRef<number[] | null>(null);
 
   useEffect(() => {
     const c = target.current.c, s = target.current.s;
+    // points whose chosen tier flipped since the last checkpoint flash white + swell, then tween back
+    const g = ref.current?.geometry;
+    if (g && prev.current && action) {
+      const cc = (g.getAttribute("color") as THREE.BufferAttribute).array as Float32Array;
+      const ss = (g.getAttribute("size") as THREE.BufferAttribute).array as Float32Array;
+      for (let i = 0; i < n; i++)
+        if (prev.current[i] !== action[i]) {
+          cc.set([1.6, 1.6, 1.6], i * 3);
+          ss[i] = 0.55;
+        }
+    }
+    prev.current = action;
     for (let i = 0; i < n; i++) {
       const a = action ? action[i] : -1;
       const rgb = a >= 0 ? TIER_RGB[TIERS[a]] : [0.55, 0.58, 0.65];
@@ -72,7 +87,7 @@ function Points({ umap, action, prob, onHover }: GalaxyProps) {
   useFrame((_, dt) => {
     const g = ref.current?.geometry;
     if (!g) return;
-    const k = 1 - Math.exp(-dt * 5); // smooth tween towards the checkpoint's colors
+    const k = 1 - Math.exp(-dt * 3.2); // smooth tween towards the checkpoint's colors
     const cA = g.getAttribute("color") as THREE.BufferAttribute;
     const sA = g.getAttribute("size") as THREE.BufferAttribute;
     const c = cA.array as Float32Array, s = sA.array as Float32Array;
@@ -97,7 +112,7 @@ function Points({ umap, action, prob, onHover }: GalaxyProps) {
         <bufferAttribute attach="attributes-color" args={[colors, 3]} />
         <bufferAttribute attach="attributes-size" args={[sizes, 1]} />
       </bufferGeometry>
-      <shaderMaterial vertexShader={vert} fragmentShader={frag} transparent depthWrite={false} blending={THREE.AdditiveBlending} />
+      <shaderMaterial vertexShader={vert} fragmentShader={frag} uniforms={uniforms} transparent depthWrite={false} blending={THREE.AdditiveBlending} />
     </points>
   );
 }
@@ -128,13 +143,13 @@ function RaycastThreshold() {
 
 export default function Galaxy3D(props: GalaxyProps) {
   return (
-    <Canvas camera={{ position: [0, 1.5, 12], fov: 50 }} dpr={[1, 1.75]} gl={{ antialias: false, powerPreference: "high-performance" }}>
+    <Canvas camera={{ position: [0, 1.5, 14], fov: 50 }} dpr={[1, 1.75]} gl={{ antialias: false, powerPreference: "high-performance" }}>
       <color attach="background" args={["#05060a"]} />
       <RaycastThreshold />
       <Points {...props} />
-      <OrbitControls enablePan={false} autoRotate={props.autoRotate ?? true} autoRotateSpeed={0.5} minDistance={5} maxDistance={24} enableDamping />
+      <OrbitControls enablePan={false} autoRotate={props.autoRotate ?? true} autoRotateSpeed={0.5} minDistance={9} maxDistance={26} enableDamping />
       <EffectComposer>
-        <Bloom intensity={1.1} luminanceThreshold={0.15} luminanceSmoothing={0.3} mipmapBlur />
+        <Bloom intensity={0.8} luminanceThreshold={0.25} luminanceSmoothing={0.3} mipmapBlur />
       </EffectComposer>
       <FpsWatch onLowFps={props.onLowFps} />
     </Canvas>

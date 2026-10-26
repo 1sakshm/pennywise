@@ -9,6 +9,7 @@ export default function BrainMap2D({ umap, action, prob, onHover, animate = true
   const tgt = useRef<{ c: Float32Array; s: Float32Array } | null>(null);
   const cur = useRef<{ c: Float32Array; s: Float32Array } | null>(null);
   const n = umap.xy.length;
+  const prev = useRef<number[] | null>(null);
   // robust per-axis bounds (2nd-98th percentile) so a few outliers don't shrink the map
   const bounds = useRef<[number, number, number, number] | null>(null);
   if (!bounds.current) {
@@ -31,6 +32,13 @@ export default function BrainMap2D({ umap, action, prob, onHover, animate = true
     }
     tgt.current = { c, s };
     if (!cur.current || !animate) cur.current = { c: c.slice(), s: s.slice() };
+    else if (prev.current && action)
+      for (let i = 0; i < n; i++)
+        if (prev.current[i] !== action[i]) {
+          cur.current.c.set([1, 1, 1], i * 3); // flipped tier: flash white, then tween to the new colour
+          cur.current.s[i] = 9;
+        }
+    prev.current = action;
   }, [action, prob, n, umap.split, animate]);
 
   useEffect(() => {
@@ -51,7 +59,7 @@ export default function BrainMap2D({ umap, action, prob, onHover, animate = true
       ctx.clearRect(0, 0, w, h);
       const T = tgt.current, C = cur.current;
       if (T && C) {
-        const k = animate ? 1 - Math.exp(-dt * 5) : 1;
+        const k = animate ? 1 - Math.exp(-dt * 3.2) : 1;
         ctx.globalCompositeOperation = "source-over";
         for (let i = 0; i < n; i++) {
           for (let j = 0; j < 3; j++) C.c[i * 3 + j] += (T.c[i * 3 + j] - C.c[i * 3 + j]) * k;

@@ -1,6 +1,7 @@
 "use client";
 import dynamic from "next/dynamic";
-import { useEffect, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { useEffect, useRef, useState } from "react";
 import { pct, SOURCE_LABEL, TIERS, type Training, type Umap } from "@/lib/data";
 import { useData, useIsMobile, useReducedMotion, useStore } from "../Store";
 import BrainMap2D from "./BrainMap2D";
@@ -25,6 +26,35 @@ export default function PolicyGalaxy({ capture = false, lambdaOverride, stepMs =
   const [lowFps, setLowFps] = useState(false);
   const [force, setForce] = useState<"2d" | "3d" | null>(null);
   const use2D = force ? force === "2d" : mobile || reduced || lowFps;
+  const viewRef = useRef<HTMLDivElement>(null);
+  const autoplayed = useRef(false);
+
+  // "Watch it learn" (hero) -> replay from step 0
+  useEffect(() => {
+    const h = () => {
+      setIdx(0);
+      setPlaying(true);
+      autoplayed.current = true;
+    };
+    window.addEventListener("galaxy:play", h);
+    return () => window.removeEventListener("galaxy:play", h);
+  }, []);
+  // auto-play once, the first time the galaxy is mostly on screen
+  useEffect(() => {
+    if (capture || reduced || !viewRef.current) return;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting && !autoplayed.current) {
+          autoplayed.current = true;
+          setIdx(0);
+          setPlaying(true);
+        }
+      },
+      { threshold: 0.6 },
+    );
+    io.observe(viewRef.current);
+    return () => io.disconnect();
+  }, [capture, reduced, cks]);
 
   useEffect(() => {
     try {
@@ -48,12 +78,14 @@ export default function PolicyGalaxy({ capture = false, lambdaOverride, stepMs =
         }
         return i + 1;
       });
-    }, capture && idx === cks.length - 1 ? 2500 : stepMs);
+    }, capture && idx === cks.length - 1 ? 2500 : Math.max(stepMs, 9000 / Math.max(1, cks.length - 1)));
     return () => clearInterval(id);
   }, [playing, cks, capture, stepMs, idx]);
 
   if (!umap || !cks || !manifest) return <div className="gal-empty">Loading galaxy…</div>;
   const ck = cks[Math.min(idx, cks.length - 1)];
+  const prevCk = idx > 0 ? cks[Math.min(idx - 1, cks.length - 1)] : null;
+  const flipped = prevCk ? ck.action.reduce((a, v, i) => a + (v !== prevCk.action[i] ? 1 : 0), 0) : 0;
   const props = {
     umap,
     action: ck.action,
@@ -63,7 +95,7 @@ export default function PolicyGalaxy({ capture = false, lambdaOverride, stepMs =
   const h = hover;
   return (
     <div className={capture ? "gal capture" : "gal"}>
-      <div className="view">
+      <div className="view" id="galaxy-view" ref={viewRef}>
         {use2D ? (
           <BrainMap2D {...props} animate={!reduced} />
         ) : (
@@ -89,6 +121,20 @@ export default function PolicyGalaxy({ capture = false, lambdaOverride, stepMs =
             </div>
           </div>
         )}
+        <AnimatePresence>
+          {playing && !capture && (
+            <motion.div className="hud" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: 20 }}>
+              <div className="eyebrow">training · λ={L}</div>
+              <motion.div key={ck.step} className="hud-step" initial={{ opacity: 0.4, y: -6 }} animate={{ opacity: 1, y: 0 }}>
+                step {ck.step}
+              </motion.div>
+              <div className="hud-row"><span>val accuracy</span><b>{pct(ck.val.accuracy)}</b></div>
+              <div className="hud-row"><span>cost vs large</span><b>{pct(ck.val.cost_vs_large, 0)}</b></div>
+              <div className="hud-row"><span>prompts flipped</span><b>{flipped}</b></div>
+              <div className="hud-bar"><motion.div animate={{ width: `${(100 * idx) / Math.max(1, cks.length - 1)}%` }} transition={{ ease: "linear", duration: 0.3 }} /></div>
+            </motion.div>
+          )}
+        </AnimatePresence>
         <div className="legend">
           {TIERS.map((t) => (
             <span key={t} className="chip">
@@ -158,6 +204,13 @@ export default function PolicyGalaxy({ capture = false, lambdaOverride, stepMs =
         .tip { position: absolute; max-width: 300px; pointer-events: none; background: rgba(5, 6, 10, 0.92); border: 1px solid var(--line-2); border-radius: 10px; padding: 10px 12px; font-size: 13px; z-index: 3; }
         .pv { color: var(--muted); margin: 4px 0 6px; }
         .legend { position: absolute; left: 12px; bottom: 12px; display: flex; gap: 6px; flex-wrap: wrap; }
+        .view :global(.hud) { position: absolute; right: 14px; top: 14px; width: 210px; padding: 12px 14px; border-radius: 12px; z-index: 4;
+          background: rgba(5, 6, 10, 0.72); border: 1px solid var(--line-2); backdrop-filter: blur(8px); font-size: 13px; }
+        .view :global(.hud-step) { font-family: var(--font-mono); font-size: 26px; color: var(--accent); margin: 2px 0 6px; }
+        .view :global(.hud-row) { display: flex; justify-content: space-between; color: var(--muted); }
+        .view :global(.hud-row b) { color: var(--text); font-family: var(--font-mono); font-weight: 500; }
+        .view :global(.hud-bar) { height: 3px; background: var(--line); border-radius: 3px; margin-top: 10px; overflow: hidden; }
+        .view :global(.hud-bar div) { height: 100%; background: var(--accent); }
         .ctl { display: flex; flex-direction: column; gap: 12px; }
         .row { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
         .row input[type="range"] { flex: 1; min-width: 160px; }

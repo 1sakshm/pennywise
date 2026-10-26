@@ -2,6 +2,7 @@
 import { AnimatePresence, motion } from "framer-motion";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { pct, SOURCE_LABEL, TIERS, usd, type Game, type GameRound, type Tier } from "@/lib/data";
+import { Burst } from "./fx";
 import { useData } from "./Store";
 
 const ROUNDS = 10;
@@ -31,6 +32,8 @@ export default function BeatTheRouter() {
   const [best, setBest] = useState<number | null>(null);
   const [phase, setPhase] = useState<"intro" | "play" | "end">("intro");
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const [burst, setBurst] = useState(0);
+  const [shake, setShake] = useState(0);
 
   useEffect(() => {
     try {
@@ -55,7 +58,10 @@ export default function BeatTheRouter() {
     (t: Tier | "timeout") => {
       if (!round || pick) return;
       setPick(t);
-      if (t === round.oracle) setYou((x) => x + 1);
+      if (t === round.oracle) {
+        setYou((x) => x + 1);
+        setBurst((b) => b + 1);
+      } else setShake((k) => k + 1);
       if (round.router === round.oracle) setLaya((x) => x + 1);
     },
     [round, pick],
@@ -116,7 +122,15 @@ export default function BeatTheRouter() {
             </span>
             <span className="chip">{SOURCE_LABEL[round.source] ?? round.source}</span>
             <span className="score">
-              You <b>{you}</b> – <b>{laya}</b> Laya
+              You{" "}
+              <motion.b key={"y" + you} initial={{ scale: 1.8, color: "#facc15" }} animate={{ scale: 1, color: "#e6e9f2" }} style={{ display: "inline-block" }}>
+                {you}
+              </motion.b>{" "}
+              –{" "}
+              <motion.b key={"l" + laya} initial={{ scale: 1.8, color: "#facc15" }} animate={{ scale: 1, color: "#e6e9f2" }} style={{ display: "inline-block" }}>
+                {laya}
+              </motion.b>{" "}
+              Laya
             </span>
           </div>
           <div className="timer" aria-hidden>
@@ -132,7 +146,8 @@ export default function BeatTheRouter() {
               {round.prompt}
             </motion.pre>
           </AnimatePresence>
-          <div className="choices">
+          <div className={shake ? "choices shake" : "choices"} key={"c" + shake} style={{ position: "relative" }}>
+            <Burst trigger={burst} />
             {TIERS.map((t, i) => {
               const reveal = !!pick;
               const ok = round.correct[i] === 1;
@@ -175,7 +190,8 @@ export default function BeatTheRouter() {
       )}
 
       {phase === "end" && (
-        <motion.div className="end" initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}>
+        <motion.div className="end" style={{ position: "relative" }} initial={{ opacity: 0, scale: 0.96 }} animate={{ opacity: 1, scale: 1 }}>
+          <Burst trigger={you >= laya ? 1 : 0} />
           <div className="eyebrow">final score</div>
           <div className="big">
             You {you} <span>–</span> {laya} Laya

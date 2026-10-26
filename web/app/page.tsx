@@ -6,6 +6,7 @@ import HowItWorks from "@/components/HowItWorks";
 import LiveMode from "@/components/LiveMode";
 import ParetoArena from "@/components/ParetoArena";
 import SavingsCounter from "@/components/SavingsCounter";
+import { PanelSpotlights, Reveal } from "@/components/fx";
 import { useStore } from "@/components/Store";
 
 const REPO = process.env.NEXT_PUBLIC_REPO_URL || "https://github.com/YOUR-USER/laya-router";
@@ -14,6 +15,7 @@ export default function Home() {
   const { manifest } = useStore();
   return (
     <main>
+      <PanelSpotlights />
       {manifest?.synthetic && <div className="banner-synthetic">SYNTHETIC DEV DATA — every number on this page is fabricated for development. Not results.</div>}
       <div className="topbar">
         <div className="wrap tb">
@@ -28,50 +30,70 @@ export default function Home() {
 
       <section className="block" id="galaxy">
         <div className="wrap">
+<Reveal>
           <div className="eyebrow">policy galaxy</div>
           <h2>Watch reinforcement learning reshape the policy</h2>
           <p className="lede">
             Every point is a prompt, placed by what the frozen base model thinks it means. Colour is the tier the policy picks; size is its confidence.
             Press play to step through training checkpoints and watch regions flip from expensive to cheap as the reward comes in.
           </p>
+</Reveal>
+<Reveal delay={0.15}>
           <PolicyGalaxy />
+</Reveal>
         </div>
       </section>
 
       <section className="block" id="game">
         <div className="wrap">
+<Reveal>
           <div className="eyebrow">beat the router</div>
           <h2>Can you pick the cheapest model that gets it right?</h2>
           <p className="lede">Real held-out prompts, real graded outcomes from all three models. Laya has seen none of them.</p>
+</Reveal>
+<Reveal delay={0.15}>
           <BeatTheRouter />
+</Reveal>
         </div>
       </section>
 
       <section className="block" id="pareto">
         <div className="wrap">
+<Reveal>
           <div className="eyebrow">pareto arena</div>
           <h2>One knob from cheap to careful</h2>
           <p className="lede">
             Each λ trains a separate policy. Slide it to move along the cost/accuracy curve; the hero animation follows. Baselines are fixed points — including the
             cheap embedding baselines a reviewer would ask for first.
           </p>
+</Reveal>
+<Reveal delay={0.15}>
           <ParetoArena />
+</Reveal>
         </div>
       </section>
 
       <section className="block" id="live">
         <div className="wrap">
+<Reveal>
           <div className="eyebrow">live</div>
           <h2>Route your own request</h2>
+</Reveal>
+<Reveal delay={0.15}>
           <LiveMode />
+</Reveal>
         </div>
       </section>
 
       <section className="block" id="how">
         <div className="wrap">
+<Reveal>
           <div className="eyebrow">how it works</div>
           <h2>Request → decision → outcome → reward</h2>
+</Reveal>
+<Reveal delay={0.15}>
           <HowItWorks />
+</Reveal>
         </div>
       </section>
 

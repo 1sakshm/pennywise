@@ -128,7 +128,7 @@ export default function LiveMode() {
             return (
               <div key={t} className={`bar ${chosen ? "chosen" : ""}`}>
                 <span className={`tier-${t} name`}>{t}</span>
-                <div className="track">
+                <div className={run?.stage === "routing" ? "track shimmer" : "track"}>
                   <motion.div className={`fill bg-${t}`} initial={{ width: 0 }} animate={{ width: `${100 * p}%` }} transition={{ type: "spring", stiffness: 90, damping: 18 }} />
                 </div>
                 <span className="mono p">{run?.probs ? pct(p, 0) : "—"}</span>
