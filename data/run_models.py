@@ -41,7 +41,23 @@ def load_done():
     return done, spend
 
 
-async def call(tier_name, tier, client, rec, gen, sem, state, lock, fout):
+class RpmLimiter:
+    """Spaces request starts so a provider's requests-per-minute cap (free tiers) is never exceeded."""
+
+    def __init__(self, rpm):
+        self.gap, self.next, self.lock = (60.0 / rpm if rpm else 0.0), 0.0, asyncio.Lock()
+
+    async def wait(self):
+        if not self.gap:
+            return
+        async with self.lock:
+            now = time.monotonic()
+            t = max(now, self.next)
+            self.next = t + self.gap
+        await asyncio.sleep(max(0.0, t - now))
+
+
+async def call(tier_name, tier, client, rec, gen, sem, state, lock, fout, limiter):
     async with sem:
         if state["spend"] >= state["budget"]:
             state["skipped"] += 1
@@ -49,6 +65,7 @@ async def call(tier_name, tier, client, rec, gen, sem, state, lock, fout):
         msgs = [{"role": "system", "content": SYSTEM[rec["source"]]}, {"role": "user", "content": rec["prompt"]}]
         for attempt in range(gen["max_retries"]):
             try:
+                await limiter.wait()
                 t0 = time.perf_counter()
                 resp = await client.chat.completions.create(
                     model=tier["model"], messages=msgs, temperature=gen["temperature"],
@@ -114,7 +131,12 @@ async def main(args):
     print(f"{len(recs)} prompts x {use}; {len(done)} cached; spend so far ${spend:.4f}; budget ${args.budget}")
     sem, lock = asyncio.Semaphore(args.concurrency or gen["concurrency"]), asyncio.Lock()
     with open(OUT, "a", encoding="utf-8") as fout:
-        jobs = [call(t, tiers[t], make_client(tiers[t], async_=True), r, gen, sem, state, lock, fout)
+        # one limiter per provider key: free tiers cap requests per minute per account
+        limiters = {}
+        for t in use:
+            limiters.setdefault(tiers[t]["api_key_env"], RpmLimiter(tiers[t].get("rpm") or gen.get("rpm")))
+        jobs = [call(t, tiers[t], make_client(tiers[t], async_=True), r, gen, sem, state, lock, fout,
+                     limiters[tiers[t]["api_key_env"]])
                 for t in use for r in recs if (r["id"], t) not in done]
         await asyncio.gather(*jobs)
     print(f"finished: {state['n']} new calls, {state['failed']} failed, {state['skipped']} skipped (budget)")

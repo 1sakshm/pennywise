@@ -2,8 +2,13 @@
 # OpenAI-style tool calling (Alan/OpenCode agent sessions run through them).
 #
 # Every endpoint is OpenAI-compatible. api_key_env names the env var holding the key
-# (never put keys in this file). Prices are USD per 1M tokens, copied from the
-# provider's pricing page; cost accounting everywhere is derived from these numbers.
+# (never put keys in this file). Prices are USD per 1M tokens; cost accounting everywhere
+# is derived from these numbers.
+#
+# Free-tier runs (e.g. NVIDIA's API, base_url https://integrate.api.nvidia.com/v1): actual spend
+# is $0, so prices are the PUBLIC LIST PRICE of the same model on a paid provider, recorded in
+# price_source. The reward then reflects what a paying user would be charged. Say so wherever
+# costs are reported. rpm caps requests/minute per key (free tiers rate-limit per account).
 #
 # Code refuses to run while any field is FILL_ME.
 
@@ -15,6 +20,7 @@ tiers:
     price_in_per_m: FILL_ME
     price_out_per_m: FILL_ME
     supports_tools: true
+    price_source: FILL_ME        # e.g. "OpenRouter list price, 2026-10-26"
   medium:
     base_url: FILL_ME
     api_key_env: OPENROUTER_API_KEY
@@ -22,6 +28,7 @@ tiers:
     price_in_per_m: FILL_ME
     price_out_per_m: FILL_ME
     supports_tools: true
+    price_source: FILL_ME
   large:
     base_url: FILL_ME
     api_key_env: OPENROUTER_API_KEY
@@ -29,6 +36,7 @@ tiers:
     price_in_per_m: FILL_ME
     price_out_per_m: FILL_ME
     supports_tools: true
+    price_source: FILL_ME
 
 # Request defaults used for dataset generation (Phase 2)
 generation:
@@ -37,3 +45,4 @@ generation:
   timeout_s: 120
   concurrency: 8
   max_retries: 5
+  rpm: 36                        # stay under a ~40 RPM free tier; 0 = unlimited
