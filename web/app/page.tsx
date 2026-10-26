@@ -6,7 +6,7 @@ import HowItWorks from "@/components/HowItWorks";
 import LiveMode from "@/components/LiveMode";
 import ParetoArena from "@/components/ParetoArena";
 import SavingsCounter from "@/components/SavingsCounter";
-import { PanelSpotlights, Reveal } from "@/components/fx";
+import { Reveal } from "@/components/fx";
 import { useStore } from "@/components/Store";
 
 const REPO = process.env.NEXT_PUBLIC_REPO_URL || "https://github.com/YOUR-USER/laya-router";
@@ -15,7 +15,6 @@ export default function Home() {
   const { manifest } = useStore();
   return (
     <main>
-      <PanelSpotlights />
       {manifest?.synthetic && <div className="banner-synthetic">SYNTHETIC DEV DATA — every number on this page is fabricated for development. Not results.</div>}
       <div className="topbar">
         <div className="wrap tb">

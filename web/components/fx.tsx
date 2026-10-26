@@ -81,39 +81,6 @@ export function Burst({ trigger, colors = ["#2dd4bf", "#818cf8", "#f472b6", "#fa
   );
 }
 
-/** Mouse-following spotlight for panels: sets --mx/--my on the element (CSS draws the glow). */
-export function useSpotlight<T extends HTMLElement>() {
-  const ref = useRef<T>(null);
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    const h = (e: PointerEvent) => {
-      const r = el.getBoundingClientRect();
-      el.style.setProperty("--mx", `${e.clientX - r.left}px`);
-      el.style.setProperty("--my", `${e.clientY - r.top}px`);
-    };
-    el.addEventListener("pointermove", h);
-    return () => el.removeEventListener("pointermove", h);
-  }, []);
-  return ref;
-}
-
-/** Global spotlight: every .panel gets the mouse-follow glow. */
-export function PanelSpotlights() {
-  useEffect(() => {
-    const h = (e: PointerEvent) => {
-      const t = (e.target as HTMLElement | null)?.closest?.(".panel") as HTMLElement | null;
-      if (!t) return;
-      const r = t.getBoundingClientRect();
-      t.style.setProperty("--mx", `${e.clientX - r.left}px`);
-      t.style.setProperty("--my", `${e.clientY - r.top}px`);
-    };
-    window.addEventListener("pointermove", h, { passive: true });
-    return () => window.removeEventListener("pointermove", h);
-  }, []);
-  return null;
-}
-
 /** Ask the galaxy to replay training from step 0 (used by "Watch it learn"). */
 export function playGalaxy() {
   document.getElementById("galaxy-view")?.scrollIntoView({ behavior: "smooth", block: "center" });
