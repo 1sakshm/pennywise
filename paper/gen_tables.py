@@ -106,7 +106,7 @@ def source_table(allr):
 
 def fig_pareto(allr):
     P = allr["policies"]
-    fig, ax = plt.subplots(figsize=(6.4, 4.2))
+    fig, ax = plt.subplots(figsize=(7.0, 2.9))
     rl = sorted([p for p in P if p["kind"] == "rl"], key=lambda p: p["cost_vs_large"])
     for emb, ls in (("Laya-emb", "--"), ("MiniLM-emb", ":")):
         c = sorted([p for p in P if p["kind"] == "correctness-predictor" and emb in p["name"]], key=lambda p: p["cost_vs_large"])
@@ -114,13 +114,18 @@ def fig_pareto(allr):
     x = [p["cost_vs_large"] for p in rl]
     ax.fill_between(x, [p["accuracy_ci"][0] for p in rl], [p["accuracy_ci"][1] for p in rl], color="#eab308", alpha=0.2)
     ax.plot(x, [p["accuracy"] for p in rl], "-o", color="#ca8a04", label="RL-trained Laya (λ sweep)", ms=4)
+    labs = []
     for p in P:
         if p["kind"] in ("trivial", "oracle", "laya", "embedding") and p["name"] != "random":
             col = TIER_C.get(p["name"].replace("always-", ""), "#334155")
             ax.errorbar(p["cost_vs_large"], p["accuracy"], yerr=[[p["accuracy"] - p["accuracy_ci"][0]], [p["accuracy_ci"][1] - p["accuracy"]]],
                         fmt="o" if p["kind"] != "oracle" else "D", color=col, ms=5, capsize=2, mfc="none" if p["kind"] == "oracle" else col)
-            ax.annotate(p["name"], (p["cost_vs_large"], p["accuracy"]), fontsize=7, xytext=(4, 3), textcoords="offset points")
-    ax.set_xlabel("cost relative to always-large")
+            labs.append((p["name"], p["cost_vs_large"], p["accuracy"]))
+    ax.set_xscale("symlog", linthresh=0.02, linscale=0.6)
+    ax.set_xlim(0, 1.15)
+    ax.set_xticks([0, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1.0], ["0", "1%", "2%", "5%", "10%", "20%", "50%", "100%"])
+    ax.set_xlabel("cost relative to always-large (symlog)")
+    place_labels(fig, ax, labs)
     ax.set_ylabel("accuracy (test)")
     ax.grid(alpha=0.25)
     ax.legend(fontsize=7, loc="lower right")
@@ -128,6 +133,24 @@ def fig_pareto(allr):
     fig.savefig(FIG / "pareto.pdf")
     fig.savefig(FIG / "pareto.png", dpi=180)  # README (GitHub does not render PDF images)
     plt.close(fig)
+
+
+def place_labels(fig, ax, labs, fs=6.5):
+    """Greedy label placement: put each label right of its point, stepping up/down in 8 pt
+    increments until it no longer overlaps an already placed label; leader line when moved."""
+    fig.canvas.draw()
+    placed = []
+    for name, x, y in sorted(labs, key=lambda t: (t[1], -t[2])):
+        px, py = ax.transData.transform((x, y))
+        w, h = 3.6 * fs * len(name) / 6.5 * 0.9, fs * 1.4
+        for k in (0, 1, -1, 2, -2, 3, -3, 4, -4, 5, -5):
+            ox, oy = 5, 2 + 8 * k
+            box = (px + ox, py + oy, px + ox + w, py + oy + h)
+            if all(box[2] < b[0] or box[0] > b[2] or box[3] < b[1] or box[1] > b[3] for b in placed):
+                break
+        placed.append(box)
+        ax.annotate(name, (x, y), xytext=(ox, oy), textcoords="offset points", fontsize=fs, va="bottom",
+                    arrowprops=dict(arrowstyle="-", lw=0.4, color="#9ca3af", shrinkA=0, shrinkB=2) if k else None)
 
 
 def fig_reward_curves():
@@ -169,6 +192,8 @@ def fig_brainmaps(lam):
 def main():
     GEN.mkdir(parents=True, exist_ok=True)
     FIG.mkdir(parents=True, exist_ok=True)
+    from paper import gen_extra
+    gen_extra.style()  # one print style for every figure
     allr = json.load(open(RESULTS / "all.json"))
     sft = json.load(open(RESULTS / "sft_history.json"))
     cfg_train = yaml.safe_load(open(ROOT / "config" / "train.yaml"))
@@ -180,8 +205,10 @@ def main():
     fig_reward_curves()
     if (VIZ / "umap.json").exists() and (VIZ / "training" / f'{allr["modes"]["auto"]:g}.json').exists() and not DRAFT:
         fig_brainmaps(allr["modes"]["auto"])
+    from paper import gen_extra  # dataset/RL/diagnostic figures, extra tables and numbers
+    gen_extra.main(GEN, FIG, allr, sft)
     if SYNTHETIC or DRAFT:  # compile a throwaway copy, never touching paper/generated
-        for f in ("main.typ", "refs.bib"):
+        for f in ("main.typ", "refs.bib", "diagrams.typ"):
             if (ROOT / "paper" / f).exists():
                 shutil.copy(ROOT / "paper" / f, OUT / f)
     print(f"{'SYNTHETIC ' if SYNTHETIC else 'DRAFT ' if DRAFT else ''}generated tables/figures -> {OUT.relative_to(ROOT)}")
