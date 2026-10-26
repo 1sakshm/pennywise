@@ -28,8 +28,7 @@ body {
   --font-mono: var(--font-jbmono), ui-monospace, SFMono-Regular, Menlo, monospace;
 }
 body {
-  background: radial-gradient(1200px 600px at 70% -10%, rgba(129, 140, 248, 0.08), transparent 60%),
-    radial-gradient(900px 500px at 0% 20%, rgba(45, 212, 191, 0.06), transparent 60%), var(--bg);
+  background: var(--bg);
   color: var(--text);
   font-family: var(--font-sans);
   font-size: 16px;
@@ -90,15 +89,6 @@ textarea:focus, button:focus-visible, input:focus-visible { outline: 2px solid v
 }
 
 /* ---------- motion layer ---------- */
-.aurora { position: absolute; inset: -20% -10% auto -10%; height: 120%; z-index: -1; pointer-events: none; filter: blur(60px); opacity: 0.55; }
-.aurora span { position: absolute; border-radius: 50%; mix-blend-mode: screen; }
-.aurora .a1 { width: 46vw; height: 46vw; left: 2%; top: 4%; background: radial-gradient(circle, rgba(45, 212, 191, 0.45), transparent 60%); animation: drift1 18s ease-in-out infinite alternate; }
-.aurora .a2 { width: 40vw; height: 40vw; left: 38%; top: -8%; background: radial-gradient(circle, rgba(129, 140, 248, 0.45), transparent 60%); animation: drift2 22s ease-in-out infinite alternate; }
-.aurora .a3 { width: 36vw; height: 36vw; left: 62%; top: 18%; background: radial-gradient(circle, rgba(244, 114, 182, 0.38), transparent 60%); animation: drift3 26s ease-in-out infinite alternate; }
-@keyframes drift1 { to { transform: translate(8vw, 6vh) scale(1.15); } }
-@keyframes drift2 { to { transform: translate(-6vw, 10vh) scale(0.9); } }
-@keyframes drift3 { to { transform: translate(-10vw, -4vh) scale(1.2); } }
-
 .stars { position: absolute; inset: 0; z-index: -1; pointer-events: none; opacity: 0.5;
   background-image: radial-gradient(1px 1px at 10% 20%, #fff8, transparent), radial-gradient(1px 1px at 30% 70%, #fff6, transparent),
     radial-gradient(1px 1px at 55% 35%, #fff7, transparent), radial-gradient(1.5px 1.5px at 75% 15%, #fff9, transparent),

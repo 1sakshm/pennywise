@@ -13,11 +13,6 @@ export default function Hero() {
   const h = manifest?.headline;
   return (
     <header className="hero">
-      <div className="aurora" aria-hidden>
-        <span className="a1" />
-        <span className="a2" />
-        <span className="a3" />
-      </div>
       <div className="stars" aria-hidden />
       <div className="wrap">
         <motion.div className="eyebrow" initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8 }}>
