@@ -34,3 +34,4 @@ router/snapshots/
 
 # trained serving deltas (published as a release asset, not committed)
 router/serve/
+server/stats.json
