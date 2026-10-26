@@ -38,8 +38,21 @@ def main():
         rows.append(f"| {lab} | {pct(p['accuracy'])} [{pct(p['accuracy_ci'][0])}, {pct(p['accuracy_ci'][1])}] | "
                     f"{pct(p['cost_vs_large'])} [{pct(p['cost_vs_large_ci'][0])}, {pct(p['cost_vs_large_ci'][1])}] | {ms} |")
     rows.append(f"\nJev: {allr['jev']}. Full findings, including where the router loses: [`eval/results/summary.md`](eval/results/summary.md).")
+    tags = [("HEADLINE", head), ("RESULTS", "\n".join(rows))]
+    ab_path = ROOT / "eval" / "results" / "alan_before_after.json"
+    if ab_path.exists():
+        ab = json.load(open(ab_path, encoding="utf-8"))
+        b, a = ab["summary"]["pennywise/large"], ab["summary"]["pennywise/auto"]
+        tags.append(("ALAN", "\n".join([
+            "**$ per merged PR** (tests pass after the agent's edit), OpenCode with `pennywise/large` (before) vs `pennywise/auto` (after):",
+            "", "| | Tasks passed | Total list-price cost | $ per merged PR | Total wall-clock |", "|---|---|---|---|---|",
+            f"| before: `pennywise/large` | {b['passed']}/{b['tasks']} | ${b['total_cost_usd']:.4f} | ${b['usd_per_passing_task']:.4f} | {b['total_wall_s'] / 60:.1f} min |",
+            f"| after: `pennywise/auto` | {a['passed']}/{a['tasks']} | ${a['total_cost_usd']:.4f} | ${a['usd_per_passing_task']:.4f} | {a['total_wall_s'] / 60:.1f} min |",
+            "", f"_{ab['label']}_ Costs are list prices from measured tokens (actual spend $0). The after-arm's long wall-clock time is the free "
+            "medium-tier endpoint's latency (often >60 s per step that night), not routing overhead. Raw runs: "
+            "[`eval/results/alan_before_after.json`](eval/results/alan_before_after.json)."])))
     readme = (ROOT / "README.md").read_text(encoding="utf-8")
-    for tag, body in (("HEADLINE", head), ("RESULTS", "\n".join(rows))):
+    for tag, body in tags:
         readme = re.sub(rf"<!-- GEN:{tag} -->.*?<!-- /GEN:{tag} -->", f"<!-- GEN:{tag} -->\n{body}\n<!-- /GEN:{tag} -->", readme, flags=re.S)
     (ROOT / "README.md").write_text(readme, encoding="utf-8")
     print("README.md updated from eval/results/all.json")

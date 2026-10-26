@@ -1,0 +1,148 @@
+{
+ "n_tasks": 4,
+ "usd_per_merged_pr": {
+  "before": 0.030671,
+  "after": 0.001131
+ },
+ "label": "Small live demo, n = 4 tasks \u2014 not a benchmark. OpenCode CLI run directly (the agent CLI Alan drives), not inside an Alan session.",
+ "cost_basis": "list price at the proxy from measured tokens; actual spend $0 (free API)",
+ "runs": [
+  {
+   "task": "off_by_one",
+   "model": "pennywise/large",
+   "passed": true,
+   "cost_usd": 0.039315,
+   "requests": 0,
+   "by_tier": {
+    "small": 0,
+    "medium": 0,
+    "large": 0
+   },
+   "wall_s": 36.0,
+   "opencode": "exit 0",
+   "log": "data\\cache\\alan_runs\\off_by_one_large.txt"
+  },
+  {
+   "task": "off_by_one",
+   "model": "pennywise/auto",
+   "passed": true,
+   "cost_usd": 0.000837,
+   "requests": 10,
+   "by_tier": {
+    "small": 0,
+    "medium": 10,
+    "large": 0
+   },
+   "wall_s": 1974.9,
+   "opencode": "timeout",
+   "log": "data\\cache\\alan_runs\\off_by_one_auto.txt"
+  },
+  {
+   "task": "slugify",
+   "model": "pennywise/large",
+   "passed": true,
+   "cost_usd": 0.028289,
+   "requests": 0,
+   "by_tier": {
+    "small": 0,
+    "medium": 0,
+    "large": 0
+   },
+   "wall_s": 22.7,
+   "opencode": "exit 0",
+   "log": "data\\cache\\alan_runs\\slugify_large.txt"
+  },
+  {
+   "task": "slugify",
+   "model": "pennywise/auto",
+   "passed": true,
+   "cost_usd": 0.001649,
+   "requests": 13,
+   "by_tier": {
+    "small": 0,
+    "medium": 13,
+    "large": 0
+   },
+   "wall_s": 1055.6,
+   "opencode": "exit 0",
+   "log": "data\\cache\\alan_runs\\slugify_auto.txt"
+  },
+  {
+   "task": "parse_kv",
+   "model": "pennywise/large",
+   "passed": true,
+   "cost_usd": 0.023634,
+   "requests": 0,
+   "by_tier": {
+    "small": 0,
+    "medium": 0,
+    "large": 0
+   },
+   "wall_s": 23.4,
+   "opencode": "exit 0",
+   "log": "data\\cache\\alan_runs\\parse_kv_large.txt"
+  },
+  {
+   "task": "parse_kv",
+   "model": "pennywise/auto",
+   "passed": true,
+   "cost_usd": 0.001435,
+   "requests": 11,
+   "by_tier": {
+    "small": 0,
+    "medium": 11,
+    "large": 0
+   },
+   "wall_s": 366.3,
+   "opencode": "exit 0",
+   "log": "data\\cache\\alan_runs\\parse_kv_auto.txt"
+  },
+  {
+   "task": "palindrome",
+   "model": "pennywise/large",
+   "passed": true,
+   "cost_usd": 0.031445,
+   "requests": 0,
+   "by_tier": {
+    "small": 0,
+    "medium": 0,
+    "large": 0
+   },
+   "wall_s": 29.1,
+   "opencode": "exit 0",
+   "log": "data\\cache\\alan_runs\\palindrome_large.txt"
+  },
+  {
+   "task": "palindrome",
+   "model": "pennywise/auto",
+   "passed": true,
+   "cost_usd": 0.000603,
+   "requests": 6,
+   "by_tier": {
+    "small": 0,
+    "medium": 6,
+    "large": 0
+   },
+   "wall_s": 541.7,
+   "opencode": "exit 0",
+   "log": "data\\cache\\alan_runs\\palindrome_auto.txt"
+  }
+ ],
+ "summary": {
+  "pennywise/large": {
+   "tasks": 4,
+   "passed": 4,
+   "total_cost_usd": 0.122683,
+   "usd_per_passing_task": 0.030671,
+   "total_wall_s": 111.2
+  },
+  "pennywise/auto": {
+   "tasks": 4,
+   "passed": 4,
+   "total_cost_usd": 0.004524,
+   "usd_per_passing_task": 0.001131,
+   "total_wall_s": 3938.5
+  }
+ },
+ "note": "off_by_one/auto fixed the bug but the OpenCode process did not exit before the 1500 s limit; its tests pass (counted as merged)."
+}

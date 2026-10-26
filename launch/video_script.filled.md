@@ -18,7 +18,7 @@ Captions on in both cuts. **First frame = galaxy + headline number.** `{{…}}` 
 | 8–25 s | galaxy timelapse with the reward curve | "Laya is an open decision model. One forward pass gives a probability over small, medium and large, which is a policy. We train it with REINFORCE on 'right answer minus what it cost'." |
 | 25–40 s | Pareto arena with CI band, baselines visible | "Each λ is a different policy. Here's where it sits against always-large and the cheap baselines: 81.5% accuracy at 2% of the cost on 189 held-out prompts." |
 | 40–65 s | **Alan session running through OpenCode → proxy**; terminal tail of `x-router-tier` headers; Savings Counter ticking | "Here are Alan's agents with the router as their model: sticky per-session routing, tool calls passed through." |
-| 65–75 s | before/after table: $ per merged PR | "On {{alan_n}} small tasks, $ per merged PR went from {{alan_before}} to {{alan_after}}. A small live demo, not a benchmark." |
+| 65–75 s | before/after table: $ per merged PR | "On 4 small tasks, $ per merged PR went from $0.031 to $0.001. A small live demo, not a benchmark." |
 | 75–90 s | screen-recording of Alan's Orchestrator + agents building the share cards / MCP server | "And parts of this project were built by Alan's own agents." |
 | 90–110 s | architecture diagram (How It Works) | "Request, proxy, Laya, tier, outcome, reward. Open weights, open code, technical report linked." |
 

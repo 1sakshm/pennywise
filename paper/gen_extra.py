@@ -347,6 +347,33 @@ def paired_table(allr, rls, GEN):
         "  table.hline(stroke: 0.4pt),\n  " + ",\n  ".join(cells) + ",\n  table.hline())\n", encoding="utf-8")
 
 
+def alan_table(GEN):
+    """Agent before/after demo (eval/results/alan_before_after.json) -> table + numbers; empty stubs if absent."""
+    f = ROOT / "eval" / "results" / "alan_before_after.json"
+    if not f.exists():
+        (GEN / "alan_table.typ").write_text("[]\n", encoding="utf-8")
+        return ["#let alan_done = false"]
+    ab = json.load(open(f, encoding="utf-8"))
+    b, a = ab["summary"]["pennywise/large"], ab["summary"]["pennywise/auto"]
+
+    def row(name, x):
+        return (f"[{name}], [{x['passed']}/{x['tasks']}], [{x['total_cost_usd']:.4f}], "
+                f"[{x['usd_per_passing_task']:.4f}], [{x['total_wall_s'] / 60:.1f}]")
+    rows = [
+        "// GENERATED — do not edit",
+        "#table(columns: 5, align: (left, center, right, right, right), stroke: none, inset: (x: 3pt, y: 2.4pt),",
+        "  table.hline(), [*Model*], [*Pass*], [*Cost (USD)*], [*USD / merged PR*], [*Wall (min)*], table.hline(stroke: 0.4pt),",
+        "  " + row("`pennywise/large`", b) + ",",
+        "  " + row("`pennywise/auto`", a) + ",",
+        "  table.hline())",
+    ]
+    (GEN / "alan_table.typ").write_text("\n".join(rows) + "\n", encoding="utf-8")
+    return ["#let alan_done = true", f"#let alan_n = {ab['n_tasks']}",
+            f'#let alan_before = "{b["usd_per_passing_task"]:.4f}"', f'#let alan_after = "{a["usd_per_passing_task"]:.4f}"',
+            f'#let alan_ratio = "{b["usd_per_passing_task"] / a["usd_per_passing_task"]:.0f}"',
+            f'#let alan_wall_before = "{b["total_wall_s"] / 60:.1f}"', f'#let alan_wall_after = "{a["total_wall_s"] / 60:.1f}"']
+
+
 def main(GEN, FIG, allr, sft):
     style()
     tab = load_table()
@@ -404,4 +431,5 @@ def main(GEN, FIG, allr, sft):
          f'#let best_lam = "{best["lambda"]:g}"', f'#let best_acc = "{p1(best["accuracy"])}"', f'#let best_cost = "{p1(best["cost_vs_large"])}"',
          f'#let worst_src = "{SRC.get(worst, worst)}"', f'#let worst_gap = "{100 * gaps[worst]:+.1f}"', f"#let worst_n = {auto_p['by_source'][worst]['n']}",
          f'#let rl_med_share = "{p1(med_share)}"', f'#let auto_pareto = {str(bool(auto_p["on_pareto_front"])).lower()}']
+    L += alan_table(GEN)
     (GEN / "extra.typ").write_text("\n".join(L) + "\n", encoding="utf-8")

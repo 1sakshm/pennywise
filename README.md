@@ -41,6 +41,18 @@ Alan drives coding-agent CLIs, so the router goes in at the CLI layer:
 3. **Agents call the router as a tool:** the [MCP server](integrations/mcp/) (`route`, `ask_routed`) installs in OpenCode next to Alan's own MCP entry, or in Alan itself via **MCP → Add custom connector** (`python -m integrations.mcp.server --http` → `http://127.0.0.1:8765/mcp`).
 4. **Alan-style workloads in the data:** 198 auto-graded agent sub-tasks (bug-fix edits graded by unit tests, CI-failure triage graded by construction), reported separately.
 
+### Before/after on agent tasks (small live demo)
+<!-- GEN:ALAN -->
+**$ per merged PR** (tests pass after the agent's edit), OpenCode with `pennywise/large` (before) vs `pennywise/auto` (after):
+
+| | Tasks passed | Total list-price cost | $ per merged PR | Total wall-clock |
+|---|---|---|---|---|
+| before: `pennywise/large` | 4/4 | $0.1227 | $0.0307 | 1.9 min |
+| after: `pennywise/auto` | 4/4 | $0.0045 | $0.0011 | 65.6 min |
+
+_Small live demo, n = 4 tasks — not a benchmark. OpenCode CLI run directly (the agent CLI Alan drives), not inside an Alan session._ Costs are list prices from measured tokens (actual spend $0). The after-arm's long wall-clock time is the free medium-tier endpoint's latency (often >60 s per step that night), not routing overhead. Raw runs: [`eval/results/alan_before_after.json`](eval/results/alan_before_after.json).
+<!-- /GEN:ALAN -->
+
 Before/after on real Alan tasks ($ per merged PR): _pending_. It will be labelled "small live demo, n = 3–5. Not a benchmark."
 
 ## Why a decision model is a natural RL policy

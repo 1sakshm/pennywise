@@ -216,6 +216,12 @@ The validation-selected `auto` policy ($lambda$ = #lam_auto) differs from always
 
 The router adds one encoder pass, #router_ms ms median on the build machine's GPU for `auto`. The proxy is OpenAI-compatible: it routes once per conversation (keyed by the system prompt and first user message, or an `x-session-id` header) and keeps that tier for the session so agent tool loops are never re-routed mid-task; tools, tool choice and tool messages pass through unchanged, including when streaming (@fig:system).
 
+#if alan_done [
+  #text(weight: "bold")[Agent before/after demo.] We ran #alan_n small coding tasks (a bug or missing function plus a unit-test suite) with OpenCode, the open coding-agent CLI that Alan drives, once with the unrouted large tier and once with `auto`. "Merged" means the tests pass after the agent's edit. Cost per merged PR fell from \$#alan_before to \$#alan_after (#alan_ratio× lower at list price), while total wall-clock time rose from #alan_wall_before to #alan_wall_after minutes because the free medium-tier endpoint was slow that night (often over a minute per step). This is a small live demo, not a benchmark, and ran in the CLI directly rather than inside an Alan session (@tab:alan).
+
+  #figure(include "generated/alan_table.typ", caption: [Agent before/after on #alan_n coding tasks (OpenCode CLI; list prices; free shared endpoints).]) <tab:alan>
+]
+
 // ------------------------------------------------------------------ 9
 = Limitations and future work
 
