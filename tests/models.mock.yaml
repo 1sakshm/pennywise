@@ -1,0 +1,6 @@
+# Test-only tier config pointing at tests/mock_upstream.py. Prices are arbitrary test values.
+tiers:
+  small:  {base_url: "http://127.0.0.1:8001/v1", api_key_env: MOCK_KEY, model: mock-small,  price_in_per_m: 0.1, price_out_per_m: 0.2, supports_tools: true}
+  medium: {base_url: "http://127.0.0.1:8001/v1", api_key_env: MOCK_KEY, model: mock-medium, price_in_per_m: 0.5, price_out_per_m: 1.0, supports_tools: true}
+  large:  {base_url: "http://127.0.0.1:8001/v1", api_key_env: MOCK_KEY, model: mock-large,  price_in_per_m: 2.0, price_out_per_m: 6.0, supports_tools: true}
+generation: {temperature: 0.0, max_tokens: 64, timeout_s: 30, concurrency: 2, max_retries: 1}

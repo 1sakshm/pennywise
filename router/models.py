@@ -21,7 +21,8 @@ def _load_dotenv():
 def load_tiers(require_tools: bool = False):
     """Returns {tier: cfg} plus '_generation'. Refuses to run on unfilled config."""
     _load_dotenv()
-    cfg = yaml.safe_load(open(ROOT / "config" / "models.yaml"))
+    path = os.environ.get("MODELS_CONFIG") or ROOT / "config" / "models.yaml"
+    cfg = yaml.safe_load(open(path))
     tiers = cfg["tiers"]
     for name in TIER_NAMES:
         t = tiers[name]

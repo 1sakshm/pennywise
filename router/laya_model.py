@@ -87,6 +87,106 @@ class LayaPolicy:
         e = np.concatenate(out)
         return e[0] if single else e
 
+    def prepare_for_training(self, n_top_layers: int):
+        """Train the top `n_top_layers` encoder layers + decision head; freeze the rest in bf16.
+
+        Sized for a 4 GB GPU: frozen modules hold no grads/optimizer state and store no
+        activations; the act/escalate head is frozen (unused, see LAYA_NOTES.md).
+        Returns the trainable parameters.
+        """
+        m, enc = self.model, self.model.encoder
+        for p in m.parameters():
+            p.requires_grad_(False)
+        trainable = [*enc.layers[len(enc.layers) - n_top_layers:], enc.final_norm, m.head, m.type_emb, m.scorer]
+        for mod in trainable:
+            for p in mod.parameters():
+                p.requires_grad_(True)
+        if self.amp:
+            for mod in [enc.embeddings, *enc.layers[: len(enc.layers) - n_top_layers]]:
+                mod.to(torch.bfloat16)
+        m.head_checkpointing = True
+        return [p for p in m.parameters() if p.requires_grad]
+
+    # ------------------------------------------------------------------ cached split forward
+    # The bottom (L - n_top) encoder layers are frozen during SFT/RL, so their output for a
+    # prompt never changes. We run them once, cache the hidden states, and train/evaluate by
+    # running only the top layers + decision head. Mirrors ModernBertModel.forward and
+    # DecisionModel.forward exactly (checked against the full forward in `check_cache`).
+    def _masks_and_rope(self, h, att):
+        from transformers.masking_utils import create_bidirectional_mask, create_bidirectional_sliding_window_mask
+        enc = self.model.encoder
+        kw = {"config": enc.config, "inputs_embeds": h, "attention_mask": att}
+        masks = {"full_attention": create_bidirectional_mask(**kw),
+                 "sliding_attention": create_bidirectional_sliding_window_mask(**kw)}
+        pos = torch.arange(h.shape[1], device=h.device).unsqueeze(0)
+        rope = {t: enc.rotary_emb(h, pos, t) for t in set(enc.config.layer_types)}
+        return masks, rope
+
+    @torch.no_grad()
+    def lower_cache(self, prompts: List[str], n_top: int, batch_size: int = 16, question: Dict = ROUTE_QUESTION):
+        """Per prompt: {'h': [len, d] bf16 CPU hidden state after layer L-n_top, 'markers': [...]}."""
+        enc = self.model.encoder
+        k = len(enc.layers) - n_top
+        out = []
+        for i in range(0, len(prompts), batch_size):
+            b = self.batch(prompts[i:i + batch_size], question)
+            ids, att = b["input_ids"].to(self.device), b["attention_mask"].to(self.device)
+            with torch.autocast(self.device.type, dtype=torch.bfloat16, enabled=self.amp):
+                h = enc.embeddings(input_ids=ids)
+                masks, rope = self._masks_and_rope(h, att)
+                for layer in enc.layers[:k]:
+                    h = layer(h, attention_mask=masks[layer.attention_type],
+                              position_embeddings=rope[layer.attention_type])
+            lens = att.sum(1).tolist()
+            for j, n in enumerate(lens):
+                m = b["marker_pos"][j][b["marker_mask"][j]].tolist()
+                out.append({"h": h[j, :n].to("cpu", torch.bfloat16).clone(), "markers": m})
+        return out
+
+    def logits_cached(self, items, n_top: int) -> torch.Tensor:
+        """Option logits [B, K] from cached lower hidden states; differentiable in the top layers + head."""
+        enc, m = self.model.encoder, self.model
+        k0 = len(enc.layers) - n_top
+        B, L, d = len(items), max(it["h"].shape[0] for it in items), items[0]["h"].shape[1]
+        K = max(len(it["markers"]) for it in items)
+        h = torch.zeros(B, L, d, dtype=torch.bfloat16)
+        att = torch.zeros(B, L, dtype=torch.long)
+        mpos = torch.zeros(B, K, dtype=torch.long)
+        mmask = torch.zeros(B, K, dtype=torch.bool)
+        for i, it in enumerate(items):
+            n = it["h"].shape[0]
+            h[i, :n], att[i, :n] = it["h"], 1
+            mpos[i, :len(it["markers"])] = torch.tensor(it["markers"])
+            mmask[i, :len(it["markers"])] = True
+        h, att, mpos, mmask = (x.to(self.device) for x in (h, att, mpos, mmask))
+        qtype = torch.zeros(B, dtype=torch.long, device=self.device)  # 'choice'
+        with torch.autocast(self.device.type, dtype=torch.bfloat16, enabled=self.amp):
+            masks, rope = self._masks_and_rope(h, att)
+            for layer in enc.layers[k0:]:
+                h = layer(h, attention_mask=masks[layer.attention_type], position_embeddings=rope[layer.attention_type])
+            h = enc.final_norm(h)
+            # --- DecisionModel.forward, head part (option_ids=None path)
+            h = h + m.type_emb(qtype)[:, None, :]
+            pad = ~att.bool()
+            for layer in m.head.layers:
+                h = layer(h, src_key_padding_mask=pad)
+            idx = mpos.clamp(min=0)[:, :, None].expand(-1, -1, h.size(-1))
+            logits = m.scorer(torch.gather(h, 1, idx)).squeeze(-1).float()
+        return logits.masked_fill(~mmask, -1e4)
+
+    @torch.no_grad()
+    def probs_cached(self, items, n_top: int, batch_size: int = 32) -> np.ndarray:
+        out = [torch.softmax(self.logits_cached(items[i:i + batch_size], n_top), -1).cpu().numpy()
+               for i in range(0, len(items), batch_size)]
+        return np.concatenate(out)
+
+    @torch.no_grad()
+    def check_cache(self, prompts: List[str], n_top: int) -> float:
+        """Max |prob difference| between the full forward and the cached split forward."""
+        full = self.probs(prompts)
+        split = self.probs_cached(self.lower_cache(prompts, n_top), n_top)
+        return float(np.abs(full - split).max())
+
     def save(self, path: str):
         save_checkpoint(self.model, self.tok, self.cfg, path)
 
