@@ -1,0 +1,39 @@
+# Model tiers for the router. All three MUST be open-weight models that support
+# OpenAI-style tool calling (Alan/OpenCode agent sessions run through them).
+#
+# Every endpoint is OpenAI-compatible. api_key_env names the env var holding the key
+# (never put keys in this file). Prices are USD per 1M tokens, copied from the
+# provider's pricing page; cost accounting everywhere is derived from these numbers.
+#
+# Code refuses to run while any field is FILL_ME.
+
+tiers:
+  small:
+    base_url: FILL_ME            # e.g. https://openrouter.ai/api/v1
+    api_key_env: OPENROUTER_API_KEY
+    model: FILL_ME               # provider's model id
+    price_in_per_m: FILL_ME
+    price_out_per_m: FILL_ME
+    supports_tools: true
+  medium:
+    base_url: FILL_ME
+    api_key_env: OPENROUTER_API_KEY
+    model: FILL_ME
+    price_in_per_m: FILL_ME
+    price_out_per_m: FILL_ME
+    supports_tools: true
+  large:
+    base_url: FILL_ME
+    api_key_env: OPENROUTER_API_KEY
+    model: FILL_ME
+    price_in_per_m: FILL_ME
+    price_out_per_m: FILL_ME
+    supports_tools: true
+
+# Request defaults used for dataset generation (Phase 2)
+generation:
+  temperature: 0.0
+  max_tokens: 1024
+  timeout_s: 120
+  concurrency: 8
+  max_retries: 5

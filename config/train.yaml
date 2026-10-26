@@ -1,0 +1,33 @@
+seed: 0
+
+data:
+  split: [0.6, 0.2, 0.2]   # train / val / test, stratified by source
+  per_source:               # target prompt counts (Phase 2)
+    gsm8k: 250
+    mbpp: 250
+    arc: 300
+    alan_bugfix: 80
+    alan_triage: 70
+  budget_usd: 12.0          # run_models.py stops when spend exceeds this
+
+sft:
+  lr: 2.0e-5
+  epochs: 10
+  batch_size: 8
+  grad_accum: 2
+  patience: 3               # early stopping on val loss
+  train_encoder_layers: 4   # top-N encoder layers unfrozen + decision head (4 GB VRAM)
+
+rl:
+  lambdas: [0.0, 0.1, 0.25, 0.5, 1.0, 2.0]
+  steps: 1500
+  batch_size: 16
+  lr: 5.0e-6
+  entropy_beta_start: 0.05
+  entropy_beta_end: 0.005
+  baseline: running_mean    # running_mean | batch_mean
+  baseline_momentum: 0.95
+  snapshot_every: 50
+
+eval:
+  bootstrap: 1000
