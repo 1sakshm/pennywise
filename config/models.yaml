@@ -16,19 +16,19 @@ tiers:
   small:
     base_url: https://integrate.api.nvidia.com/v1   # NVIDIA free tier (actual spend $0)
     api_key_env: NVIDIA_API_KEY
+    model: openai/gpt-oss-20b
+    price_in_per_m: 0.018
+    price_out_per_m: 0.09
+    supports_tools: true
+    price_source: "OpenRouter list price for openai/gpt-oss-20b, 2026-10-26"
+  medium:
+    base_url: https://integrate.api.nvidia.com/v1   # NVIDIA free tier (actual spend $0)
+    api_key_env: NVIDIA_API_KEY
     model: nvidia/nemotron-3.5-lightning-30b-a3b
     price_in_per_m: 0.07
     price_out_per_m: 0.20
     supports_tools: true
     price_source: "OpenRouter list price for nvidia/nemotron-3.5-lightning, 2026-10-26"
-  medium:
-    base_url: https://integrate.api.nvidia.com/v1   # NVIDIA free tier (actual spend $0)
-    api_key_env: NVIDIA_API_KEY
-    model: minimaxai/minimax-m3.1-flash
-    price_in_per_m: 0.15
-    price_out_per_m: 0.60
-    supports_tools: true
-    price_source: "OpenRouter list price for minimax/minimax-m3.1-flash, 2026-10-26"
   large:
     base_url: https://integrate.api.nvidia.com/v1   # NVIDIA free tier (actual spend $0)
     api_key_env: NVIDIA_API_KEY

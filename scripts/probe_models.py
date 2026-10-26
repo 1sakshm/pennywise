@@ -4,7 +4,7 @@ from openai import OpenAI
 sys.path.insert(0, ".")
 from router.models import _load_dotenv
 _load_dotenv()
-c = OpenAI(base_url=os.environ.get("PROBE_BASE", "https://integrate.api.nvidia.com/v1"), api_key=os.environ[os.environ.get("PROBE_KEY_ENV", "NVIDIA_API_KEY")], max_retries=0, timeout=90)
+c = OpenAI(base_url=os.environ.get("PROBE_BASE", "https://integrate.api.nvidia.com/v1"), api_key=os.environ[os.environ.get("PROBE_KEY_ENV", "NVIDIA_API_KEY")], max_retries=0, timeout=240)
 TOOLS = [{"type": "function", "function": {"name": "get_weather", "description": "Get current weather for a city",
           "parameters": {"type": "object", "properties": {"city": {"type": "string"}}, "required": ["city"]}}}]
 Q = "A shop sells pens at 3 for $4. Maria buys 27 pens and pays with a $50 bill. How much change does she get? End with 'Answer: <number>'."
