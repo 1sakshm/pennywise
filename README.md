@@ -8,11 +8,13 @@ Pennywise is an open decision model (Convai's Laya), trained with **reinforcemen
 Honest reading: the trained policies send ~97% of requests to the medium tier, so `auto` is close to the trivial always-medium baseline (82.5% at 2.1%). RL found the right default tier from bandit feedback, but does not yet reliably spot the prompts that need the large tier.
 <!-- /GEN:HEADLINE -->
 
-📄 **[Technical Report v0.1 (PDF)](web/public/paper.pdf)**. Preliminary, not peer-reviewed. · 🌐 **Live demo:** _TBD_ · 🎥 **Video:** _TBD_
+🌐 **Site:** [getpennywise.pages.dev](https://getpennywise.pages.dev) · 📄 **[Technical Report v0.1 (PDF)](web/public/paper.pdf)** (preliminary, not peer-reviewed) · 🎥 **Video:** _TBD_
+
+> **No hosted API.** Hugging Face now requires a paid plan for Docker Spaces, so the router isn't hosted publicly; the site's Live Mode replays real recorded runs. Run the proxy yourself (below): `uvicorn server.app:app --port 8000`.
 
 ```python
 from openai import OpenAI
-client = OpenAI(base_url="https://YOUR-DEPLOYMENT/v1", api_key="unused")   # ← the whole integration
+client = OpenAI(base_url="http://127.0.0.1:8000/v1", api_key="unused")   # ← the whole integration (your proxy)
 client.chat.completions.create(model="auto", messages=[{"role": "user", "content": "..."}])
 ```
 
@@ -20,7 +22,7 @@ client.chat.completions.create(model="auto", messages=[{"role": "user", "content
 
 ```js
 import OpenAI from "openai";
-const client = new OpenAI({ baseURL: "https://YOUR-DEPLOYMENT/v1", apiKey: "unused" });
+const client = new OpenAI({ baseURL: "http://127.0.0.1:8000/v1", apiKey: "unused" });
 await client.chat.completions.create({ model: "auto", messages: [{ role: "user", content: "..." }] });
 ```
 </details>
@@ -34,10 +36,10 @@ Coding agents send every call to a frontier model: classification, summaries, on
 
 ## Alan integration
 Alan drives coding-agent CLIs, so the router goes in at the CLI layer:
-1. **Cost layer (OpenCode):** [`examples/alan/opencode.json`](examples/alan/opencode.json) adds the proxy as an OpenAI-compatible provider (`pennywise/auto`, etc.). Enable OpenCode in Alan, **Rescan models**, then whitelist them. The proxy routes **once per agent session** (sticky) and passes tool calls through unchanged, so sessions don't break mid-run. Steps and status are in [`examples/alan/README.md`](examples/alan/README.md); the checks are in [`docs/ALAN_NOTES.md`](docs/ALAN_NOTES.md).
-2. **Built with Alan:** _pending Alan access_. See [`docs/DECISIONS.md`](docs/DECISIONS.md).
-3. **Agents call the router as a tool:** the [MCP server](integrations/mcp/) (`route`, `ask_routed`) installs in OpenCode next to Alan's own MCP entry.
-4. **Alan-style workloads in the data:** 150 auto-graded agent sub-tasks (bug-fix edits graded by unit tests, CI-failure triage graded by construction), reported separately.
+1. **Cost layer (OpenCode):** [`examples/alan/opencode.json`](examples/alan/opencode.json) adds the proxy as an OpenAI-compatible provider (`pennywise/auto`, etc.). Works with OpenCode directly (`opencode run -m pennywise/auto`, verified). Inside Alan, **Rescan models** does not list custom OpenCode providers (tested 2026-10-26, reported in [`docs/ALAN_FEEDBACK.md`](docs/ALAN_FEEDBACK.md)), so in Alan use route 3 below. The proxy routes **once per agent session** (sticky) and passes tool calls through unchanged, so sessions don't break mid-run. Steps and status are in [`examples/alan/README.md`](examples/alan/README.md); the checks are in [`docs/ALAN_NOTES.md`](docs/ALAN_NOTES.md).
+2. **Built with Alan:** not part of this release; see [`docs/DECISIONS.md`](docs/DECISIONS.md).
+3. **Agents call the router as a tool:** the [MCP server](integrations/mcp/) (`route`, `ask_routed`) installs in OpenCode next to Alan's own MCP entry, or in Alan itself via **MCP → Add custom connector** (`python -m integrations.mcp.server --http` → `http://127.0.0.1:8765/mcp`).
+4. **Alan-style workloads in the data:** 198 auto-graded agent sub-tasks (bug-fix edits graded by unit tests, CI-failure triage graded by construction), reported separately.
 
 Before/after on real Alan tasks ($ per merged PR): _pending_. It will be labelled "small live demo, n = 3–5. Not a benchmark."
 

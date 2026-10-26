@@ -34,7 +34,7 @@ Rules: punchy first line, **one** measured number per post, one visual, tag the 
 >
 > 10 real prompts. Pick the cheapest LLM that'll still get it right. 10 seconds each. Laya has never seen them.
 >
-> {{site_url}}/#game  — post your score 👇 @HOST_HANDLE @ALAN_HANDLE
+> https://getpennywise.pages.dev/#game  — post your score 👇 @HOST_HANDLE @ALAN_HANDLE
 
 ---
 
@@ -45,4 +45,4 @@ Rules: punchy first line, **one** measured number per post, one visual, tag the 
 >
 > On 189 held-out prompts: 81.5% accuracy at 2% of always-large cost. One base_url change, and Alan's agents run through it.
 >
-> Live: {{site_url}} · Code + report: {{repo_url}}
+> Live: https://getpennywise.pages.dev · Code + report: https://github.com/1sakshm/pennywise

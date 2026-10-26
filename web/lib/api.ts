@@ -4,7 +4,7 @@
 import type { Tier } from "./data";
 
 export const API_URL = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "");
-export const PROXY_URL = API_URL ? `${API_URL}/v1` : "https://YOUR-DEPLOYMENT/v1";
+export const PROXY_URL = API_URL ? `${API_URL}/v1` : "http://127.0.0.1:8000/v1"; // no hosted API: run the proxy locally
 
 export type Health = {
   ok: boolean;
