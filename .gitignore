@@ -27,3 +27,7 @@ web/out/
 # os
 .DS_Store
 Thumbs.db
+
+# synthetic dev data (never committed)
+web/public/data-synthetic/
+router/snapshots/
