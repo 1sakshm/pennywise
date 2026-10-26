@@ -25,6 +25,8 @@ OUT = ROOT / "data" / "processed" / "outcomes.jsonl"
 SYSTEM = {
     "gsm8k": "Solve the math problem. Think step by step, then end with a final line of the form 'Answer: <number>'.",
     "arc": "Answer the multiple-choice science question. Reason briefly, then end with a final line of the form 'Answer: <letter>'.",
+    "math": "Solve the competition math problem. Show your reasoning, then give the final answer in \boxed{}.",
+    "mmlu_pro": "Answer the multiple-choice question. Reason briefly, then end with a final line of the form 'Answer: <letter>'.",
     "mbpp": "Write a correct Python function for the task. Return only the code in a single ```python block.",
     "alan_bugfix": "You are a coding agent fixing a bug. Return only the full corrected function in a single ```python block.",
     "alan_triage": "You are a coding agent triaging a CI failure. Reason briefly, then end with a final line of the form 'Answer: <label>'.",

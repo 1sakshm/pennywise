@@ -125,6 +125,8 @@ export const lamKey = (l: number) => String(+l.toFixed(4));
 
 export const SOURCE_LABEL: Record<string, string> = {
   gsm8k: "Math (GSM8K)",
+  math: "Hard math (MATH L4-5)",
+  mmlu_pro: "Hard QA (MMLU-Pro)",
   arc: "Science QA (ARC)",
   mbpp: "Code (MBPP)",
   alan_bugfix: "Agent: bug fix",

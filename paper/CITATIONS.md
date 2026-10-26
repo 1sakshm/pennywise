@@ -20,6 +20,9 @@ Verified on 2026-10-26.
 | `clark2018arc` | Think you have Solved Question Answering? Try ARC · Clark et al. (7 authors) · 2018 | https://arxiv.org/abs/1803.05457 | ARC-Challenge set. |
 | `mcinnes2018umap` | UMAP · McInnes, Healy, Melville · 2018 | https://arxiv.org/abs/1802.03426 | UMAP projection used for the galaxy / brain-map figures. |
 | `minilm2021card` | all-MiniLM-L6-v2 model card · sentence-transformers | https://huggingface.co/sentence-transformers/all-MiniLM-L6-v2 | The off-the-shelf 384-d sentence-embedding baseline. (The card asks for no specific paper citation.) |
+| `hendrycks2021math` | Measuring Mathematical Problem Solving With the MATH Dataset · Hendrycks, Burns, Kadavath, Arora, Basart, Tang, Song, Steinhardt · 2021 | https://arxiv.org/abs/2103.03874 | MATH dataset (12,500 competition problems). |
+| `lightman2023verify` | Let's Verify Step by Step · Lightman et al. (10 authors) · 2023 | https://arxiv.org/abs/2305.20050 (+ dataset card https://huggingface.co/datasets/HuggingFaceH4/MATH-500) | Origin of the MATH-500 subset (per the HF dataset card, which says the 500 problems come from this paper's prm800k release). |
+| `wang2024mmlupro` | MMLU-Pro · Wang et al. (17 authors) · 2024 | https://arxiv.org/abs/2406.01574 | MMLU-Pro: harder, reasoning-focused MMLU extension with ten answer options. |
 
 ## Placeholders still open
-- None in `refs.bib`. Any `[CITATION NEEDED: …]` in `main.typ` is listed here when added.
+- None.

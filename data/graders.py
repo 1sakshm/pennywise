@@ -43,10 +43,71 @@ def grade_gsm8k(rec, raw: str) -> bool:
 
 
 def grade_choice(rec, raw: str) -> bool:
-    """ARC: single letter option."""
+    """ARC (A-E) / MMLU-Pro (A-J): single letter option after 'Answer:'."""
     line = extract_final_answer_line(raw)
-    m = re.search(r"\b([A-E])\b", line.upper())
+    m = re.search(r"\b([A-J])\b", line.upper())
     return bool(m) and m.group(1) == rec["answer"]
+
+
+def last_boxed(text: str):
+    r"""Content of the last \boxed{...} (brace-matched), or None."""
+    i = text.rfind(r"\boxed")
+    j = text.find("{", i) if i >= 0 else -1
+    if j < 0:
+        return None
+    depth = 0
+    for k in range(j, len(text)):
+        if text[k] == "{":
+            depth += 1
+        elif text[k] == "}":
+            depth -= 1
+            if depth == 0:
+                return text[j + 1:k]
+    return None
+
+
+_DROP = [r"\left", r"\right", r"\!", r"\,", r"\;", r"\:", "^\\circ", "^{\\circ}", r"\%", "%", r"\$", "$", r"\displaystyle"]
+
+
+def norm_math(a: str) -> str:
+    """Conservative LaTeX answer normalisation for MATH-style answers (see DECISIONS.md)."""
+    a = a.strip()
+    a = re.sub(r"\\(?:text|mathrm|textbf|mbox)\{([^}]*)\}", r"\1", a)
+    for t in _DROP:
+        a = a.replace(t, "")
+    a = a.replace(r"\dfrac", r"\frac").replace(r"\tfrac", r"\frac")
+    a = re.sub(r"\\frac(\d)(\d)", r"\\frac{\1}{\2}", a)
+    a = re.sub(r"\\sqrt(\d)", r"\\sqrt{\1}", a)
+    a = re.sub(r"\s+", "", a).rstrip(".")
+    a = re.sub(r"^[a-zA-Z]=", "", a)  # "x=5" -> "5"
+    if re.fullmatch(r"-?\d+\.0+", a):
+        a = a.split(".")[0]
+    return a
+
+
+def _as_number(a: str):
+    m = re.fullmatch(r"(-?)\\frac\{(-?\d+)\}\{(-?\d+)\}", a)
+    try:
+        if m:
+            v = int(m.group(2)) / int(m.group(3))
+            return -v if m.group(1) else v
+        if re.fullmatch(r"-?\d+/\d+", a):
+            n, d = a.split("/")
+            return int(n) / int(d)
+        return float(a.replace(",", ""))
+    except (ValueError, ZeroDivisionError):
+        return None
+
+
+def grade_math(rec, raw: str) -> bool:
+    pred = last_boxed(raw)
+    if pred is None:
+        pred = extract_final_answer_line(raw)
+    p, g = norm_math(pred), norm_math(rec["answer"])
+    if p == g:
+        return True
+    pn, gn = _as_number(p), _as_number(g)
+    return pn is not None and gn is not None and abs(pn - gn) < 1e-6 * max(1, abs(gn))
 
 
 def grade_triage(rec, raw: str) -> bool:
@@ -90,6 +151,8 @@ def grade_code(rec, raw: str) -> bool:
 GRADERS = {
     "gsm8k": grade_gsm8k,
     "arc": grade_choice,
+    "mmlu_pro": grade_choice,
+    "math": grade_math,
     "mbpp": grade_code,
     "alan_bugfix": grade_code,
     "alan_triage": grade_triage,

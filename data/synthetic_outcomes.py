@@ -18,8 +18,8 @@ PROMPTS = ROOT / "data" / "processed" / "prompts.jsonl"
 
 SKILL = {"small": 0.0, "medium": 1.3, "large": 2.4}
 PRICE = {"small": (0.05, 0.10), "medium": (0.30, 0.60), "large": (1.00, 3.00)}  # fake $/1M in, out
-OUT_TOKENS = {"gsm8k": 250, "arc": 120, "mbpp": 200, "alan_bugfix": 220, "alan_triage": 90}
-SRC_DIFF = {"gsm8k": 0.2, "arc": -0.3, "mbpp": 0.4, "alan_bugfix": 0.6, "alan_triage": 0.9}
+OUT_TOKENS = {"math": 600, "mmlu_pro": 200, "gsm8k": 250, "arc": 120, "mbpp": 200, "alan_bugfix": 220, "alan_triage": 90}
+SRC_DIFF = {"math": 1.6, "mmlu_pro": 1.0, "gsm8k": 0.2, "arc": -0.3, "mbpp": 0.4, "alan_bugfix": 0.6, "alan_triage": 0.9}
 
 
 def main():

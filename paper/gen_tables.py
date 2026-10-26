@@ -25,7 +25,7 @@ from router.paths import RESULTS, SYNTHETIC, VIZ  # noqa: E402
 OUT = ROOT / "data" / "cache" / "synthetic" / "paper" if SYNTHETIC else ROOT / "paper"
 GEN, FIG = OUT / "generated", OUT / "figures"
 TIER_C = {"small": "#14b8a6", "medium": "#6366f1", "large": "#db2777"}
-SRC = {"gsm8k": "GSM8K", "arc": "ARC-Challenge", "mbpp": "MBPP", "alan_bugfix": "Agent bug-fix", "alan_triage": "Agent CI triage"}
+SRC = {"math": "MATH L4-5", "mmlu_pro": "MMLU-Pro", "gsm8k": "GSM8K", "arc": "ARC-Challenge", "mbpp": "MBPP", "alan_bugfix": "Agent bug-fix", "alan_triage": "Agent CI triage"}
 
 
 def p1(x):

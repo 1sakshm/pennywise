@@ -49,6 +49,25 @@ def arc(rng):
                "answer": letters[labels.index(r["answerKey"])]}
 
 
+def math500(rng):
+    """Hard math: MATH-500 levels 4-5, graded on the final \\boxed{} answer."""
+    ds = [r for r in load_dataset("HuggingFaceH4/MATH-500", split="test") if int(r["level"]) >= 4]
+    for r in rng.sample(ds, N["math"]):
+        yield {"id": "math-" + r["unique_id"].replace("test/", "").replace(".json", "").replace("/", "-"),
+               "source": "math", "prompt": r["problem"], "answer": r["answer"],
+               "meta": {"level": int(r["level"]), "subject": r["subject"]}}
+
+
+def mmlu_pro(rng):
+    """Hard multiple choice: MMLU-Pro (up to 10 options)."""
+    ds = load_dataset("TIGER-Lab/MMLU-Pro", split="test")
+    for i in rng.sample(range(len(ds)), N["mmlu_pro"]):
+        r = ds[i]
+        opts = "\n".join(f"{chr(ord('A') + k)}. {o}" for k, o in enumerate(r["options"]))
+        yield {"id": f"mmlu_pro-{r['question_id']}", "source": "mmlu_pro", "prompt": f"{r['question']}\n\n{opts}",
+               "answer": r["answer"], "meta": {"category": r["category"]}}
+
+
 def mbpp_rows(splits):
     rows = []
     for s in splits:
@@ -102,7 +121,12 @@ def _sites(tree, kind):
 
 
 def mutate(code, kind, rng):
-    """Return mutated source for one injected bug of `kind`, or None if no site."""
+    """Return mutated source for one injected bug of `kind`, or None if no site.
+    kind "two_bugs" applies two different semantic mutations in sequence."""
+    if kind == "two_bugs":
+        k1, k2 = rng.sample(["off_by_one", "wrong_operator", "inverted_condition", "wrong_return"], 2)
+        first = mutate(code, k1, rng)
+        return mutate(first, k2, rng) if first else None
     if kind == "syntax_error":
         lines = code.split("\n")
         cands = [i for i, l in enumerate(lines) if l.rstrip().endswith(":")
@@ -168,16 +192,21 @@ def inject(rows, kinds_quota, rng):
 
 def alan_slice(rng):
     rows = check_reference(mbpp_rows(["train", "validation", "prompt"]))
+    # harder slice: only the longer half of MBPP functions (more code to read, more places to hide a bug)
+    med = sorted(len(r["code"]) for r in rows)[len(rows) // 2]
+    rows = [r for r in rows if len(r["code"]) >= med]
     rng.shuffle(rows)
     half = len(rows) // 2
     fix_rows, tri_rows = rows[:half], rows[half:]  # disjoint functions per sub-slice
 
     bug_kinds = [k for k in TRIAGE_LABELS if k != "syntax_error"]
-    q = N["alan_bugfix"] // len(bug_kinds)
-    for r, kind, b, _ in inject(fix_rows, {k: q for k in bug_kinds}, rng):
+    n_two = N["alan_bugfix"] // 2  # half the bug-fix prompts carry two independent bugs
+    q = (N["alan_bugfix"] - n_two) // len(bug_kinds)
+    for r, kind, b, _ in inject(fix_rows, {**{k: q for k in bug_kinds}, "two_bugs": n_two}, rng):
+        n_bugs = "two independent bugs" if kind == "two_bugs" else "exactly one bug"
         yield {"id": f"alan_bugfix-{r['task_id']}-{kind}", "source": "alan_bugfix",
                "prompt": (f"This function is supposed to: {r['text']}\n"
-                          f"It contains exactly one bug. Fix it and return the full corrected function.\n\n"
+                          f"It contains {n_bugs}. Fix it and return the full corrected function.\n\n"
                           f"```python\n{b}\n```\n\nIt must pass, for example:\n{r['test_list'][0]}"),
                "answer": None, "tests": r["test_list"], "test_setup": r["test_setup_code"],
                "meta": {"bug_kind": kind}}
@@ -209,7 +238,8 @@ def split(records, rng):
 
 def main():
     recs = []
-    for name, fn in [("gsm8k", gsm8k), ("arc", arc), ("mbpp", mbpp), ("alan", alan_slice)]:
+    for name, fn in [("gsm8k", gsm8k), ("math", math500), ("arc", arc), ("mmlu_pro", mmlu_pro), ("mbpp", mbpp),
+                     ("alan", alan_slice)]:
         got = list(fn(random.Random(f"{SEED}-{name}")))
         print(f"{name}: {len(got)}", flush=True)
         recs += got

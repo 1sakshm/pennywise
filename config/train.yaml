@@ -2,12 +2,14 @@ seed: 0
 
 data:
   split: [0.6, 0.2, 0.2]   # train / val / test, stratified by source
-  per_source:               # target prompt counts (Phase 2)
-    gsm8k: 250
-    mbpp: 250
-    arc: 300
-    alan_bugfix: 80
-    alan_triage: 70
+  per_source:               # target prompt counts (Phase 2). Easy + hard mix: 2026 models saturate
+    gsm8k: 100              # GSM8K/ARC/MBPP alone (pilot: small tier 93%), see DECISIONS.md
+    math: 150               # MATH-500 levels 4-5
+    arc: 100
+    mmlu_pro: 200
+    mbpp: 200
+    alan_bugfix: 100        # half single-bug, half two-bug; longer functions
+    alan_triage: 100
   budget_usd: 12.0          # run_models.py stops when spend exceeds this
 
 sft:
