@@ -13,7 +13,7 @@ import typst
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from paper import gen_tables  # noqa: E402
-from router.paths import SYNTHETIC  # noqa: E402
+from router.paths import DRAFT, SYNTHETIC  # noqa: E402
 
 gen_tables.main()
 try:
@@ -26,6 +26,6 @@ pdf = out_dir / "paper.pdf"
 typst.compile(str(out_dir / "main.typ"), output=str(pdf), root=str(out_dir),
               sys_inputs={"commit": commit + ("-dirty" if dirty else ""), "date": datetime.date.today().isoformat()})
 print(f"compiled {pdf.relative_to(ROOT)} @ {commit}{'-dirty' if dirty else ''}")
-if not SYNTHETIC:
+if not (SYNTHETIC or DRAFT):
     shutil.copy(pdf, ROOT / "web" / "public" / "paper.pdf")
     print("copied to web/public/paper.pdf")

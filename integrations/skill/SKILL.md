@@ -1,9 +1,9 @@
 ---
-name: laya-router
+name: pennywise
 description: Send bounded sub-tasks (summaries, classifications, quick lookups, small self-contained edits) through the RL-trained Laya model router so they run on the cheapest model tier that will still get them right, and keep your main model for the hard work. Use when you are about to spend main-model tokens on a well-scoped side task whose answer you can check.
 ---
 
-# Laya router skill
+# Pennywise skill
 
 You have access to an OpenAI-compatible endpoint that routes each request to a small, medium or large open model. An RL-trained decision model (Laya) picks the cheapest tier it expects to answer correctly.
 
@@ -29,4 +29,4 @@ python scripts/route_task.py --route-only "..."                                 
 The output fields are `answer`, `tier`, `confidence` and `estimated_savings_usd`. **Verify the answer the same way you would verify a junior colleague's.** If it's wrong, redo the task yourself and don't retry the same prompt with a higher mode in a loop.
 
 ## Configuration
-`LAYA_ROUTER_URL` is the proxy base URL, without `/v1`. If the endpoint is unreachable, the helper exits non-zero with an error message; in that case, do the task with your main model.
+`PENNYWISE_URL` is the proxy base URL, without `/v1`. If the endpoint is unreachable, the helper exits non-zero with an error message; in that case, do the task with your main model.

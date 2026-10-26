@@ -4,7 +4,7 @@ from mcp.client.stdio import stdio_client
 
 async def main():
     params = StdioServerParameters(command=sys.executable, args=["-m", "integrations.mcp.server"],
-                                   env={**os.environ, "LAYA_ROUTER_URL": "http://127.0.0.1:8000"})
+                                   env={**os.environ, "PENNYWISE_URL": "http://127.0.0.1:8000"})
     async with stdio_client(params) as (r, w):
         async with ClientSession(r, w) as s:
             await s.initialize()

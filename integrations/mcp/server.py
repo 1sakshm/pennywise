@@ -1,9 +1,9 @@
-"""MCP server (stdio) exposing the Laya router as two tools. Thin wrapper over the deployed proxy.
+"""MCP server (stdio) exposing Pennywise as two tools. Thin wrapper over the deployed proxy.
 
   route(prompt)                       -> tier, confidence, router latency, probabilities
   ask_routed(prompt, mode="auto")     -> answer from the routed tier + routing metadata/cost
 
-Config: LAYA_ROUTER_URL (default http://127.0.0.1:8000), optional LAYA_ROUTER_KEY.
+Config: PENNYWISE_URL (default http://127.0.0.1:8000), optional PENNYWISE_KEY.
 Built on the official MCP Python SDK (`mcp` >= 2, `MCPServer`).
 Run: python -m integrations.mcp.server
 """
@@ -12,11 +12,11 @@ import os
 import httpx
 from mcp.server import MCPServer
 
-URL = os.environ.get("LAYA_ROUTER_URL", "http://127.0.0.1:8000").rstrip("/")
-KEY = os.environ.get("LAYA_ROUTER_KEY", "unused")
+URL = os.environ.get("PENNYWISE_URL", "http://127.0.0.1:8000").rstrip("/")
+KEY = os.environ.get("PENNYWISE_KEY", "unused")
 MODES = ("auto", "auto-cheap", "auto-quality")
 
-mcp = MCPServer("laya-router")
+mcp = MCPServer("pennywise")
 
 
 async def _modes(client: httpx.AsyncClient) -> dict:
@@ -27,7 +27,7 @@ async def _modes(client: httpx.AsyncClient) -> dict:
 
 @mcp.tool()
 async def route(prompt: str, mode: str = "auto") -> dict:
-    """Ask the RL-trained Laya router which model tier (small / medium / large) a request needs,
+    """Ask Pennywise (an RL-trained Laya router) which model tier (small / medium / large) a request needs,
     without calling any LLM. Returns the chosen tier, its confidence, all three probabilities and
     the router latency. Use it to decide whether a sub-task is cheap enough to delegate."""
     if mode not in MODES:
@@ -45,7 +45,7 @@ async def route(prompt: str, mode: str = "auto") -> dict:
 @mcp.tool()
 async def ask_routed(prompt: str, mode: str = "auto") -> dict:
     """Answer a bounded sub-task (summary, classification, small edit, quick question) using the
-    cheapest model tier the Laya router judges sufficient. mode: auto | auto-cheap | auto-quality.
+    cheapest model tier Pennywise judges sufficient. mode: auto | auto-cheap | auto-quality.
     Returns the answer plus which tier answered, router confidence and estimated savings."""
     if mode not in MODES:
         return {"error": f"mode must be one of {MODES}"}

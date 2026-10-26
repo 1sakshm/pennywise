@@ -16,19 +16,19 @@ tiers:
   small:
     base_url: https://integrate.api.nvidia.com/v1   # NVIDIA free tier (actual spend $0)
     api_key_env: NVIDIA_API_KEY
+    model: nvidia/nemotron-3.5-bolt-e4b
+    price_in_per_m: 0.04
+    price_out_per_m: 0.05
+    supports_tools: true
+    price_source: "No paid listing for nemotron-3.5-bolt-e4b found; proxy = OpenRouter list price of google/gemma-3-4b-it (same ~4B class), 2026-10-26"
+  medium:
+    base_url: https://integrate.api.nvidia.com/v1   # NVIDIA free tier (actual spend $0)
+    api_key_env: NVIDIA_API_KEY
     model: openai/gpt-oss-20b
     price_in_per_m: 0.018
     price_out_per_m: 0.09
     supports_tools: true
     price_source: "OpenRouter list price for openai/gpt-oss-20b, 2026-10-26"
-  medium:
-    base_url: https://integrate.api.nvidia.com/v1   # NVIDIA free tier (actual spend $0)
-    api_key_env: NVIDIA_API_KEY
-    model: nvidia/nemotron-3.5-lightning-30b-a3b
-    price_in_per_m: 0.07
-    price_out_per_m: 0.20
-    supports_tools: true
-    price_source: "OpenRouter list price for nvidia/nemotron-3.5-lightning, 2026-10-26"
   large:
     base_url: https://integrate.api.nvidia.com/v1   # NVIDIA free tier (actual spend $0)
     api_key_env: NVIDIA_API_KEY

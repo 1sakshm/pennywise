@@ -48,6 +48,12 @@ def umap_coords(X):
     return norm(c3), norm(c2)
 
 
+def tier_models():
+    """Tier -> model id and list price (for the site's spec sheet); test config when SYNTHETIC."""
+    cfg = yaml.safe_load(open(ROOT / ("tests/models.mock.yaml" if SYNTHETIC else "config/models.yaml")))["tiers"]
+    return {t: {"model": cfg[t]["model"], "price_in_per_m": cfg[t]["price_in_per_m"], "price_out_per_m": cfg[t]["price_out_per_m"]} for t in TIERS}
+
+
 def main():
     tab = load_table()
     allr = json.load(open(RESULTS / "all.json"))
@@ -138,7 +144,8 @@ def main():
         "headline": {"lambda": modes["auto"], "accuracy": a_auto["accuracy"], "accuracy_ci": a_auto["accuracy_ci"],
                      "cost_vs_large": a_auto["cost_vs_large"], "cost_vs_large_ci": a_auto["cost_vs_large_ci"],
                      "large_accuracy": large["accuracy"], "router_latency_ms": a_auto["router_latency_ms"]},
-        "measured_savings": {"usd": saved, "requests": int(len(te)), "label": "measured on the held-out test set"}})
+        "measured_savings": {"usd": saved, "requests": int(len(te)), "label": "measured on the held-out test set"},
+        "tier_models": tier_models()})
 
     tot = sum(sizes.values())
     for k, v in sizes.items():

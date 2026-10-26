@@ -1,7 +1,7 @@
 import { ImageResponse } from "next/og";
 import { Card } from "@/lib/og";
 
-export const runtime = "edge";
+export const dynamic = "force-static"; // rendered once at build time -> out/og.png
 
 export async function GET() {
   return new ImageResponse(

@@ -37,29 +37,31 @@ export default function SavingsCounter() {
   const n = liveStats ? liveStats.requests_routed : manifest?.measured_savings.requests;
   if (usdVal == null || n == null) return null;
   const digits = usdVal < 1 ? 4 : 2;
+  const src = liveStats ? "live · via the proxy" : manifest?.measured_savings.label;
   return (
-    <div className="savings" role="status">
-      <span className="pulse" data-live={!!liveStats} />
+    <div className="savings" role="status" title={`Saved $${usdVal.toFixed(digits)} across ${n.toLocaleString()} routed requests — ${src}`}>
+      <span className={liveStats ? "led" : "led off"} aria-hidden />
       <span className="lbl">saved</span>
       <strong>
         <Roll text={`$${usdVal.toFixed(digits)}`} />
       </strong>
-      <span className="lbl">
-        across <Roll text={n.toLocaleString()} /> routed requests
+      <span className="sep" aria-hidden>·</span>
+      <span className="n">
+        <Roll text={n.toLocaleString()} />
       </span>
-      <span className="src">{liveStats ? "live · via the proxy" : manifest?.measured_savings.label}</span>
+      <span className="lbl">routed</span>
+      <span className="src">{liveStats ? "live" : src}</span>
       <style jsx>{`
         .savings {
-          display: flex; align-items: center; gap: 10px; flex-wrap: wrap; font-size: 14px;
-          padding: 8px 14px; border-radius: 999px; border: 1px solid var(--line-2); background: rgba(5, 6, 10, 0.75);
-          backdrop-filter: blur(10px);
+          display: inline-flex; align-items: center; gap: 8px; min-width: 0; white-space: nowrap;
+          font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; line-height: 1;
+          padding: 7px 10px; border-radius: var(--radius); border: 1px solid var(--line-2); background: var(--bg-2);
         }
-        strong { font-size: 18px; color: var(--accent); font-weight: 600; }
-        .lbl { color: var(--muted); display: inline-flex; gap: 6px; align-items: center; }
-        .src { font-size: 11px; color: var(--dim); font-family: var(--font-mono); }
-        .pulse { width: 8px; height: 8px; border-radius: 50%; background: var(--dim); }
-        .pulse[data-live="true"] { background: var(--ok); box-shadow: 0 0 0 0 rgba(74, 222, 128, 0.6); animation: p 2s infinite; }
-        @keyframes p { 70% { box-shadow: 0 0 0 8px rgba(74, 222, 128, 0); } 100% { box-shadow: 0 0 0 0 rgba(74, 222, 128, 0); } }
+        strong { font-size: 12.5px; color: var(--accent); font-weight: 500; letter-spacing: 0; }
+        .n { color: var(--text); font-size: 12.5px; letter-spacing: 0; }
+        .lbl, .sep { color: var(--muted); }
+        .src { color: var(--dim); text-transform: none; letter-spacing: 0.02em; padding-left: 8px; border-left: 1px solid var(--line); }
+        @media (max-width: 1100px) { .src { display: none; } }
       `}</style>
     </div>
   );

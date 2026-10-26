@@ -33,11 +33,16 @@ SYSTEM = {
 }
 
 
+MODEL_OF = {t: c["model"] for t, c in load_tiers().items() if t != "_generation"}
+
+
 def load_done():
     done, spend = set(), 0.0
     if OUT.exists():
         for line in open(OUT, encoding="utf-8"):
             r = json.loads(line)
+            if r.get("model") != MODEL_OF.get(r["tier"]):
+                continue  # answered by a model no longer in this tier (tier swaps)
             done.add((r["prompt_id"], r["tier"]))
             spend += r["cost_usd"]
     return done, spend
@@ -103,7 +108,8 @@ async def call(tier_name, tier, client, rec, gen, sem, state, lock, fout, limite
 
 
 def summary():
-    rows = [json.loads(l) for l in open(OUT, encoding="utf-8")]
+    ids = {json.loads(l)["id"] for l in open(ROOT / "data" / "processed" / "prompts.jsonl", encoding="utf-8")}
+    rows = [r for r in map(json.loads, open(OUT, encoding="utf-8")) if r["prompt_id"] in ids and r.get("model") == MODEL_OF.get(r["tier"])]
     agg = defaultdict(lambda: [0, 0, 0.0])
     for r in rows:
         for key in [(r["source"], r["tier"]), ("ALL", r["tier"])]:

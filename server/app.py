@@ -22,7 +22,7 @@ from router.models import TIER_NAMES
 from server.proxy import _http, est_tokens, router as proxy_router
 from server.state import DAILY_CAP, MAX_PROMPT_CHARS, State, client_ip
 
-app = FastAPI(title="Laya Router", version="0.1")
+app = FastAPI(title="Pennywise", version="0.1")
 app.add_middleware(CORSMiddleware, allow_origins=[o.strip() for o in os.environ.get("ALLOWED_ORIGINS", "*").split(",")],
                    allow_methods=["GET", "POST", "OPTIONS"], allow_headers=["*"],
                    expose_headers=["x-router-tier", "x-router-confidence", "x-router-latency-ms",

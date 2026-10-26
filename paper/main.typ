@@ -4,10 +4,11 @@
 #let commit = sys.inputs.at("commit", default: "unknown")
 #let built = sys.inputs.at("date", default: "unknown")
 
-#set document(title: "Learning to Route LLM Calls with an Open Decision Model", author: "laya-router")
+#set document(title: "Learning to Route LLM Calls with an Open Decision Model", author: "Pennywise contributors")
 #set page(
   paper: "a4", margin: (x: 2.3cm, y: 2.2cm), numbering: "1",
-  background: if synthetic { rotate(-35deg, text(64pt, fill: red.transparentize(80%), weight: "bold")[SYNTHETIC — NOT RESULTS]) },
+  background: if synthetic { rotate(-35deg, text(64pt, fill: red.transparentize(80%), weight: "bold")[SYNTHETIC — NOT RESULTS]) }
+    else if draft { rotate(-35deg, text(44pt, fill: orange.transparentize(80%), weight: "bold")[DRAFT · PARTIAL RESULTS]) },
 )
 #set text(font: ("New Computer Modern", "Libertinus Serif"), size: 10.5pt)
 #set par(justify: true, leading: 0.62em)
@@ -18,10 +19,16 @@
 #align(center)[
   #text(9pt, fill: rgb("#b91c1c"), weight: "bold")[TECHNICAL REPORT v0.1 — PRELIMINARY, NOT PEER-REVIEWED] \
   #v(0.6em)
-  #text(17pt, weight: "bold")[Learning to Route LLM Calls with an Open Decision Model: \ Policy-Gradient Training of Laya as a Cost-Aware Router]
+  #text(17pt, weight: "bold")[Pennywise: Learning to Route LLM Calls with an Open Decision Model \ #text(14pt)[Policy-Gradient Training of Laya as a Cost-Aware Router]]
   #v(0.5em)
-  laya-router contributors \
+  Pennywise contributors \
   #text(9pt)[Built #built from commit #raw(commit) · seed #seed]
+]
+#if draft [
+  #v(0.4em)
+  #block(fill: orange.lighten(85%), inset: 8pt, radius: 3pt, width: 100%)[
+    #text(9pt)[*Interim draft.* Built from real outcomes while RL training is still running. Only the RL policies for $lambda in {#draft_lams}$ had finished, so the mode selection, the RL rows and the Pareto curve cover those values only. Every number will change when the remaining runs finish. The policy-map figure is omitted until the visualisation export runs.]
+  ]
 ]
 
 #v(0.8em)
@@ -70,6 +77,7 @@ with $b$ an exponential running mean of the batch reward @williams1992reinforce 
 #table(columns: 4, stroke: none, align: (left, left, right, right), table.hline(),
   [*Tier*], [*Model*], [*In*], [*Out*], table.hline(stroke: 0.5pt),
   ..tier_rows.map(r => r.map(x => [#x])).flatten(), table.hline())
+All calls ran on NVIDIA's free API (actual spend \$0), so every cost is computed at the public list price of the same model on a paid provider (OpenRouter). The small tier has no paid listing; its price is a _proxy price_, the list price of `google/gemma-3-4b-it`, a model of the same \~4B size class.
 
 *Baselines.* Always-small/medium/large; uniform random; the oracle (hindsight, not achievable); zero-shot Laya; logistic regression and $k$-NN predicting the oracle tier from frozen embeddings (base Laya, mean-pooled; and all-MiniLM-L6-v2 @minilm2021card), with $C$ and $k$ tuned on validation; and per-tier correctness predictors, one logistic regression per tier estimating $P("correct"|s, a)$, acting by $arg max_a P("correct"|s,a) - lambda dot overline(c)_a \/ c_"ref"$ over the same $lambda$ grid. Jev: #jev_status.
 
@@ -86,14 +94,14 @@ with $b$ an exponential running mean of the batch reward @williams1992reinforce 
 
 #figure(image("figures/pareto.pdf", width: 88%), caption: [Accuracy vs. cost relative to always-large. Shaded band: 95% CI of the RL family.]) <fig:pareto>
 
-The validation-selected `auto` policy ($lambda$ = #lam_auto) differs from always-large in accuracy by #auto_vs_large points (paired 95% CI #auto_vs_large_lo to #auto_vs_large_hi) while costing #auto_cost% as much. Zero-shot Laya reaches #zs_acc% at #zs_cost% cost. The supervised warm start raises validation agreement with the oracle label from #sft_zs_val% (zero-shot) to #sft_best_val% (epoch #sft_best_epoch). @tab:main and @fig:pareto place the RL family against the per-tier correctness predictors, the strongest cheap baseline. Where those match or beat the RL policies, the Laya router's remaining advantages are architectural (a single model scoring options directly, trainable from bandit feedback) rather than accuracy.
+The validation-selected `auto` policy ($lambda$ = #lam_auto) differs from always-large in accuracy by #auto_vs_large points (paired 95% CI #auto_vs_large_lo to #auto_vs_large_hi) while costing #auto_cost% as much. Zero-shot Laya reaches #zs_acc% at #zs_cost% cost. The supervised warm start raises validation agreement with the oracle label from #sft_zs_val% (zero-shot) to #sft_best_val% (epoch #sft_best_epoch). @tab:main and @fig:pareto place the RL family against the per-tier correctness predictors, the strongest cheap baseline. Where those match or beat the RL policies, Pennywise's remaining advantages are architectural (a single model scoring options directly, trainable from bandit feedback) rather than accuracy.
 
 #figure(image("figures/reward_curves.pdf", width: 88%), caption: [Training reward (sampled actions, 25-step moving average) per $lambda$.]) <fig:curves>
 
-#figure(
+#if not draft [#figure(
   grid(columns: 3, gutter: 4pt, image("figures/brainmap_early.png"), image("figures/brainmap_mid.png"), image("figures/brainmap_final.png")),
   caption: [UMAP @mcinnes2018umap of base-model prompt embeddings, coloured by the `auto` policy's chosen tier (teal = small, indigo = medium, pink = large; size = confidence) at the start, middle and end of RL.],
-) <fig:brain>
+) <fig:brain>]
 
 #figure(text(8.5pt, include "generated/source_table.typ"), caption: [Per-source accuracy % / cost % of always-large on the test split. The agent-style slices are reported separately.]) <tab:src>
 

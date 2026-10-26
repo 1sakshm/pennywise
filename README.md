@@ -1,6 +1,6 @@
-# laya-router: Jev chooses. This one learns.
+# Pennywise: Jev chooses. This one learns.
 
-An open decision model, trained with **reinforcement learning**, that sends each LLM request to the **cheapest model tier that will still get it right**. You can watch it learn and try to beat it. Plugging it in takes one line.
+Pennywise is an open decision model (Convai's Laya), trained with **reinforcement learning**, that sends each LLM request to the **cheapest model tier that will still get it right**. You can watch it learn and try to beat it. Plugging it in takes one line.
 
 <!-- GEN:HEADLINE -->
 _Results pending: generated from `eval/results/all.json` by `scripts/gen_readme.py`._
@@ -32,7 +32,7 @@ Coding agents send every call to a frontier model: classification, summaries, on
 
 ## Alan integration
 Alan drives coding-agent CLIs, so the router goes in at the CLI layer:
-1. **Cost layer (OpenCode):** [`examples/alan/opencode.json`](examples/alan/opencode.json) adds the proxy as an OpenAI-compatible provider (`laya-router/auto`, etc.). Enable OpenCode in Alan, **Rescan models**, then whitelist them. The proxy routes **once per agent session** (sticky) and passes tool calls through unchanged, so sessions don't break mid-run. Steps and status are in [`examples/alan/README.md`](examples/alan/README.md); the checks are in [`docs/ALAN_NOTES.md`](docs/ALAN_NOTES.md).
+1. **Cost layer (OpenCode):** [`examples/alan/opencode.json`](examples/alan/opencode.json) adds the proxy as an OpenAI-compatible provider (`pennywise/auto`, etc.). Enable OpenCode in Alan, **Rescan models**, then whitelist them. The proxy routes **once per agent session** (sticky) and passes tool calls through unchanged, so sessions don't break mid-run. Steps and status are in [`examples/alan/README.md`](examples/alan/README.md); the checks are in [`docs/ALAN_NOTES.md`](docs/ALAN_NOTES.md).
 2. **Built with Alan:** _pending Alan access_. See [`docs/DECISIONS.md`](docs/DECISIONS.md).
 3. **Agents call the router as a tool:** the [MCP server](integrations/mcp/) (`route`, `ask_routed`) installs in OpenCode next to Alan's own MCP entry.
 4. **Alan-style workloads in the data:** 150 auto-graded agent sub-tasks (bug-fix edits graded by unit tests, CI-failure triage graded by construction), reported separately.
@@ -91,7 +91,7 @@ Edit [`config/models.yaml`](config/models.yaml) (any OpenAI-compatible endpoint,
 ## Serve
 ```bash
 uvicorn server.app:app --port 8000      # /route /answer /health + /v1/chat/completions, /v1/models
-docker build --build-arg SERVE_TGZ_URL=<release asset> -t laya-router .
+docker build --build-arg SERVE_TGZ_URL=<release asset> -t pennywise .
 ```
 Rate limits, a max prompt length and a daily spend cap (`DAILY_SPEND_CAP_USD`) protect the public demo. When the server is down or capped, the site replays genuine recorded runs and says so.
 

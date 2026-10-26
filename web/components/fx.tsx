@@ -1,17 +1,17 @@
 "use client";
 // Small animation primitives shared across sections. All respect prefers-reduced-motion.
-import { animate, motion, useInView, useMotionValue, useReducedMotion as useFmReduced } from "framer-motion";
+import { animate, motion, useInView, useMotionValue, useReducedMotion as useFmReduced, useScroll, useSpring } from "framer-motion";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 
 /** Fade + rise when scrolled into view (once). */
-export function Reveal({ children, delay = 0, y = 24 }: { children: ReactNode; delay?: number; y?: number }) {
+export function Reveal({ children, delay = 0, y = 14 }: { children: ReactNode; delay?: number; y?: number }) {
   const reduce = useFmReduced();
   return (
     <motion.div
       initial={reduce ? false : { opacity: 0, y }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-80px" }}
-      transition={{ duration: 0.7, delay, ease: [0.2, 0.8, 0.2, 1] }}
+      viewport={{ once: true, margin: "0px 0px -60px 0px" }}
+      transition={{ duration: 0.8, delay, ease: [0.2, 0.8, 0.2, 1] }}
     >
       {children}
     </motion.div>
@@ -28,9 +28,9 @@ export function StaggerWords({ text, className, delay = 0 }: { text: string; cla
           key={i}
           aria-hidden
           style={{ display: "inline-block", whiteSpace: "pre" }}
-          initial={reduce ? false : { opacity: 0, y: "0.45em", filter: "blur(8px)" }}
-          animate={{ opacity: 1, y: 0, filter: "blur(0px)" }}
-          transition={{ duration: 0.6, delay: delay + i * 0.08, ease: [0.2, 0.8, 0.2, 1] }}
+          initial={reduce ? false : { opacity: 0, y: "0.35em" }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, delay: delay + i * 0.06, ease: [0.2, 0.8, 0.2, 1] }}
         >
           {w + (i < text.split(" ").length - 1 ? " " : "")}
         </motion.span>
@@ -79,6 +79,59 @@ export function Burst({ trigger, colors = ["#2dd4bf", "#818cf8", "#f472b6", "#fa
       })}
     </div>
   );
+}
+
+/** Numbered section header: "§02 — POLICY GALAXY" rule, then the title (may contain <em>). */
+export function SectionHead({ n, kicker, title, lede, meta }: { n: string; kicker: string; title: ReactNode; lede?: ReactNode; meta?: ReactNode }) {
+  return (
+    <Reveal>
+      <div className="sh">
+        <div className="sh-rule">
+          <span className="sh-n">§{n}</span>
+          <span className="sh-k">{kicker}</span>
+          <span className="sh-line" />
+          {meta && <span className="sh-meta">{meta}</span>}
+        </div>
+        <h2>{title}</h2>
+        {lede && <p className="lede">{lede}</p>}
+      </div>
+      <style jsx>{`
+        .sh-rule { display: flex; align-items: center; gap: 12px; font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.14em; text-transform: uppercase; }
+        .sh-n { color: var(--accent); }
+        .sh-k { color: var(--muted); }
+        .sh-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--line-2), transparent); }
+        .sh-meta { color: var(--dim); letter-spacing: 0.08em; }
+        @media (max-width: 600px) { .sh-meta { display: none; } }
+      `}</style>
+    </Reveal>
+  );
+}
+
+/** 2px reading-progress bar along the top edge. */
+export function ScrollProgress() {
+  const { scrollYProgress } = useScroll();
+  const scaleX = useSpring(scrollYProgress, { stiffness: 200, damping: 40, restDelta: 0.001 });
+  return <motion.div className="progress" style={{ scaleX }} aria-hidden />;
+}
+
+/** Inertial smooth scrolling (Lenis). Off for reduced motion and touch (native is better there). */
+export function SmoothScroll() {
+  const reduce = useFmReduced();
+  useEffect(() => {
+    if (reduce || matchMedia("(pointer: coarse)").matches) return;
+    let raf = 0;
+    let lenis: { raf: (t: number) => void; destroy: () => void } | null = null;
+    let dead = false;
+    import("lenis").then(({ default: Lenis }) => {
+      if (dead) return;
+      const l = new Lenis({ duration: 1.1, easing: (t: number) => 1 - Math.pow(1 - t, 4), anchors: true });
+      lenis = l;
+      const loop = (t: number) => { l.raf(t); raf = requestAnimationFrame(loop); };
+      raf = requestAnimationFrame(loop);
+    });
+    return () => { dead = true; cancelAnimationFrame(raf); lenis?.destroy(); };
+  }, [reduce]);
+  return null;
 }
 
 /** Ask the galaxy to replay training from step 0 (used by "Watch it learn"). */

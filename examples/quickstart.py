@@ -1,12 +1,12 @@
 """The whole integration: change base_url. Works with the official openai SDK, streaming or not.
 
-    LAYA_ROUTER_URL=https://YOUR-DEPLOYMENT python examples/quickstart.py
+    PENNYWISE_URL=https://YOUR-DEPLOYMENT python examples/quickstart.py
 """
 import os
 
 from openai import OpenAI
 
-client = OpenAI(base_url=os.environ.get("LAYA_ROUTER_URL", "http://127.0.0.1:8000") + "/v1", api_key="unused")
+client = OpenAI(base_url=os.environ.get("PENNYWISE_URL", "http://127.0.0.1:8000") + "/v1", api_key="unused")
 
 # non-streaming: the routing decision comes back in response headers
 raw = client.chat.completions.with_raw_response.create(

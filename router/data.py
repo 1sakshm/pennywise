@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from router.models import TIER_NAMES
+from router.models import TIER_NAMES, load_tiers
 from router.paths import OUTCOMES, PROMPTS
 
 
@@ -36,11 +36,12 @@ def load_table(require_complete=True) -> Table:
     recs = [json.loads(l) for l in open(PROMPTS, encoding="utf-8")]
     pos = {r["id"]: i for i, r in enumerate(recs)}
     n = len(recs)
+    models = {t: c["model"] for t, c in load_tiers().items() if t in TIER_NAMES}  # ignore rows from swapped-out models
     correct = np.zeros((n, 3), bool)
     cost = np.full((n, 3), np.nan)
     for line in open(OUTCOMES, encoding="utf-8"):
         o = json.loads(line)
-        if o["prompt_id"] in pos:
+        if o["prompt_id"] in pos and o.get("model") == models[o["tier"]]:
             i, t = pos[o["prompt_id"]], TIER_NAMES.index(o["tier"])
             correct[i, t], cost[i, t] = o["correct"], o["cost_usd"]
     have = ~np.isnan(cost).any(1)

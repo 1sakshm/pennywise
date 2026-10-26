@@ -1,13 +1,13 @@
 {
   "$schema": "https://opencode.ai/config.json",
-  "model": "laya-router/auto",
+  "model": "pennywise/auto",
   "provider": {
-    "laya-router": {
+    "pennywise": {
       "npm": "@ai-sdk/openai-compatible",
-      "name": "Laya Router",
+      "name": "Pennywise",
       "options": {
         "baseURL": "https://YOUR-DEPLOYMENT/v1",
-        "apiKey": "{env:LAYA_ROUTER_KEY}"
+        "apiKey": "{env:PENNYWISE_KEY}"
       },
       "models": {
         "auto": { "name": "Laya auto (RL-routed)", "limit": { "context": 32000, "output": 8192 } },
@@ -18,11 +18,11 @@
     }
   },
   "mcp": {
-    "laya-router": {
+    "pennywise": {
       "type": "local",
       "command": ["python", "-m", "integrations.mcp.server"],
       "enabled": true,
-      "environment": { "LAYA_ROUTER_URL": "https://YOUR-DEPLOYMENT" }
+      "environment": { "PENNYWISE_URL": "https://YOUR-DEPLOYMENT" }
     }
   }
 }

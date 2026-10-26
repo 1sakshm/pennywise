@@ -33,7 +33,7 @@ def est_tokens(text):
 async def models(request: Request):
     st = request.app.state.s
     ids = list(st.modes) + TIER_NAMES
-    return {"object": "list", "data": [{"id": i, "object": "model", "created": 0, "owned_by": "laya-router"} for i in ids]}
+    return {"object": "list", "data": [{"id": i, "object": "model", "created": 0, "owned_by": "pennywise"} for i in ids]}
 
 
 async def decide(st, body, request):

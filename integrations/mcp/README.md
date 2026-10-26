@@ -1,4 +1,4 @@
-# Laya router — MCP server
+# Pennywise — MCP server
 
 Two tools over stdio, built on the official MCP Python SDK (`mcp` ≥ 2, `MCPServer`):
 
@@ -7,7 +7,7 @@ Two tools over stdio, built on the official MCP Python SDK (`mcp` ≥ 2, `MCPSer
 | `route(prompt, mode="auto")` | Returns which tier (small/medium/large) Laya would use, with confidence, all probabilities and router latency. **No LLM call.** |
 | `ask_routed(prompt, mode="auto")` | Answers a bounded sub-task on the routed tier and returns the answer, tier, confidence and estimated savings. |
 
-`mode` is one of `auto`, `auto-cheap` or `auto-quality`. Config is via env: `LAYA_ROUTER_URL` (the proxy's base URL, without `/v1`) and optionally `LAYA_ROUTER_KEY`.
+`mode` is one of `auto`, `auto-cheap` or `auto-quality`. Config is via env: `PENNYWISE_URL` (the proxy's base URL, without `/v1`) and optionally `PENNYWISE_KEY`.
 
 ```bash
 pip install "mcp>=2" httpx
@@ -20,11 +20,11 @@ python -m integrations.mcp.server        # run from the repo root
 ```json
 {
   "mcp": {
-    "laya-router": {
+    "pennywise": {
       "type": "local",
       "command": ["python", "-m", "integrations.mcp.server"],
       "enabled": true,
-      "environment": { "LAYA_ROUTER_URL": "https://YOUR-DEPLOYMENT" }
+      "environment": { "PENNYWISE_URL": "https://YOUR-DEPLOYMENT" }
     }
   }
 }
@@ -32,13 +32,13 @@ python -m integrations.mcp.server        # run from the repo root
 
 **Claude Code**
 ```bash
-claude mcp add laya-router -e LAYA_ROUTER_URL=https://YOUR-DEPLOYMENT -- python -m integrations.mcp.server
+claude mcp add pennywise -e PENNYWISE_URL=https://YOUR-DEPLOYMENT -- python -m integrations.mcp.server
 ```
 
 **Cursor / Claude Desktop** (`mcpServers` JSON):
 ```json
-{ "mcpServers": { "laya-router": { "command": "python", "args": ["-m", "integrations.mcp.server"],
-  "env": { "LAYA_ROUTER_URL": "https://YOUR-DEPLOYMENT" } } } }
+{ "mcpServers": { "pennywise": { "command": "python", "args": ["-m", "integrations.mcp.server"],
+  "env": { "PENNYWISE_URL": "https://YOUR-DEPLOYMENT" } } } }
 ```
 
 The `-m integrations.mcp.server` form has to run from the repo root. Otherwise, use the absolute path to `integrations/mcp/server.py`.

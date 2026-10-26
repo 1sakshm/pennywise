@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Helper for the laya-router agent skill. Stdlib only, so it runs anywhere an agent has Python.
+"""Helper for the pennywise agent skill. Stdlib only, so it runs anywhere an agent has Python.
 
 usage: route_task.py [--mode auto|auto-cheap|auto-quality] [--route-only] PROMPT
 Prints JSON: {answer, tier, confidence, router_latency_ms, estimated_savings_usd} or {error}.
@@ -11,7 +11,7 @@ import sys
 import urllib.error
 import urllib.request
 
-URL = os.environ.get("LAYA_ROUTER_URL", "http://127.0.0.1:8000").rstrip("/")
+URL = os.environ.get("PENNYWISE_URL", "http://127.0.0.1:8000").rstrip("/")
 
 
 def post(path, body, timeout):

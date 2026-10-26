@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "build": "next build --turbopack",
-    "start": "next start"
+    "start": "next start",
+    "export": "cross-env STATIC_EXPORT=1 next build",
+    "deploy:pages": "npx wrangler@4.42.0 pages deploy out --project-name getpennywise --branch main"
   },
   "dependencies": {
     "@react-three/drei": "^10.7.6",
@@ -13,6 +15,7 @@
     "@react-three/postprocessing": "^3.0.4",
     "d3": "^7.9.0",
     "framer-motion": "^12.23.22",
+    "lenis": "^1.1.20",
     "next": "15.5.4",
     "pixi.js": "^8.13.2",
     "react": "19.1.0",
@@ -25,6 +28,7 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "@types/three": "^0.180.0",
+    "cross-env": "^7.0.3",
     "typescript": "^5"
   },
   "overrides": {

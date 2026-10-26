@@ -6,6 +6,7 @@ Usage: python -m eval.evaluate
 """
 import glob
 import json
+import sys
 
 import numpy as np
 import yaml
@@ -60,6 +61,7 @@ def by_source(tab, rows, actions):
 
 
 def main():
+    sys.stdout.reconfigure(encoding="utf-8")  # summary has ✓ and λ; Windows consoles/log redirects default to cp1252
     tab = load_table()
     te = tab.idx("test")
     pos = {i: k for k, i in enumerate(tab.ids[te])}

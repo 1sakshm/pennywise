@@ -29,6 +29,7 @@ export type Manifest = {
   n_test: number;
   n_prompts: number;
   jev: string;
+  tier_models?: Record<Tier, { model: string; price_in_per_m: number; price_out_per_m: number }>;
   headline: {
     lambda: number;
     accuracy: number;
