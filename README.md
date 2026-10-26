@@ -3,7 +3,9 @@
 Pennywise is an open decision model (Convai's Laya), trained with **reinforcement learning**, that sends each LLM request to the **cheapest model tier that will still get it right**. You can watch it learn and try to beat it. Plugging it in takes one line.
 
 <!-- GEN:HEADLINE -->
-_Results pending: generated from `eval/results/all.json` by `scripts/gen_readme.py`._
+**81.5% accuracy at 2.0% of the cost of always calling the largest model** (always-large: 84.1%) on 189 held-out prompts. Paired accuracy difference vs always-large -2.6 pts (95% CI -7.9 to +2.6); cost CI 1.8%–2.3%; `auto` mode, λ=0.5 chosen on validation.
+
+Honest reading: the trained policies send ~97% of requests to the medium tier, so `auto` is close to the trivial always-medium baseline (82.5% at 2.1%). RL found the right default tier from bandit feedback, but does not yet reliably spot the prompts that need the large tier.
 <!-- /GEN:HEADLINE -->
 
 📄 **[Technical Report v0.1 (PDF)](web/public/paper.pdf)**. Preliminary, not peer-reviewed. · 🌐 **Live demo:** _TBD_ · 🎥 **Video:** _TBD_
@@ -55,7 +57,35 @@ request ─▶ proxy ─▶ Laya π(a|s) ─▶ small | medium | large ─▶ an
 
 ## Results (test split, bootstrap 95% CIs)
 <!-- GEN:RESULTS -->
-_Pending real model outcomes._
+| Policy | Accuracy [95% CI] | Cost vs always-large [95% CI] | Router ms |
+|---|---|---|---|
+| always-small | 73.5% [67.2%, 79.9%] | 1.0% [0.8%, 1.1%] | 0.0 |
+| always-medium | 82.5% [77.2%, 87.8%] | 2.1% [1.8%, 2.3%] | 0.0 |
+| always-large | 84.1% [78.8%, 88.9%] | 100.0% [100.0%, 100.0%] | 0.0 |
+| random | 79.9% [74.1%, 85.2%] | 41.4% [32.4%, 51.5%] | 0.0 |
+| oracle | 93.7% [90.5%, 96.8%] | 26.0% [17.4%, 35.1%] |  |
+| zero-shot Laya | 77.2% [71.4%, 83.1%] | 20.1% [12.4%, 28.7%] | 43.9 |
+| LR (Laya-emb) | 74.1% [68.3%, 79.9%] | 6.8% [2.6%, 12.4%] | 30.9 |
+| kNN (Laya-emb) | 73.5% [67.2%, 79.9%] | 1.1% [0.9%, 1.5%] | 30.9 |
+| per-tier LR (Laya-emb) (λ=0.1) | 82.5% [76.7%, 87.8%] | 8.5% [4.2%, 13.4%] | 30.9 |
+| per-tier LR (Laya-emb) (λ=0.25) | 81.5% [75.7%, 86.8%] | 2.8% [1.7%, 4.5%] | 30.9 |
+| per-tier LR (Laya-emb) (λ=0.5) | 81.5% [75.7%, 86.8%] | 1.8% [1.5%, 2.0%] | 30.9 |
+| per-tier LR (Laya-emb) (λ=1) | 81.0% [75.1%, 86.2%] | 1.8% [1.5%, 2.0%] | 30.9 |
+| LR (MiniLM-emb) | 75.1% [68.8%, 81.0%] | 4.8% [1.5%, 9.0%] | 6.4 |
+| kNN (MiniLM-emb) | 73.5% [67.2%, 79.9%] | 1.1% [0.9%, 1.3%] | 6.4 |
+| per-tier LR (MiniLM-emb) (λ=0.1) | 83.1% [77.8%, 88.4%] | 7.6% [3.9%, 12.3%] | 6.4 |
+| per-tier LR (MiniLM-emb) (λ=0.25) | 82.0% [76.7%, 87.3%] | 3.4% [2.0%, 5.1%] | 6.4 |
+| per-tier LR (MiniLM-emb) (λ=0.5) | 81.0% [75.1%, 86.2%] | 1.9% [1.6%, 2.1%] | 6.4 |
+| per-tier LR (MiniLM-emb) (λ=1) | 81.0% [75.1%, 86.2%] | 1.8% [1.6%, 2.1%] | 6.4 |
+| SFT Laya | 73.5% [67.2%, 79.9%] | 1.0% [0.8%, 1.1%] | 43.9 |
+| RL Laya (λ=0) | 83.1% [77.2%, 88.4%] | 86.2% [78.8%, 92.4%] | 43.9 |
+| RL Laya (λ=0.1) | 83.1% [77.8%, 88.4%] | 1.9% [1.7%, 2.2%] | 43.9 |
+| RL Laya (λ=0.25) | 82.0% [76.7%, 87.3%] | 2.0% [1.8%, 2.3%] | 43.9 |
+| **RL Laya (λ=0.5) ← auto** | 81.5% [76.2%, 86.8%] | 2.0% [1.8%, 2.3%] | 43.9 |
+| RL Laya (λ=1) | 82.0% [76.7%, 87.3%] | 2.0% [1.8%, 2.3%] | 43.9 |
+| RL Laya (λ=2) | 83.1% [77.8%, 88.4%] | 2.0% [1.8%, 2.3%] | 43.9 |
+
+Jev: not run (no JEV_API_KEY). Full findings, including where the router loses: [`eval/results/summary.md`](eval/results/summary.md).
 <!-- /GEN:RESULTS -->
 
 ![Pareto: accuracy vs cost](paper/figures/pareto.png)

@@ -61,7 +61,7 @@ def _outcome_rows(tab):
 
 
 def _rl():
-    out = [json.load(open(f)) for f in glob.glob(str(RESULTS / "rl_lam*.json"))]
+    out = [json.load(open(f, encoding="utf-8")) for f in glob.glob(str(RESULTS / "rl_lam*.json"))]
     return sorted(out, key=lambda r: r["lambda"])
 
 
@@ -367,6 +367,21 @@ def main(GEN, FIG, allr, sft):
     hparam_table(GEN)
     paired_table(allr, rls, GEN)
 
+    # auto vs always-medium (paired bootstrap on the test split) and the test-best RL policy, for honest framing
+    te_pos = {i: k for k, i in enumerate(tab.ids)}
+    rows_te = np.array([te_pos[i] for i in allr["test_ids"]])
+    auto_p = next(p for p in allr["policies"] if p["kind"] == "rl" and p["lambda"] == allr["modes"]["auto"])
+    ok_auto = tab.correct[rows_te, np.array(auto_p["actions"])].astype(float)
+    ok_med = tab.correct[rows_te, 1].astype(float)
+    rng = np.random.default_rng(allr["seed"])
+    bs = [(ok_auto[ix] - ok_med[ix]).mean() for ix in (rng.integers(0, len(rows_te), len(rows_te)) for _ in range(allr["bootstrap"]))]
+    vs_med = (float(ok_auto.mean() - ok_med.mean()), float(np.percentile(bs, 2.5)), float(np.percentile(bs, 97.5)))
+    best = max((p for p in allr["policies"] if p["kind"] == "rl"), key=lambda p: (p["accuracy"], -p["mean_cost_usd"]))
+    large_p = next(p for p in allr["policies"] if p["name"] == "always-large")
+    gaps = {k: auto_p["by_source"][k]["accuracy"] - large_p["by_source"][k]["accuracy"] for k in auto_p["by_source"]}
+    worst = min(gaps, key=gaps.get)
+    med_share = float(np.mean([p["action_share"][1] for p in allr["policies"] if p["kind"] == "rl" and p["lambda"] > 0]))
+
     acc = tab.correct.mean(0)
     tot_calls = sum(1 for _ in rows)
     tot_cost = float(tab.cost.sum())
@@ -384,5 +399,9 @@ def main(GEN, FIG, allr, sft):
          f'#let lat_small = "{lat["small"]:.1f}"', f'#let lat_medium = "{lat["medium"]:.1f}"', f'#let lat_large = "{lat["large"]:.1f}"',
          f'#let auto_oracle_agree = "{p1(agree)}"', f'#let n_patterns = {len(pats)}',
          f'#let calib_r = "{rho:.2f}"', f"#let n_rl_done = {len(rls)}",
-         f'#let rl_lams_done = "{", ".join(f"{r["lambda"]:g}" for r in rls)}"']
+         f'#let rl_lams_done = "{", ".join(f"{r["lambda"]:g}" for r in rls)}"',
+         f'#let auto_vs_med = "{100 * vs_med[0]:+.1f}"', f'#let auto_vs_med_lo = "{100 * vs_med[1]:+.1f}"', f'#let auto_vs_med_hi = "{100 * vs_med[2]:+.1f}"',
+         f'#let best_lam = "{best["lambda"]:g}"', f'#let best_acc = "{p1(best["accuracy"])}"', f'#let best_cost = "{p1(best["cost_vs_large"])}"',
+         f'#let worst_src = "{SRC.get(worst, worst)}"', f'#let worst_gap = "{100 * gaps[worst]:+.1f}"', f"#let worst_n = {auto_p['by_source'][worst]['n']}",
+         f'#let rl_med_share = "{p1(med_share)}"', f'#let auto_pareto = {str(bool(auto_p["on_pareto_front"])).lower()}']
     (GEN / "extra.typ").write_text("\n".join(L) + "\n", encoding="utf-8")

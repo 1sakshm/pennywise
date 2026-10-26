@@ -155,8 +155,8 @@ def place_labels(fig, ax, labs, fs=6.5):
 
 def fig_reward_curves():
     fig, ax = plt.subplots(figsize=(6.4, 3.4))
-    for f in sorted(glob.glob(str(RESULTS / "rl_lam*.json")), key=lambda f: json.load(open(f))["lambda"]):
-        r = json.load(open(f))
+    for f in sorted(glob.glob(str(RESULTS / "rl_lam*.json")), key=lambda f: json.load(open(f, encoding="utf-8"))["lambda"]):
+        r = json.load(open(f, encoding="utf-8"))
         rew = np.array([h["reward"] for h in r["train_curve"]])
         k = 25
         ma = np.convolve(rew, np.ones(k) / k, mode="valid")
@@ -171,8 +171,8 @@ def fig_reward_curves():
 
 
 def fig_brainmaps(lam):
-    um = json.load(open(VIZ / "umap.json"))
-    tr = json.load(open(VIZ / "training" / f"{lam:g}.json"))["checkpoints"]
+    um = json.load(open(VIZ / "umap.json", encoding="utf-8"))
+    tr = json.load(open(VIZ / "training" / f"{lam:g}.json", encoding="utf-8"))["checkpoints"]
     xy = np.array(um["xy"])
     picks = [("early", tr[0]), ("mid", tr[len(tr) // 2]), ("final", tr[-1])]
     cols = np.array([TIER_C["small"], TIER_C["medium"], TIER_C["large"]])
@@ -194,8 +194,8 @@ def main():
     FIG.mkdir(parents=True, exist_ok=True)
     from paper import gen_extra
     gen_extra.style()  # one print style for every figure
-    allr = json.load(open(RESULTS / "all.json"))
-    sft = json.load(open(RESULTS / "sft_history.json"))
+    allr = json.load(open(RESULTS / "all.json", encoding="utf-8"))
+    sft = json.load(open(RESULTS / "sft_history.json", encoding="utf-8"))
     cfg_train = yaml.safe_load(open(ROOT / "config" / "train.yaml"))
     cfg_models = yaml.safe_load(open(ROOT / ("tests/models.mock.yaml" if SYNTHETIC else "config/models.yaml")))
     numbers(allr, cfg_train, cfg_models, sft)

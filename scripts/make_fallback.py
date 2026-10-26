@@ -36,7 +36,7 @@ def main(a):
         by.setdefault(r["source"], []).append(r)
     prompts = EVERYDAY + [r["prompt"] for s in sorted(by) for r in rng.sample(by[s], 3)]
     prompts = [p for p in prompts if len(p) <= 3500][: a.n]
-    c = httpx.Client(base_url=a.url, timeout=120)
+    c = httpx.Client(base_url=a.url, timeout=httpx.Timeout(30, read=300))  # reasoning tiers can think for minutes
     lam = c.get("/health").json()["modes"]["auto"]
     out = []
     for p in prompts:
@@ -45,12 +45,16 @@ def main(a):
             print("route failed:", r)
             continue
         ans, done = "", None
-        with c.stream("POST", "/answer", json={"prompt": p, "tier": r["action"]}) as s:
-            for line in s.iter_lines():
-                if line.startswith("data:"):
-                    ev = json.loads(line[5:])
-                    ans += ev.get("delta", "")
-                    done = ev if ev.get("done") else done
+        try:
+            with c.stream("POST", "/answer", json={"prompt": p, "tier": r["action"]}) as s:
+                for line in s.iter_lines():
+                    if line.startswith("data:"):
+                        ev = json.loads(line[5:])
+                        ans += ev.get("delta", "")
+                        done = ev if ev.get("done") else done
+        except httpx.HTTPError as e:  # skip, never fabricate: only completed real runs are kept
+            print("answer error:", type(e).__name__, p[:60])
+            continue
         if not done:
             print("answer failed for:", p[:60])
             continue
