@@ -51,7 +51,7 @@ def main():
     pol = LayaPolicy()
     n_top = S["train_encoder_layers"]
     cache = pol.lower_cache(tab.prompts, n_top)  # frozen lower layers run once (see LayaPolicy.lower_cache)
-    params = pol.prepare_for_training(n_top)
+    params = pol.prepare_for_training(n_top, offload_frozen=True)
     print(f"trainable params: {sum(p.numel() for p in params) / 1e6:.1f}M | train {len(tr)} val {len(va)}"
           f" | oracle label share {np.bincount(y[tr], minlength=3) / len(tr)}")
     opt = torch.optim.AdamW(params, lr=S["lr"], weight_decay=0.01)
@@ -100,7 +100,9 @@ def main():
     torch.cuda.empty_cache()
     best_pol = LayaPolicy(str(out))
     te = tab.idx("test")
-    P = best_pol.probs([tab.prompts[i] for i in te])
+    # cached path: frozen lower layers come from the base model (the saved checkpoint holds them
+    # bf16-rounded), matching training and serving (router/serve_policy.py uses base + deltas)
+    P = best_pol.probs_cached([cache[i] for i in te], n_top)
     json.dump({"name": "SFT Laya", "seed": SEED, "synthetic": SYNTHETIC, "test_ids": tab.ids[te].tolist(),
                "test_actions": P.argmax(1).tolist(), "test_probs": P.round(4).tolist()},
               open(RESULTS / "sft.json", "w"), indent=1)

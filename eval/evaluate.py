@@ -112,14 +112,35 @@ def main():
 
     out = {"synthetic": SYNTHETIC, "n_test": int(len(te)), "bootstrap": B, "seed": SEED,
            "cost_ref_usd": tab.cost_ref, "jev": base["jev"], "test_ids": tab.ids[te].tolist(),
-           "test_source": tab.source[te].tolist(), "modes": choose_modes(results), "policies": results}
+           "test_source": tab.source[te].tolist(), "modes": choose_modes(val_results(tab)),
+           "modes_selected_on": "val", "policies": results}
     json.dump(out, open(RESULTS / "all.json", "w"), indent=1)
     write_summary(out)
     print((RESULTS / "summary.md").read_text(encoding="utf-8"))
 
 
+def val_results(tab):
+    """RL policies + always-medium/large scored on the *val* split (used only for choose_modes)."""
+    va = tab.idx("val")
+    pos = {i: k for k, i in enumerate(tab.ids[va])}
+    idx = np.random.default_rng(SEED + 1).integers(0, len(va), size=(B, len(va)))
+    out = []
+    for f in glob.glob(str(RESULTS / "rl_lam*.json")):
+        r = json.load(open(f))
+        a = np.full(len(va), -1)
+        for i, x in zip(r["val_ids"], r["val_actions"]):
+            a[pos[i]] = x
+        rec = {"name": "RL Laya", "kind": "rl", "lambda": r["lambda"], **boot(tab, va, a, idx)}
+        rec["vs_always_large_acc"] = paired_diff(tab, va, a, np.full(len(va), 2), idx)
+        out.append(rec)
+    for t, name in ((1, "always-medium"), (2, "always-large")):
+        out.append({"name": name, "kind": "trivial", "lambda": None, **boot(tab, va, np.full(len(va), t), idx)})
+    return out
+
+
 def choose_modes(results):
-    """Map proxy modes to a trained lambda with fixed rules (documented in DECISIONS.md):
+    """Map proxy modes to a trained lambda with fixed rules, applied to VAL-split results
+    (never test; documented in DECISIONS.md):
     auto         = cheapest RL policy whose accuracy is not significantly below always-large
                    (fallback: the lambda closest to 0.25)
     auto-quality = most accurate RL policy (ties -> cheaper)

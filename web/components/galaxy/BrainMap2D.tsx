@@ -1,0 +1,80 @@
+"use client";
+import { useEffect, useRef } from "react";
+import { TIER_RGB, TIERS } from "@/lib/data";
+import type { GalaxyProps } from "./Galaxy3D";
+
+// 2D fallback for the galaxy: same data, canvas 2D, colors tween between checkpoints.
+export default function BrainMap2D({ umap, action, prob, onHover, animate = true }: GalaxyProps & { animate?: boolean }) {
+  const ref = useRef<HTMLCanvasElement>(null);
+  const tgt = useRef<{ c: Float32Array; s: Float32Array } | null>(null);
+  const cur = useRef<{ c: Float32Array; s: Float32Array } | null>(null);
+  const n = umap.xy.length;
+
+  useEffect(() => {
+    const c = new Float32Array(n * 3), s = new Float32Array(n);
+    for (let i = 0; i < n; i++) {
+      const a = action ? action[i] : -1;
+      c.set(a >= 0 ? TIER_RGB[TIERS[a]] : [0.55, 0.58, 0.65], i * 3);
+      s[i] = (1.6 + 3.2 * (prob ? prob[i] : 0.5)) * (umap.split[i] === "test" ? 1.2 : 1);
+    }
+    tgt.current = { c, s };
+    if (!cur.current || !animate) cur.current = { c: c.slice(), s: s.slice() };
+  }, [action, prob, n, umap.split, animate]);
+
+  useEffect(() => {
+    const cv = ref.current!;
+    const ctx = cv.getContext("2d")!;
+    let raf = 0;
+    let last = performance.now();
+    const draw = (now: number) => {
+      const dt = Math.min(0.05, (now - last) / 1000);
+      last = now;
+      const dpr = Math.min(2, devicePixelRatio);
+      const w = cv.clientWidth, h = cv.clientHeight;
+      if (cv.width !== w * dpr) {
+        cv.width = w * dpr;
+        cv.height = h * dpr;
+      }
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.clearRect(0, 0, w, h);
+      const T = tgt.current, C = cur.current;
+      if (T && C) {
+        const k = animate ? 1 - Math.exp(-dt * 5) : 1;
+        ctx.globalCompositeOperation = "lighter";
+        const pad = 24, sc = Math.min(w, h) / 2 - pad;
+        for (let i = 0; i < n; i++) {
+          for (let j = 0; j < 3; j++) C.c[i * 3 + j] += (T.c[i * 3 + j] - C.c[i * 3 + j]) * k;
+          C.s[i] += (T.s[i] - C.s[i]) * k;
+          const [x, y] = umap.xy[i];
+          const px = w / 2 + x * sc, py = h / 2 - y * sc;
+          ctx.fillStyle = `rgba(${(C.c[i * 3] * 255) | 0},${(C.c[i * 3 + 1] * 255) | 0},${(C.c[i * 3 + 2] * 255) | 0},0.85)`;
+          ctx.beginPath();
+          ctx.arc(px, py, C.s[i], 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      raf = requestAnimationFrame(draw);
+    };
+    raf = requestAnimationFrame(draw);
+    return () => cancelAnimationFrame(raf);
+  }, [n, umap.xy, animate]);
+
+  const pick = (e: React.PointerEvent<HTMLCanvasElement>) => {
+    const cv = ref.current!;
+    const r = cv.getBoundingClientRect();
+    const mx = e.clientX - r.left, my = e.clientY - r.top;
+    const w = r.width, h = r.height, sc = Math.min(w, h) / 2 - 24;
+    let best = -1, bd = 100;
+    for (let i = 0; i < n; i++) {
+      const [x, y] = umap.xy[i];
+      const d = (w / 2 + x * sc - mx) ** 2 + (h / 2 - y * sc - my) ** 2;
+      if (d < bd) {
+        bd = d;
+        best = i;
+      }
+    }
+    onHover?.(best >= 0 ? best : null, mx, my);
+  };
+
+  return <canvas ref={ref} style={{ width: "100%", height: "100%", display: "block", touchAction: "pan-y" }} onPointerMove={pick} onPointerLeave={() => onHover?.(null, 0, 0)} />;
+}

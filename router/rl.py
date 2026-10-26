@@ -55,23 +55,24 @@ def snapshot(pol, cache, tab, lam):
 def train_one(lam, tab, steps, cache):
     seed_all(SEED)
     pol = LayaPolicy(str(CKPTS / "sft"))
-    params = pol.prepare_for_training(N_TOP)
+    params = pol.prepare_for_training(N_TOP, offload_frozen=True)
     opt = torch.optim.AdamW(params, lr=R["lr"], weight_decay=0.0)
     tr = tab.idx("train")
     rng = np.random.default_rng(SEED)
     gen = torch.Generator(device=pol.device).manual_seed(SEED)
     b, hist, snaps = None, [], []
     best_val, tag = -np.inf, lam_tag(lam)
+    best_state = None  # best-val trainable weights, kept in RAM; written to disk once at the end
     t0 = time.time()
 
     def take_snapshot(step):
-        nonlocal best_val
+        nonlocal best_val, best_state
         P, a, m = snapshot(pol, cache, tab, lam)
         snaps.append({"step": step, "train_reward_ma": float(np.mean([h["reward"] for h in hist[-R["snapshot_every"]:]])) if hist else None,
                       **m, "probs": P.round(3).tolist()})
         if m["val"]["reward"] > best_val:
             best_val = m["val"]["reward"]
-            pol.save(str(CKPTS / f"rl_lam{tag}"))
+            best_state = {k: v.detach().to("cpu", copy=True) for k, v in pol.model.named_parameters() if v.requires_grad}
             snaps[-1]["is_best_val"] = True
         print(f"  [lam={tag}] step {step:5d}  train_r_ma {snaps[-1]['train_reward_ma'] if hist else float('nan'):.4f}  "
               f"val r {m['val']['reward']:.4f} acc {m['val']['accuracy']:.3f} cost {m['val']['cost_vs_large']:.3f}  "
@@ -103,6 +104,8 @@ def train_one(lam, tab, steps, cache):
         if step % R["snapshot_every"] == 0 or step == steps:
             take_snapshot(step)
 
+    pol.model.load_state_dict(best_state, strict=False)
+    pol.save(str(CKPTS / f"rl_lam{tag}"))
     # final test evaluation uses the best-val checkpoint
     best = max(snaps, key=lambda s: s["val"]["reward"])
     a_best = np.array(best["probs"]).argmax(1)
@@ -111,6 +114,7 @@ def train_one(lam, tab, steps, cache):
                "config": R, "cost_ref_usd": tab.cost_ref, "test_ids": tab.ids[te].tolist(),
                "test": {**metrics(tab, a_best[te], te), "reward": float(tab.reward(a_best[te], lam, te).mean())},
                "test_actions": a_best[te].tolist(), "test_probs": np.array(best["probs"])[te].tolist(),
+               "val_ids": tab.ids[tab.idx("val")].tolist(), "val_actions": a_best[tab.idx("val")].tolist(),
                "train_curve": hist}
     json.dump({"lambda": lam, "ids": tab.ids.tolist(), "split": tab.split.tolist(), "snapshots": snaps},
               open(SNAPSHOTS / f"rl_lam{tag}.json", "w"))
@@ -131,7 +135,9 @@ def main(a):
             print(f"[lam={lam_tag(lam)}] already done, skipping")
             continue
         if cache is None:  # lower layers are frozen in SFT and RL, so the base model's cache is exact for all
-            cache = LayaPolicy().lower_cache(tab.prompts, N_TOP)
+            base = LayaPolicy()
+            cache = base.lower_cache(tab.prompts, N_TOP)
+            del base
             torch.cuda.empty_cache()
         train_one(lam, tab, a.steps or R["steps"], cache)
 

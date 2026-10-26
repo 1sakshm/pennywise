@@ -94,6 +94,15 @@ def main():
         k: p.get(k) for k in ("name", "kind", "lambda", "accuracy", "accuracy_ci", "cost_vs_large", "cost_vs_large_ci",
                               "mean_cost_usd", "router_latency_ms", "action_share", "on_pareto_front")} for p in allr["policies"]])
 
+    # ---- router_actions.json: per-policy test actions, aligned with prompts.json (drives the particle hero)
+    pick_pol = lambda n, lam=None: next((p for p in allr["policies"] if p["name"] == n and p.get("lambda") == lam), None)  # noqa: E731
+    acts = {"always-large": pick_pol("always-large")["actions"], "zero-shot": pick_pol("zero-shot Laya")["actions"]}
+    if pick_pol("SFT Laya"):
+        acts["sft"] = pick_pol("SFT Laya")["actions"]
+    acts["rl"] = {f"{p['lambda']:g}": p["actions"] for p in allr["policies"] if p["kind"] == "rl"}
+    assert allr["test_ids"] == tab.ids[te].tolist()
+    sizes["router_actions.json"] = dump("router_actions.json", acts)
+
     # ---- game.json: router = the `auto` policy; score = picking the oracle (cheapest correct) tier
     auto = json.load(open(RESULTS / f"rl_lam{modes['auto']:g}.json"))
     apos = {i: k for k, i in enumerate(auto["test_ids"])}

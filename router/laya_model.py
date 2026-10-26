@@ -87,11 +87,14 @@ class LayaPolicy:
         e = np.concatenate(out)
         return e[0] if single else e
 
-    def prepare_for_training(self, n_top_layers: int):
-        """Train the top `n_top_layers` encoder layers + decision head; freeze the rest in bf16.
+    def prepare_for_training(self, n_top_layers: int, offload_frozen: bool = False):
+        """Train the top `n_top_layers` encoder layers + decision head; freeze the rest.
 
         Sized for a 4 GB GPU: frozen modules hold no grads/optimizer state and store no
         activations; the act/escalate head is frozen (unused, see LAYA_NOTES.md).
+        offload_frozen=True (for the cached path, which never runs the lower layers) moves the
+        embeddings + lower layers to CPU in fp32: frees ~1.2 GB VRAM and keeps them exact, so
+        saved checkpoints hold the original frozen weights. Otherwise they're cast to bf16 on GPU.
         Returns the trainable parameters.
         """
         m, enc = self.model, self.model.encoder
@@ -101,8 +104,13 @@ class LayaPolicy:
         for mod in trainable:
             for p in mod.parameters():
                 p.requires_grad_(True)
-        if self.amp:
-            for mod in [enc.embeddings, *enc.layers[: len(enc.layers) - n_top_layers]]:
+        frozen = [enc.embeddings, *enc.layers[: len(enc.layers) - n_top_layers]]
+        if offload_frozen:
+            for mod in frozen:
+                mod.to("cpu")
+            torch.cuda.empty_cache()
+        elif self.amp:
+            for mod in frozen:
                 mod.to(torch.bfloat16)
         m.head_checkpointing = True
         return [p for p in m.parameters() if p.requires_grad]
