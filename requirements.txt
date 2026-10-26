@@ -1,0 +1,22 @@
+# Full pipeline (dataset, training, eval). torch: install the CUDA build for your GPU first, e.g.
+#   pip install torch --index-url https://download.pytorch.org/whl/cu124
+torch>=2.6
+laya
+transformers>=5
+safetensors
+huggingface_hub
+numpy
+pandas
+pyyaml
+datasets
+scikit-learn
+umap-learn
+sentence-transformers
+openai>=1.50
+httpx
+fastapi
+uvicorn[standard]
+pydantic>=2
+mcp[cli]>=2
+matplotlib
+typst

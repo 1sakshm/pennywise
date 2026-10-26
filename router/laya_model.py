@@ -12,6 +12,7 @@ from typing import Dict, List, Optional
 
 import numpy as np
 import torch
+from torch.utils.checkpoint import checkpoint
 from laya.common import QTYPES, build_sequence, collate_items
 from laya.train import load_checkpoint, save_checkpoint
 
@@ -104,6 +105,8 @@ class LayaPolicy:
         for mod in trainable:
             for p in mod.parameters():
                 p.requires_grad_(True)
+        if self.device.type == "cuda":  # make the allocator free its cache instead of spilling (WDDM)
+            torch.cuda.set_per_process_memory_fraction(0.85)
         frozen = [enc.embeddings, *enc.layers[: len(enc.layers) - n_top_layers]]
         if offload_frozen:
             for mod in frozen:
@@ -168,16 +171,20 @@ class LayaPolicy:
             mmask[i, :len(it["markers"])] = True
         h, att, mpos, mmask = (x.to(self.device) for x in (h, att, mpos, mmask))
         qtype = torch.zeros(B, dtype=torch.long, device=self.device)  # 'choice'
+        # Activation checkpointing while training: recompute each layer in backward instead of
+        # storing its activations (peak 3.5 GB -> fits a 4 GB GPU without spilling).
+        ckpt = self.model.training and torch.is_grad_enabled()
+        run = (lambda f, *a, **k: checkpoint(f, *a, use_reentrant=False, **k)) if ckpt else (lambda f, *a, **k: f(*a, **k))
         with torch.autocast(self.device.type, dtype=torch.bfloat16, enabled=self.amp):
             masks, rope = self._masks_and_rope(h, att)
             for layer in enc.layers[k0:]:
-                h = layer(h, attention_mask=masks[layer.attention_type], position_embeddings=rope[layer.attention_type])
+                h = run(layer, h, attention_mask=masks[layer.attention_type], position_embeddings=rope[layer.attention_type])
             h = enc.final_norm(h)
             # --- DecisionModel.forward, head part (option_ids=None path)
             h = h + m.type_emb(qtype)[:, None, :]
             pad = ~att.bool()
             for layer in m.head.layers:
-                h = layer(h, src_key_padding_mask=pad)
+                h = run(layer, h, src_key_padding_mask=pad)
             idx = mpos.clamp(min=0)[:, :, None].expand(-1, -1, h.size(-1))
             logits = m.scorer(torch.gather(h, 1, idx)).squeeze(-1).float()
         return logits.masked_fill(~mmask, -1e4)

@@ -20,14 +20,14 @@ sft:
 
 rl:
   lambdas: [0.0, 0.1, 0.25, 0.5, 1.0, 2.0]
-  steps: 1500
+  steps: 800                # ~22 passes over 570 train prompts; ~11 min per lambda on an RTX 3050
   batch_size: 16
   lr: 5.0e-6
   entropy_beta_start: 0.05
   entropy_beta_end: 0.005
   baseline: running_mean    # running_mean | batch_mean
   baseline_momentum: 0.95
-  snapshot_every: 50
+  snapshot_every: 40
 
 eval:
   bootstrap: 1000

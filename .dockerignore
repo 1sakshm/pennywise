@@ -1,0 +1,13 @@
+.venv
+.git
+web
+data
+eval
+paper
+launch
+docs
+tests
+router/checkpoints
+router/snapshots
+**/__pycache__
+.env

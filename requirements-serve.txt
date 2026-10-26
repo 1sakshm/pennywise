@@ -1,0 +1,11 @@
+# Serving only (router + proxy). torch CPU wheel is installed separately in the Dockerfile.
+laya
+transformers>=5
+safetensors
+huggingface_hub
+numpy
+pyyaml
+httpx
+fastapi
+uvicorn[standard]
+pydantic>=2

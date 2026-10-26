@@ -30,10 +30,17 @@ def trainable_prefixes(n_layers_total: int):
                  + ["encoder.final_norm.", "head.", "type_emb.", "scorer."])
 
 
-def export_deltas(lambdas, out_dir=SERVE_DIR):
-    """Write rl_lam{lam}.safetensors holding only the trainable modules of each RL checkpoint."""
+def export_deltas(lambdas=None, out_dir=SERVE_DIR):
+    """Write rl_lam{lam}.safetensors holding only the trainable modules of each RL checkpoint,
+    plus modes.json (proxy mode -> lambda, chosen on val by eval/evaluate.py).
+    Default: only the lambdas the modes use (keeps serving RAM ~2.3 GB)."""
+    import json
     from safetensors.torch import load_file, save_file
+    from router.paths import RESULTS
+    modes = json.load(open(RESULTS / "all.json"))["modes"]
+    lambdas = sorted(set(modes.values())) if lambdas is None else lambdas
     out_dir.mkdir(parents=True, exist_ok=True)
+    json.dump({"modes": modes}, open(out_dir / "modes.json", "w"), indent=1)
     for lam in lambdas:
         sd = load_file(str(CKPTS / f"rl_lam{lam:g}" / "model.safetensors"))
         n = 1 + max(int(k.split(".")[2]) for k in sd if k.startswith("encoder.layers."))
@@ -72,8 +79,11 @@ class MultiPolicy:
         self.device = self.base.device
         self.policies, self.lambdas = {}, []
         files = sorted(SERVE_DIR.glob("rl_lam*.safetensors")) if SERVE_DIR.exists() else []
+        only = {float(x) for x in os.environ.get("SERVE_LAMBDAS", "").split(",") if x.strip()}
         for f in files:
             lam = float(f.stem.replace("rl_lam", ""))
+            if only and lam not in only:
+                continue
             m = _clone_trainable(self.base.model)
             res = m.load_state_dict({k: v.float() for k, v in load_file(str(f)).items()}, strict=False)
             assert not res.unexpected_keys, res.unexpected_keys
@@ -109,10 +119,11 @@ class MultiPolicy:
 if __name__ == "__main__":
     import argparse
     ap = argparse.ArgumentParser()
-    ap.add_argument("--export", default="", help="comma-separated lambdas to export deltas for")
+    ap.add_argument("--export", nargs="?", const="modes", default="",
+                    help="export deltas: 'modes' (default: lambdas used by auto modes) or comma-separated lambdas")
     a = ap.parse_args()
     if a.export:
-        export_deltas([float(x) for x in a.export.split(",")])
+        export_deltas(None if a.export == "modes" else [float(x) for x in a.export.split(",")])
     mp = MultiPolicy()
     print(f"mode={mp.mode} lambdas={mp.lambdas}")
     for lam in mp.lambdas or [0.0]:

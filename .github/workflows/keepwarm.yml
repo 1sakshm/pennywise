@@ -1,0 +1,12 @@
+name: keep-warm
+# Pings the live server so judges never hit a cold start (GitHub's cron is best-effort, ~5-15 min).
+on:
+  schedule:
+    - cron: "*/5 * * * *"
+  workflow_dispatch:
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    if: ${{ vars.HEALTH_URL != '' }}
+    steps:
+      - run: curl -fsS --max-time 20 "${{ vars.HEALTH_URL }}" > /dev/null || echo "health check failed"
