@@ -172,6 +172,166 @@
    },
    "wall_s": 416.4,
    "status": "exit 0"
+  },
+  {
+   "task": "off_by_one",
+   "level": "easy",
+   "arm": "pennywise/large",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.038062,
+   "tier_calls": {
+    "small": 0,
+    "medium": 0,
+    "large": 0
+   },
+   "wall_s": 102.3,
+   "status": "exit 0"
+  },
+  {
+   "task": "slugify",
+   "level": "easy",
+   "arm": "pennywise/large",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.031638,
+   "tier_calls": {
+    "small": 0,
+    "medium": 0,
+    "large": 0
+   },
+   "wall_s": 25.9,
+   "status": "exit 0"
+  },
+  {
+   "task": "palindrome",
+   "level": "easy",
+   "arm": "pennywise/large",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.048075,
+   "tier_calls": {
+    "small": 0,
+    "medium": 0,
+    "large": 0
+   },
+   "wall_s": 67.9,
+   "status": "exit 0"
+  },
+  {
+   "task": "parse_kv",
+   "level": "medium",
+   "arm": "pennywise/large",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.030992,
+   "tier_calls": {
+    "small": 0,
+    "medium": 0,
+    "large": 0
+   },
+   "wall_s": 80.6,
+   "status": "exit 0"
+  },
+  {
+   "task": "merge_intervals",
+   "level": "medium",
+   "arm": "pennywise/large",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.032745,
+   "tier_calls": {
+    "small": 0,
+    "medium": 0,
+    "large": 0
+   },
+   "wall_s": 29.9,
+   "status": "exit 0"
+  },
+  {
+   "task": "roman",
+   "level": "medium",
+   "arm": "pennywise/large",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.037549,
+   "tier_calls": {
+    "small": 0,
+    "medium": 0,
+    "large": 0
+   },
+   "wall_s": 86.9,
+   "status": "exit 0"
+  },
+  {
+   "task": "lru_cache",
+   "level": "hard",
+   "arm": "pennywise/large",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.044209,
+   "tier_calls": {
+    "small": 0,
+    "medium": 0,
+    "large": 0
+   },
+   "wall_s": 83.0,
+   "status": "exit 0"
+  },
+  {
+   "task": "expr_eval",
+   "level": "hard",
+   "arm": "pennywise/large",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.077268,
+   "tier_calls": {
+    "small": 0,
+    "medium": 0,
+    "large": 0
+   },
+   "wall_s": 70.7,
+   "status": "exit 0"
+  },
+  {
+   "task": "dijkstra_bug",
+   "level": "hard",
+   "arm": "pennywise/large",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.053189,
+   "tier_calls": {
+    "small": 0,
+    "medium": 0,
+    "large": 0
+   },
+   "wall_s": 112.0,
+   "status": "exit 0"
+  },
+  {
+   "task": "csv_quotes",
+   "level": "hard",
+   "arm": "pennywise/large",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.046798,
+   "tier_calls": {
+    "small": 0,
+    "medium": 0,
+    "large": 0
+   },
+   "wall_s": 113.9,
+   "status": "exit 0"
   }
  ]
 }

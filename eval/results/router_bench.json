@@ -24,6 +24,54 @@
    "total_cost_usd": 0.12530000000000002,
    "usd_per_merged_pr": 0.012530000000000003,
    "total_minutes": 36.9
+  },
+  "pennywise/auto (repeat, day)": {
+   "tasks": 10,
+   "merged": 6,
+   "by_level": {
+    "easy": "2/3",
+    "medium": "2/3",
+    "hard": "2/4"
+   },
+   "total_cost_usd": 0.009176,
+   "usd_per_merged_pr": 0.0015293333333333333,
+   "total_minutes": 8.9
+  },
+  "pennywise/auto + cascade (v0.2)": {
+   "tasks": 10,
+   "merged": 5,
+   "by_level": {
+    "easy": "2/3",
+    "medium": "2/3",
+    "hard": "1/4"
+   },
+   "total_cost_usd": 0.077888,
+   "usd_per_merged_pr": 0.0155776,
+   "total_minutes": 7.7
+  },
+  "pennywise/auto + cascade (v0.2b)": {
+   "tasks": 10,
+   "merged": 10,
+   "by_level": {
+    "easy": "3/3",
+    "medium": "3/3",
+    "hard": "4/4"
+   },
+   "total_cost_usd": 0.324653,
+   "usd_per_merged_pr": 0.0324653,
+   "total_minutes": 11.0
+  },
+  "pennywise/large (reference)": {
+   "tasks": 10,
+   "merged": 10,
+   "by_level": {
+    "easy": "3/3",
+    "medium": "3/3",
+    "hard": "4/4"
+   },
+   "total_cost_usd": 0.440525,
+   "usd_per_merged_pr": 0.0440525,
+   "total_minutes": 12.9
   }
  },
  "alan_runs": [
@@ -287,6 +335,166 @@
     "large": 0
    },
    "wall_s": 416.4,
+   "status": "exit 0"
+  },
+  {
+   "task": "off_by_one",
+   "level": "easy",
+   "arm": "pennywise/large",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.038062,
+   "tier_calls": {
+    "small": 0,
+    "medium": 0,
+    "large": 0
+   },
+   "wall_s": 102.3,
+   "status": "exit 0"
+  },
+  {
+   "task": "slugify",
+   "level": "easy",
+   "arm": "pennywise/large",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.031638,
+   "tier_calls": {
+    "small": 0,
+    "medium": 0,
+    "large": 0
+   },
+   "wall_s": 25.9,
+   "status": "exit 0"
+  },
+  {
+   "task": "palindrome",
+   "level": "easy",
+   "arm": "pennywise/large",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.048075,
+   "tier_calls": {
+    "small": 0,
+    "medium": 0,
+    "large": 0
+   },
+   "wall_s": 67.9,
+   "status": "exit 0"
+  },
+  {
+   "task": "parse_kv",
+   "level": "medium",
+   "arm": "pennywise/large",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.030992,
+   "tier_calls": {
+    "small": 0,
+    "medium": 0,
+    "large": 0
+   },
+   "wall_s": 80.6,
+   "status": "exit 0"
+  },
+  {
+   "task": "merge_intervals",
+   "level": "medium",
+   "arm": "pennywise/large",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.032745,
+   "tier_calls": {
+    "small": 0,
+    "medium": 0,
+    "large": 0
+   },
+   "wall_s": 29.9,
+   "status": "exit 0"
+  },
+  {
+   "task": "roman",
+   "level": "medium",
+   "arm": "pennywise/large",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.037549,
+   "tier_calls": {
+    "small": 0,
+    "medium": 0,
+    "large": 0
+   },
+   "wall_s": 86.9,
+   "status": "exit 0"
+  },
+  {
+   "task": "lru_cache",
+   "level": "hard",
+   "arm": "pennywise/large",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.044209,
+   "tier_calls": {
+    "small": 0,
+    "medium": 0,
+    "large": 0
+   },
+   "wall_s": 83.0,
+   "status": "exit 0"
+  },
+  {
+   "task": "expr_eval",
+   "level": "hard",
+   "arm": "pennywise/large",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.077268,
+   "tier_calls": {
+    "small": 0,
+    "medium": 0,
+    "large": 0
+   },
+   "wall_s": 70.7,
+   "status": "exit 0"
+  },
+  {
+   "task": "dijkstra_bug",
+   "level": "hard",
+   "arm": "pennywise/large",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.053189,
+   "tier_calls": {
+    "small": 0,
+    "medium": 0,
+    "large": 0
+   },
+   "wall_s": 112.0,
+   "status": "exit 0"
+  },
+  {
+   "task": "csv_quotes",
+   "level": "hard",
+   "arm": "pennywise/large",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.046798,
+   "tier_calls": {
+    "small": 0,
+    "medium": 0,
+    "large": 0
+   },
+   "wall_s": 113.9,
    "status": "exit 0"
   }
  ]

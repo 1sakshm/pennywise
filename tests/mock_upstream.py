@@ -17,6 +17,11 @@ def reply(body):
     msgs, tools = body["messages"], body.get("tools")
     if tools and msgs[-1]["role"] != "tool":
         fn = tools[0]["function"]["name"]
+        first_user = next((m.get("content") or "" for m in msgs if m["role"] == "user"), "")
+        if "BADTOOL" in str(first_user) and body["model"] != "mock-large":  # simulate gpt-oss's malformed tool call
+            fn = fn + "?json"
+        if "EMPTYREPLY" in str(first_user) and body["model"] != "mock-large":  # simulate gpt-oss's empty (reasoning-only) turn
+            return "", None
         return None, [{"id": "call_1", "type": "function", "function": {"name": fn, "arguments": json.dumps({"x": 1})}}]
     last = msgs[-1].get("content") or ""
     return f"[{body['model']}] ok: {str(last)[:40]}", None

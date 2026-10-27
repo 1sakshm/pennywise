@@ -17,13 +17,22 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "bench"))
-from tasks import TASKS  # noqa: E402
+from tasks import ORIGINAL_TESTS, TASKS  # noqa: E402
 
 
 def score_folder(d, task):
-    tests = {n: s for n, s in TASKS[task]["files"].items() if n.startswith("test_")}
-    untouched = all((d / n).exists() and (d / n).read_text(encoding="utf-8") == s for n, s in tests.items())
-    r = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider"], cwd=d, capture_output=True, text=True)
+    """Untouched = the folder's test file is the current or the original (v1.0) version. Pass = the agent's code
+    passes the CURRENT canonical tests, run on a copy, so every arm is judged by the same corrected suite."""
+    import shutil
+    import tempfile
+    tests = {n: src for n, src in TASKS[task]["files"].items() if n.startswith("test_")}
+    allowed = lambda n: {tests[n], (ORIGINAL_TESTS.get(task) or {}).get(n)}  # noqa: E731
+    untouched = all((d / n).exists() and (d / n).read_text(encoding="utf-8") in allowed(n) for n in tests)
+    with tempfile.TemporaryDirectory() as tmp:
+        shutil.copytree(d, tmp, dirs_exist_ok=True, ignore=shutil.ignore_patterns(".git", "__pycache__"))
+        for n, src in tests.items():
+            Path(tmp, n).write_text(src, encoding="utf-8")
+        r = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider"], cwd=tmp, capture_output=True, text=True)
     return {"tests_pass": r.returncode == 0, "tests_untouched": untouched, "merged": r.returncode == 0 and untouched}
 
 
@@ -76,6 +85,18 @@ def main():
                                      sum(r["cost_usd"] for r in pw if r["arm"] == "pennywise/auto"),
                                      round(sum(r["wall_s"] for r in pw if r["arm"] == "pennywise/auto") / 60, 1)),
            "alan/auto-router": summary(alan, alan_cost, round(sum(r["minutes"] for r in alan if r["minutes"]), 1) if any(r["minutes"] for r in alan) else None)}
+    day = ROOT / "eval" / "results" / "router_bench_pennywise_day.json"
+    if day.exists():  # independent repeat of the auto arm in daytime (all 10 tasks, not just failures)
+        rows = [r for r in json.load(open(day, encoding="utf-8"))["runs"] if r["arm"] == "pennywise/auto"]
+        out["pennywise/auto (repeat, day)"] = summary(rows, sum(r["cost_usd"] for r in rows), round(sum(r["wall_s"] for r in rows) / 60, 1))
+    cas = ROOT / "eval" / "results" / "router_bench_pennywise_cascade.json"
+    if cas.exists():  # v0.2: same router + tool-call cascade in the proxy (escalate to top tier on a broken tool call)
+        rows = [r for r in json.load(open(cas, encoding="utf-8"))["runs"] if r["arm"] == "pennywise/auto"]
+        out["pennywise/auto + cascade (v0.2)"] = summary(rows, sum(r["cost_usd"] for r in rows), round(sum(r["wall_s"] for r in rows) / 60, 1))
+    cas2 = ROOT / "eval" / "results" / "router_bench_pennywise_cascade2.json"
+    if cas2.exists():  # v0.2b: cascade also escalates on empty replies and in-stream upstream errors
+        rows = [r for r in json.load(open(cas2, encoding="utf-8"))["runs"] if r["arm"] == "pennywise/auto"]
+        out["pennywise/auto + cascade (v0.2b)"] = summary(rows, sum(r["cost_usd"] for r in rows), round(sum(r["wall_s"] for r in rows) / 60, 1))
     if any(r["arm"] == "pennywise/large" for r in pw):
         rows = [r for r in pw if r["arm"] == "pennywise/large"]
         out["pennywise/large (reference)"] = summary(rows, sum(r["cost_usd"] for r in rows), round(sum(r["wall_s"] for r in rows) / 60, 1))

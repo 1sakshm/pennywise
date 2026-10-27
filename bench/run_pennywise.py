@@ -57,7 +57,7 @@ def run(task, model, opencode, timeout):
     untouched = all((d / n).read_text(encoding="utf-8") == s for n, s in tests_of(task).items())
     tests = subprocess.run([sys.executable, "-m", "pytest", "-q", "-p", "no:cacheprovider"], cwd=d, capture_output=True, text=True)
     LOGS.mkdir(parents=True, exist_ok=True)
-    (LOGS / f"{task}_{model}.txt").write_text(re.sub(r"\x1b\[[0-9;]*m", "", transcript) + "\n--- pytest ---\n" + tests.stdout, encoding="utf-8")
+    (LOGS / f"{task}_{model}_{time.strftime('%H%M')}.txt").write_text(re.sub(r"\x1b\[[0-9;]*m", "", transcript) + "\n--- pytest ---\n" + tests.stdout, encoding="utf-8")
     row = {"task": task, "level": TASKS[task]["level"], "arm": f"pennywise/{model}", "merged": tests.returncode == 0 and untouched,
            "tests_pass": tests.returncode == 0, "tests_untouched": untouched, "cost_usd": round(s1 - s0, 6),
            "tier_calls": {k: t1.get(k, 0) - t0.get(k, 0) for k in t1}, "wall_s": round(wall, 1), "status": status}
@@ -71,18 +71,20 @@ def main():
     ap.add_argument("--models", default="auto")
     ap.add_argument("--tasks", default=",".join(TASKS))
     ap.add_argument("--timeout", type=int, default=1500)
+    ap.add_argument("--out", default=str(OUT), help="results file (use a new one for an independent repeat run)")
     a = ap.parse_args()
+    out = Path(a.out)
     opencode = shutil.which("opencode") or sys.exit("opencode not on PATH (npm i -g opencode-ai)")
-    old = json.load(open(OUT, encoding="utf-8"))["runs"] if OUT.exists() else []
+    old = json.load(open(out, encoding="utf-8"))["runs"] if out.exists() else []
     done = {(r["task"], r["arm"]) for r in old}
     rows = list(old)
     for t in a.tasks.split(","):
         for m in a.models.split(","):
             if (t, f"pennywise/{m}") not in done:  # resumable
                 rows.append(run(t, m, opencode, a.timeout))
-                OUT.write_text(json.dumps({"runs": rows}, indent=1), encoding="utf-8")
+                out.write_text(json.dumps({"runs": rows}, indent=1), encoding="utf-8")
     hashes = {t: hashlib.sha256(json.dumps(TASKS[t], sort_keys=True).encode()).hexdigest()[:12] for t in TASKS}
-    OUT.write_text(json.dumps({"label": "OpenCode CLI with Pennywise; list-price cost from measured tokens (actual spend $0, free shared endpoints).",
+    out.write_text(json.dumps({"label": "OpenCode CLI with Pennywise; list-price cost from measured tokens (actual spend $0, free shared endpoints).",
                                "task_hashes": hashes, "runs": rows}, indent=1), encoding="utf-8")
 
 

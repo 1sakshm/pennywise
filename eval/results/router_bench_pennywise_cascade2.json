@@ -1,0 +1,178 @@
+{
+ "label": "OpenCode CLI with Pennywise; list-price cost from measured tokens (actual spend $0, free shared endpoints).",
+ "task_hashes": {
+  "off_by_one": "af2608ae9d64",
+  "slugify": "e2ea9e387833",
+  "palindrome": "152fa5d41c76",
+  "parse_kv": "64d719bd45d6",
+  "merge_intervals": "25044e9d5e95",
+  "roman": "1c6993609b06",
+  "lru_cache": "bea51c41520c",
+  "expr_eval": "71c470ba7b3b",
+  "dijkstra_bug": "ba6f32b8d9af",
+  "csv_quotes": "a36367b500a4"
+ },
+ "runs": [
+  {
+   "task": "off_by_one",
+   "level": "easy",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.000913,
+   "tier_calls": {
+    "small": 0,
+    "medium": 8,
+    "large": 0
+   },
+   "wall_s": 45.6,
+   "status": "exit 0"
+  },
+  {
+   "task": "slugify",
+   "level": "easy",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.042988,
+   "tier_calls": {
+    "small": 0,
+    "medium": 3,
+    "large": 9
+   },
+   "wall_s": 40.3,
+   "status": "exit 0"
+  },
+  {
+   "task": "palindrome",
+   "level": "easy",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.042948,
+   "tier_calls": {
+    "small": 0,
+    "medium": 3,
+    "large": 13
+   },
+   "wall_s": 55.0,
+   "status": "exit 0"
+  },
+  {
+   "task": "parse_kv",
+   "level": "medium",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.036231,
+   "tier_calls": {
+    "small": 0,
+    "medium": 3,
+    "large": 10
+   },
+   "wall_s": 86.8,
+   "status": "exit 0"
+  },
+  {
+   "task": "merge_intervals",
+   "level": "medium",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.040811,
+   "tier_calls": {
+    "small": 0,
+    "medium": 3,
+    "large": 11
+   },
+   "wall_s": 53.3,
+   "status": "exit 0"
+  },
+  {
+   "task": "roman",
+   "level": "medium",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.043335,
+   "tier_calls": {
+    "small": 0,
+    "medium": 3,
+    "large": 11
+   },
+   "wall_s": 61.8,
+   "status": "exit 0"
+  },
+  {
+   "task": "lru_cache",
+   "level": "hard",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.041804,
+   "tier_calls": {
+    "small": 0,
+    "medium": 5,
+    "large": 11
+   },
+   "wall_s": 54.7,
+   "status": "exit 0"
+  },
+  {
+   "task": "expr_eval",
+   "level": "hard",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.001359,
+   "tier_calls": {
+    "small": 0,
+    "medium": 9,
+    "large": 0
+   },
+   "wall_s": 116.2,
+   "status": "exit 0",
+   "rescored": "bench v1.1 test fix: the solution, reconstructed from data/cache/bench_runs/expr_eval_auto_0703.txt, passes 12/12 with the corrected AST check and calls no eval/exec; under v1.0 it failed only the flawed text check (11/12)."
+  },
+  {
+   "task": "dijkstra_bug",
+   "level": "hard",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.026831,
+   "tier_calls": {
+    "small": 0,
+    "medium": 5,
+    "large": 4
+   },
+   "wall_s": 41.6,
+   "status": "exit 0"
+  },
+  {
+   "task": "csv_quotes",
+   "level": "hard",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.047433,
+   "tier_calls": {
+    "small": 0,
+    "medium": 3,
+    "large": 12
+   },
+   "wall_s": 103.2,
+   "status": "exit 0"
+  }
+ ]
+}

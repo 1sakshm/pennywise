@@ -5,6 +5,10 @@ Each task is a tiny repo: source file(s) with a bug or a stub, a pytest suite, a
 Difficulty is spread on purpose (easy -> hard) so routing decisions matter.
 """
 
+# v1.1 (2026-10-27): expr_eval's test_no_eval used a text search for "eval(" that the starter docstring itself
+# ("Do not use eval()") tripped, so a correct solution that kept the docstring failed. It now checks the AST for
+# real eval/exec calls. ORIGINAL_TESTS keeps the v1.0 text so folders created before the fix still count as
+# "tests untouched".
 TASKS = {
     # ---- easy: a small model should handle these
     "off_by_one": {
@@ -75,7 +79,8 @@ TASKS = {
                   "test_calc.py": "import pytest\nfrom calc import evaluate\n\n"
                                   "@pytest.mark.parametrize('e,v', [('1+2*3', 7), ('(1+2)*3', 9), ('10/4', 2.5), ('-3+5', 2), ('2*-3', -6), ('-(2+3)*2', -10), ('2-3-4', -5), ('8/2/2', 2), (' 7 ', 7), ('((2))', 2)])\n"
                                   "def test_eval(e, v):\n    assert evaluate(e) == pytest.approx(v)\n\n"
-                                  "def test_no_eval():\n    import inspect, calc\n    assert 'eval(' not in inspect.getsource(calc).replace('def evaluate(', '')\n\n"
+                                  "def test_no_eval():\n    import ast, inspect, calc\n    tree = ast.parse(inspect.getsource(calc))\n"
+                                  "    assert not any(isinstance(n, ast.Call) and getattr(n.func, 'id', None) in ('eval', 'exec') for n in ast.walk(tree))\n\n"
                                   "def test_errors():\n    for bad in ['1+', '(1+2', '2**3', '']:\n        with pytest.raises(ValueError):\n            evaluate(bad)\n"},
         "ask": "Implement evaluate in calc.py as a recursive-descent parser (no eval) supporting + - * / parentheses and unary minus, left-associative, raising ValueError on malformed input, so `python -m pytest -q` passes. Do not edit the tests.",
     },
@@ -106,3 +111,8 @@ TASKS = {
         "ask": "split_csv_line in csvline.py must follow RFC 4180 quoting (quoted fields, doubled quotes, empty fields; ValueError on an unterminated quote) without the csv module. Fix it so `python -m pytest -q` passes. Do not edit the tests.",
     },
 }
+
+ORIGINAL_TESTS = {"expr_eval": {"test_calc.py": TASKS["expr_eval"]["files"]["test_calc.py"].replace(
+    "def test_no_eval():\n    import ast, inspect, calc\n    tree = ast.parse(inspect.getsource(calc))\n"
+    "    assert not any(isinstance(n, ast.Call) and getattr(n.func, 'id', None) in ('eval', 'exec') for n in ast.walk(tree))\n",
+    "def test_no_eval():\n    import inspect, calc\n    assert 'eval(' not in inspect.getsource(calc).replace('def evaluate(', '')\n")}}
