@@ -10,7 +10,7 @@
 #let ink = rgb("#111827")
 #let muted = rgb("#4b5563")
 
-#set document(title: "Pennywise: Learning to Route LLM Calls with an Open Decision Model", author: "Pennywise contributors")
+#set document(title: "Pennywise: Learning to Route LLM Calls with an Open Decision Model", author: "Saksham Sharma")
 #set page(
   paper: "a4", margin: (x: 1.75cm, top: 2.1cm, bottom: 2.0cm), columns: 2,
   header: context {
@@ -59,7 +59,8 @@
   #v(0.35em)
   #text(11pt, fill: muted)[Policy-gradient training of Laya as a cost-aware router]
   #v(0.7em)
-  #text(9.5pt)[Pennywise contributors] \
+  #text(9.5pt)[Saksham Sharma] \
+  #text(8.5pt, fill: muted)[BITS Pilani] \
   #text(8pt, fill: muted)[Built #built from commit #raw(commit) · seed #seed · all numbers generated from evaluation outputs]
   #v(0.9em)
   #block(width: 88%, inset: (x: 0pt))[
