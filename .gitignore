@@ -38,3 +38,6 @@ server/stats.json
 bench/alan_evidence/*.png
 launch/video/audio/mix.wav
 launch/video/pennywise_launch_v2.mp4
+launch/video/assets/07_lru_cache.png
+launch/video/assets/usage_after.png
+launch/video/pennywise_demo.mp4

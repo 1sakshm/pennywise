@@ -24,12 +24,13 @@ def decode(path):
 
 
 def trim(x, thr_db=-38, pad=0.04):
+    """-> (trimmed audio, seconds removed from the start)"""
     env = np.convolve(np.abs(x), np.ones(480) / 480, mode="same")
     idx = np.where(env > 10 ** (thr_db / 20))[0]
     if not len(idx):
-        return x
+        return x, 0.0
     a, b = max(0, idx[0] - int(pad * SR)), min(len(x), idx[-1] + int(pad * SR))
-    return x[a:b]
+    return x[a:b], a / SR
 
 
 def filt(x, kind, f, order=2):
@@ -152,18 +153,30 @@ def add(buf, x, t, gain=1.0, pan=0.0):
 
 # ------------------------------------------------------------------ timeline from the voiceover
 lines = json.load(open(HERE / "vo_script.json", encoding="utf-8"))
-vo = {l["id"]: trim(decode(HERE / "audio" / f"vo_{l['id']}.mp3")) for l in lines}
-GAP = {"hook": 0.25, "jev": 0.08, "laya": 0.2, "what": 0.15, "data": 0.25, "race": 0.1, "result": 0.45, "faster": 0.6, "cascade": 0.2, "report": 0.25, "close": 0}
-INTRO = 2.0
+vo, lead = {}, {}
+for l in lines:
+    vo[l["id"]], lead[l["id"]] = trim(decode(HERE / "audio" / f"vo_{l['id']}.mp3"))
+GAPS = {"hook": 0.8, "laya": 0.8, "problem": 0.8, "what": 0.8, "data": 0.7, "train": 0.7, "galaxy": 0.8, "serve": 0.7, "cascade": 0.9,
+        "alan1": 0.7, "alan2": 0.45, "go": 0.25, "result": 0.85, "faster": 1.1, "report": 0.7, "site": 0.7, "close": 0}
+INTRO = 2.3
 t = INTRO
 TL = []
 for l in lines:
     d = len(vo[l["id"]]) / SR
-    TL.append({"id": l["id"], "text": l["text"], "start": round(t, 3), "end": round(t + d, 3)})
-    t += d + GAP[l["id"]]
-END = t + 1.6  # logo hold
+    wpath = HERE / "audio" / f"vo_{l['id']}.words.json"
+    words = [{"w": w["w"], "t": round(t + w["t"] - lead[l["id"]], 3)} for w in json.load(open(wpath, encoding="utf-8"))] if wpath.exists() else []
+    TL.append({"id": l["id"], "text": l["text"], "start": round(t, 3), "end": round(t + d, 3), "words": words})
+    t += d + GAPS.get(l["id"], 0.7)
+END = t + 2.2  # logo hold
 TOTAL = round(END, 2)
 L = {x["id"]: x for x in TL}
+
+
+def WT(line, word, nth=0):
+    """Absolute time of a spoken word (case-insensitive prefix match)."""
+    hits = [w["t"] for w in L[line]["words"] if w["w"].lower().startswith(word.lower())]
+    return hits[nth] if len(hits) > nth else L[line]["start"]
+
 
 # ------------------------------------------------------------------ music
 N = int(TOTAL * SR) + SR
@@ -203,7 +216,7 @@ for b in range(nbars):
 roll_t = build_from
 k = 0
 while roll_t < drop - 0.02:
-    add(music, clap(), roll_t, 0.25 + 0.6 * (roll_t - build_from) / max(0.1, drop - build_from))
+    add(music, clap(), roll_t, 0.1 + 0.32 * (roll_t - build_from) / max(0.1, drop - build_from))
     step = BEAT / 2 if roll_t < drop - 2 * BEAT else BEAT / 4
     roll_t += step
 # sidechain pump on everything except kick is approximated by a beat-synced gain
@@ -222,23 +235,38 @@ def cue(name, x, t, g=1.0, pan=0.0):
 cue("riser", riser(1.2), 0.05, 0.8)
 cue("impact", impact(), 1.25, 1.0)  # logo slam (wordmark lands)
 cue("whoosh", whoosh(0.5), L["jev"]["start"] - 0.25, 0.9, -0.4)
-cue("glitch", glitch(), L["jev"]["start"] + 0.9, 0.8)
+cue("glitch", glitch(), WT("jev", "main"), 0.8)
 cue("whoosh", whoosh(0.45, up=False), L["laya"]["start"] - 0.22, 0.9, 0.4)
-cue("glitch", glitch(), L["laya"]["start"] + 1.1, 0.7)
-cue("impact", impact(), L["what"]["start"] - 0.05, 0.75)
+cue("glitch", glitch(), WT("laya", "taught"), 0.7)
+cue("whoosh", whoosh(0.5), L["problem"]["start"] - 0.25, 0.8, -0.3)
+cue("boop", boop(), WT("problem", "slow"), 0.7)
+cue("impact", impact(), L["what"]["start"] - 0.05, 0.8)
 cue("whoosh", whoosh(0.5), L["data"]["start"] - 0.25, 0.8)
-for i in range(3):
-    cue("tick", tick(), L["data"]["start"] + 0.2 + i * 0.85, 1.0)
-cue("boop", boop(), L["data"]["start"] + 3.1, 0.9)  # "one very warm laptop"
-cue("whoosh", whoosh(0.6), L["race"]["start"] - 0.3, 1.0, -0.3)
-cue("riser", riser(drop - build_from), build_from, 0.7)
+for w in ("three", "nine", "graded"):
+    cue("tick", tick(), WT("data", w), 1.0)
+cue("whoosh", whoosh(0.5, up=False), L["train"]["start"] - 0.25, 0.8, 0.3)
+cue("ding", ding(), WT("train", "rewarded"), 0.6)
+cue("boop", boop(), WT("train", "punished"), 0.6)
+cue("whoosh", whoosh(0.5), L["galaxy"]["start"] - 0.25, 0.8, -0.3)
+cue("boop", boop(), WT("galaxy", "warm"), 0.9)  # "one very warm laptop"
+cue("whoosh", whoosh(0.5, up=False), L["serve"]["start"] - 0.25, 0.8, 0.3)
+cue("tick", tick(), WT("serve", "base"), 1.0)
+cue("whoosh", whoosh(0.5), L["cascade"]["start"] - 0.25, 0.9, -0.3)
+cue("boop", boop(), WT("cascade", "fumbles"), 0.8)  # the fumble
+cue("ding", ding(), WT("cascade", "escalates"), 1.0)  # escalated, fixed
+cue("impact", impact(), L["alan1"]["start"] - 0.05, 0.75)
+cue("tick", tick(), WT("alan1", "provider"), 1.0)
+cue("tick", tick(), WT("alan1", "MCP"), 1.0)
+cue("whoosh", whoosh(0.6), L["alan2"]["start"] - 0.3, 0.9, 0.3)
+cue("riser", riser(0.9), WT("go", "Go") - 0.9, 0.5)
+cue("impact", impact(), WT("go", "Go") - 0.02, 0.9)  # race starts
+_rs = max(L["result"]["end"] + 0.05, drop - 1.2)
+cue("riser", riser(drop - _rs), _rs, 0.5)  # riser only after "ten for ten" ends
 cue("impact", impact(), drop - 0.03, 1.15)  # the drop on "three point four times faster"
-cue("whoosh", whoosh(0.5, up=False), L["cascade"]["start"] - 0.25, 0.9, 0.3)
-cue("boop", boop(), L["cascade"]["start"] + 1.6, 0.8)  # the fumble
-cue("ding", ding(), L["cascade"]["start"] + 2.5, 1.0)  # escalated, fixed
 cue("whoosh", whoosh(0.4), L["report"]["start"] - 0.2, 0.8, -0.3)
 for i in range(4):
     cue("whoosh", whoosh(0.18), L["report"]["start"] + 0.25 + i * 0.22, 0.35, 0.5 - i * 0.3)
+cue("whoosh", whoosh(0.5, up=False), L["site"]["start"] - 0.25, 0.8, 0.3)
 cue("riser", riser(1.0), L["close"]["start"] - 1.0, 0.6)
 cue("impact", impact(), L["close"]["start"] - 0.02, 1.05)
 cue("impact", impact(), L["close"]["end"] + 0.15, 0.9)
@@ -256,6 +284,8 @@ for x in TL:
 sm = int(0.12 * SR)
 duck = np.convolve(speaking, np.ones(sm) / sm, mode="same")
 music_gain = 0.42 - 0.28 * duck  # ~ -9.5 dB under speech
+build = ((tt >= build_from) & (tt < drop)).astype(np.float32)
+music_gain = music_gain * (1 - 0.45 * build * duck)  # extra ducking while the result line plays over the build
 mix = music * music_gain + sfx * 0.55 + np.vstack([voice, voice]) * 1.0
 mix = np.tanh(mix * 1.1) / np.tanh(1.1)  # gentle limiter
 mix = mix / (np.abs(mix).max() + 1e-9) * 0.93

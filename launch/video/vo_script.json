@@ -2,56 +2,91 @@
  {
   "id": "hook",
   "text": "Dear Alan. We need to talk about your router.",
-  "dur": 2.3
+  "dur": 2.35
  },
  {
   "id": "jev",
   "text": "Jev made decision models the main character on tech Twitter.",
-  "dur": 3.84
+  "dur": 3.62
  },
  {
   "id": "laya",
   "text": "Then Laya went open source. So we taught it to learn.",
-  "dur": 3.12
+  "dur": 3.1
+ },
+ {
+  "id": "problem",
+  "text": "Here's the problem. Coding agents send every single call to a giant model. Even the easy ones. That's slow.",
+  "dur": 6.77
  },
  {
   "id": "what",
-  "text": "Meet Pennywise. An RL-trained router that picks the right model for every request.",
-  "dur": 6.53
+  "text": "Meet Pennywise. A reinforcement-learning router that picks the right model for every request.",
+  "dur": 5.69
  },
  {
   "id": "data",
-  "text": "Nine hundred forty-eight graded prompts. One very warm laptop.",
-  "dur": 5.04
+  "text": "First, we asked three open models nine hundred forty-eight questions, and graded every answer automatically.",
+  "dur": 6.62
  },
  {
-  "id": "race",
-  "text": "Then we raced Alan's own Auto Router. Same ten tasks. Same tests.",
-  "dur": 4.99
+  "id": "train",
+  "text": "Then Laya learned from the results. A supervised warm start, then REINFORCE. Right answers get rewarded. Waste gets punished.",
+  "dur": 8.21
+ },
+ {
+  "id": "galaxy",
+  "text": "Here's the policy reshaping itself as it trains. Powered by one very warm laptop.",
+  "dur": 5.93
+ },
+ {
+  "id": "serve",
+  "text": "Using it takes one line: your base URL. Pennywise sits in front of your models and routes every call.",
+  "dur": 6.17
+ },
+ {
+  "id": "cascade",
+  "text": "For agents, it checks every tool call. When the fast model fumbles, it escalates. No drama.",
+  "dur": 6.6
+ },
+ {
+  "id": "alan1",
+  "text": "Now, Alan. Alan runs coding agents like OpenCode, and Pennywise plugs into OpenCode as a provider, with an MCP server Alan can add as a connector.",
+  "dur": 9.05
+ },
+ {
+  "id": "alan2",
+  "text": "So we opened the Alan desktop app, and raced Alan Code's built-in Auto Router.",
+  "dur": 4.46
+ },
+ {
+  "id": "go",
+  "text": "Same ten coding tasks. Same tests. Go.",
+  "dur": 3.43
  },
  {
   "id": "result",
   "text": "Pennywise: eleven minutes. Auto Router: thirty-seven. Both, ten for ten.",
-  "dur": 5.42
+  "dur": 5.57
  },
  {
   "id": "faster",
   "text": "Three point four times faster.",
-  "dur": 1.94
- },
- {
-  "id": "cascade",
-  "text": "The trick? When the fast model fumbles a tool call, it escalates. No drama.",
-  "dur": 4.92
+  "dur": 2.02
  },
  {
   "id": "report",
-  "text": "Nine-page technical report. Confidence intervals included. Yes, we're those people.",
-  "dur": 5.16
+  "text": "Every number is in a nine-page technical report. Confidence intervals included.",
+  "dur": 4.99
+ },
+ {
+  "id": "site",
+  "text": "It's live, it's open source, and it takes one line to try.",
+  "dur": 3.79
  },
  {
   "id": "close",
   "text": "Pennywise. Built for Alan's router. Your move, Alan.",
-  "dur": 3.74
+  "dur": 3.84
  }
 ]
