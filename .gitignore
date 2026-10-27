@@ -36,3 +36,5 @@ router/snapshots/
 router/serve/
 server/stats.json
 bench/alan_evidence/*.png
+launch/video/audio/mix.wav
+launch/video/pennywise_launch_v2.mp4

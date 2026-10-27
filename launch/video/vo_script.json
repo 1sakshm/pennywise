@@ -1,0 +1,57 @@
+[
+ {
+  "id": "hook",
+  "text": "Dear Alan. We need to talk about your router.",
+  "dur": 2.3
+ },
+ {
+  "id": "jev",
+  "text": "Jev made decision models the main character on tech Twitter.",
+  "dur": 3.84
+ },
+ {
+  "id": "laya",
+  "text": "Then Laya went open source. So we taught it to learn.",
+  "dur": 3.12
+ },
+ {
+  "id": "what",
+  "text": "Meet Pennywise. An RL-trained router that picks the right model for every request.",
+  "dur": 6.53
+ },
+ {
+  "id": "data",
+  "text": "Nine hundred forty-eight graded prompts. One very warm laptop.",
+  "dur": 5.04
+ },
+ {
+  "id": "race",
+  "text": "Then we raced Alan's own Auto Router. Same ten tasks. Same tests.",
+  "dur": 4.99
+ },
+ {
+  "id": "result",
+  "text": "Pennywise: eleven minutes. Auto Router: thirty-seven. Both, ten for ten.",
+  "dur": 5.42
+ },
+ {
+  "id": "faster",
+  "text": "Three point four times faster.",
+  "dur": 1.94
+ },
+ {
+  "id": "cascade",
+  "text": "The trick? When the fast model fumbles a tool call, it escalates. No drama.",
+  "dur": 4.92
+ },
+ {
+  "id": "report",
+  "text": "Nine-page technical report. Confidence intervals included. Yes, we're those people.",
+  "dur": 5.16
+ },
+ {
+  "id": "close",
+  "text": "Pennywise. Built for Alan's router. Your move, Alan.",
+  "dur": 3.74
+ }
+]

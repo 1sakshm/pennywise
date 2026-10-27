@@ -48,10 +48,8 @@ export default function Home() {
       <nav className="topbar">
         <div className="wrap tb">
           <a href="#" className="brand" aria-label="Pennywise home">
-            <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden>
-              <rect x="0.5" y="0.5" width="15" height="15" fill="none" stroke="currentColor" opacity="0.5" />
-              <path d="M3 8h4l2-4M9 8l2 0M7 8l2 4" stroke="var(--accent)" strokeWidth="1.4" fill="none" />
-            </svg>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/logo.svg" width={24} height={24} alt="" aria-hidden />
             pennywise
           </a>
           <div className="links">

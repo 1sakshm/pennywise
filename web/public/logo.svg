@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200" role="img" aria-label="Pennywise logo">
+  <title>Pennywise</title>
+  <circle cx="100" cy="100" r="90" fill="#0b0d12" stroke="#facc15" stroke-width="9"/>
+  <circle cx="100" cy="100" r="74" fill="none" stroke="#facc15" stroke-width="2" stroke-opacity="0.45" stroke-dasharray="3 6"/>
+  <path d="M38 100 H86" stroke="#eef1f6" stroke-width="9" stroke-linecap="round" fill="none"/>
+  <path d="M98 100 C122 100 122 64 148 64" stroke="#2dd4bf" stroke-width="8" stroke-linecap="round" fill="none"/>
+  <path d="M98 100 H148" stroke="#818cf8" stroke-width="8" stroke-linecap="round" fill="none"/>
+  <path d="M98 100 C122 100 122 136 148 136" stroke="#f472b6" stroke-width="8" stroke-linecap="round" fill="none"/>
+  <circle cx="92" cy="100" r="11" fill="#facc15"/>
+  <circle cx="154" cy="64" r="9" fill="#2dd4bf"/>
+  <circle cx="154" cy="100" r="9" fill="#818cf8"/>
+  <circle cx="154" cy="136" r="9" fill="#f472b6"/>
+</svg>

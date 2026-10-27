@@ -14,6 +14,7 @@ export const metadata: Metadata = {
   title: "Pennywise — Jev chooses. This one learns.",
   description:
     "An open decision model trained with reinforcement learning to route every LLM request to the cheapest model that gets it right. Watch it learn, beat it, or plug it in with one line.",
+  icons: { icon: "/logo.svg" },
   openGraph: { images: ["/og.png"], type: "website" },
   twitter: { card: "summary_large_image", images: ["/og.png"] },
 };
