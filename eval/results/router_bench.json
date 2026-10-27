@@ -61,6 +61,18 @@
    "usd_per_merged_pr": 0.0324653,
    "total_minutes": 11.0
   },
+  "pennywise/auto + cascade->MiniMax (v0.3)": {
+   "tasks": 10,
+   "merged": 10,
+   "by_level": {
+    "easy": "3/3",
+    "medium": "3/3",
+    "hard": "4/4"
+   },
+   "total_cost_usd": 0.315666,
+   "usd_per_merged_pr": 0.0315666,
+   "total_minutes": 30.1
+  },
   "pennywise/large (reference)": {
    "tasks": 10,
    "merged": 10,

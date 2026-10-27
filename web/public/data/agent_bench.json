@@ -1,0 +1,29 @@
+{
+ "tasks": 10,
+ "pennywise": {
+  "label": "Pennywise (auto + tool-call cascade)",
+  "merged": 10,
+  "minutes": 11.0,
+  "by_level": {
+   "easy": "3/3",
+   "medium": "3/3",
+   "hard": "4/4"
+  }
+ },
+ "alan": {
+  "label": "Alan Code \u00b7 Auto Router",
+  "merged": 10,
+  "minutes": 36.9,
+  "by_level": {
+   "easy": "3/3",
+   "medium": "3/3",
+   "hard": "4/4"
+  },
+  "routed_to": [
+   "DeepSeek V4.1 Flash"
+  ]
+ },
+ "speedup": 3.4,
+ "scope": "10 agent coding tasks (3 easy, 3 medium, 4 hard), unit-tested; one run each; OpenCode CLI for Pennywise, Alan desktop app for Auto Router; Oct 27, 2026.",
+ "merged_means": "tests pass and the test file is unchanged"
+}

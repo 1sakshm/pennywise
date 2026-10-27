@@ -1,0 +1,187 @@
+{
+ "label": "OpenCode CLI with Pennywise; list-price cost from measured tokens (actual spend $0, free shared endpoints).",
+ "task_hashes": {
+  "off_by_one": "af2608ae9d64",
+  "slugify": "e2ea9e387833",
+  "palindrome": "152fa5d41c76",
+  "parse_kv": "64d719bd45d6",
+  "merge_intervals": "25044e9d5e95",
+  "roman": "1c6993609b06",
+  "lru_cache": "bea51c41520c",
+  "expr_eval": "c0c149881e38",
+  "dijkstra_bug": "ba6f32b8d9af",
+  "csv_quotes": "a36367b500a4"
+ },
+ "runs": [
+  {
+   "task": "off_by_one",
+   "level": "easy",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.021163,
+   "tier_calls": {
+    "small": 0,
+    "medium": 2,
+    "large": 0,
+    "escalate": 6
+   },
+   "wall_s": 70.9,
+   "status": "exit 0"
+  },
+  {
+   "task": "slugify",
+   "level": "easy",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.028963,
+   "tier_calls": {
+    "small": 0,
+    "medium": 2,
+    "large": 0,
+    "escalate": 8
+   },
+   "wall_s": 166.3,
+   "status": "exit 0"
+  },
+  {
+   "task": "palindrome",
+   "level": "easy",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.019041,
+   "tier_calls": {
+    "small": 0,
+    "medium": 2,
+    "large": 0,
+    "escalate": 8
+   },
+   "wall_s": 66.6,
+   "status": "exit 0"
+  },
+  {
+   "task": "parse_kv",
+   "level": "medium",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.028909,
+   "tier_calls": {
+    "small": 0,
+    "medium": 2,
+    "large": 0,
+    "escalate": 12
+   },
+   "wall_s": 129.5,
+   "status": "exit 0"
+  },
+  {
+   "task": "merge_intervals",
+   "level": "medium",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.028033,
+   "tier_calls": {
+    "small": 0,
+    "medium": 2,
+    "large": 0,
+    "escalate": 10
+   },
+   "wall_s": 103.2,
+   "status": "exit 0"
+  },
+  {
+   "task": "roman",
+   "level": "medium",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.024654,
+   "tier_calls": {
+    "small": 0,
+    "medium": 2,
+    "large": 0,
+    "escalate": 8
+   },
+   "wall_s": 146.9,
+   "status": "exit 0"
+  },
+  {
+   "task": "lru_cache",
+   "level": "hard",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.021679,
+   "tier_calls": {
+    "small": 0,
+    "medium": 2,
+    "large": 0,
+    "escalate": 10
+   },
+   "wall_s": 125.6,
+   "status": "exit 0"
+  },
+  {
+   "task": "expr_eval",
+   "level": "hard",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.028086,
+   "tier_calls": {
+    "small": 0,
+    "medium": 2,
+    "large": 0,
+    "escalate": 8
+   },
+   "wall_s": 145.3,
+   "status": "exit 0"
+  },
+  {
+   "task": "dijkstra_bug",
+   "level": "hard",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.030366,
+   "tier_calls": {
+    "small": 0,
+    "medium": 2,
+    "large": 0,
+    "escalate": 9
+   },
+   "wall_s": 168.5,
+   "status": "exit 0"
+  },
+  {
+   "task": "csv_quotes",
+   "level": "hard",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.084772,
+   "tier_calls": {
+    "small": 0,
+    "medium": 2,
+    "large": 0,
+    "escalate": 13
+   },
+   "wall_s": 685.4,
+   "status": "exit 0"
+  }
+ ]
+}

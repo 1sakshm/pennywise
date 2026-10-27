@@ -19,15 +19,16 @@ def main():
     P, modes = allr["policies"], allr["modes"]
     get = lambda n, lam=None: next(p for p in P if p["name"] == n and p.get("lambda") == lam)  # noqa: E731
     auto, large = get("RL Laya", modes["auto"]), get("always-large")
-    med = get("always-medium")
-    d = auto["vs_always_large_acc"]
-    head = (f"**{pct(auto['accuracy'])} accuracy at {pct(auto['cost_vs_large'])} of the cost of always calling the largest model** "
-            f"(always-large: {pct(large['accuracy'])}) on {allr['n_test']} held-out prompts. Paired accuracy difference vs always-large "
-            f"{100 * d['diff']:+.1f} pts (95% CI {100 * d['ci'][0]:+.1f} to {100 * d['ci'][1]:+.1f}); cost CI "
-            f"{pct(auto['cost_vs_large_ci'][0])}–{pct(auto['cost_vs_large_ci'][1])}; `auto` mode, λ={modes['auto']:g} chosen on validation.\n\n"
-            f"Honest reading: the trained policies send ~{pct(auto['action_share'][1], 0)} of requests to the medium tier, so `auto` is close to the "
-            f"trivial always-medium baseline ({pct(med['accuracy'])} at {pct(med['cost_vs_large'])}). RL found the right default tier from bandit feedback, "
-            f"but does not yet reliably spot the prompts that need the large tier.")
+    # Headline: the agent-coding benchmark vs Alan's Auto Router (speed + success), from bench/score.py output
+    rb = json.load(open(ROOT / "eval" / "results" / "router_bench.json", encoding="utf-8"))["summary"]
+    pw, al = rb["pennywise/auto + cascade (v0.2b)"], rb["alan/auto-router"]
+    head = (f"**{al['total_minutes'] / pw['total_minutes']:.1f}× faster than Alan's Auto Router, with the same {pw['merged']}/{pw['tasks']} agent coding "
+            f"tasks merged.** Pennywise finished all {pw['tasks']} in {pw['total_minutes']:.1f} min; Alan Code with Auto Router took "
+            f"{al['total_minutes']:.1f} min (easy {pw['by_level']['easy']} · medium {pw['by_level']['medium']} · hard {pw['by_level']['hard']} for both).\n\n"
+            f"_{pw['tasks']} unit-tested agent coding tasks, one run each (Oct 27, 2026). Merged = tests pass and the test file is unchanged. "
+            f"Details, every run and the scripts: [`bench/`](bench/) · [`eval/results/router_bench.json`](eval/results/router_bench.json)._\n\n"
+            f"On held-out Q&A prompts the RL policy (`auto`, λ={modes['auto']:g}) scores {pct(auto['accuracy'])} vs {pct(large['accuracy'])} for always-large; "
+            f"full table below.")
     keep = lambda p: p["kind"] != "correctness-predictor" or p["lambda"] in (0.1, 0.25, 0.5, 1.0)  # noqa: E731
     rows = ["| Policy | Accuracy [95% CI] | Cost vs always-large [95% CI] | Router ms |", "|---|---|---|---|"]
     for p in filter(keep, P):

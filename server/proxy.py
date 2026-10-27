@@ -9,12 +9,15 @@ Response headers: x-router-tier, x-router-confidence, x-router-latency-ms, x-est
 Tool-call cascade (agent sessions): when a routed request carries `tools` and the routed tier is not the
 top tier, the cheap tier's reply is validated before it reaches the client: every tool call must name a
 tool from the request and carry valid JSON arguments without garbled characters, and the upstream must
-not reject the turn. On a detected failure the turn is retried on the top tier and the session sticks to
-it. Cheap first, escalate on evidence (FrugalGPT-style). CASCADE=0 disables it.
+not reject the turn. On a detected failure the turn is retried on the escalation tier (`escalate` in
+config/models.yaml if present, else the top tier) and the session sticks to it. Cheap first, escalate on
+evidence (FrugalGPT-style). A cheap-tier turn that takes longer than CASCADE_TIMEOUT_S (default 30 s) also
+escalates, so a slow free endpoint can't stall an agent. CASCADE=0 disables it.
 """
 import asyncio
 import json
 import os
+import re
 import time
 
 import httpx
@@ -27,8 +30,25 @@ from server.state import MAX_REQUEST_CHARS, PROXY_API_KEY, client_ip, text_of
 router = APIRouter()
 _http = httpx.AsyncClient(timeout=httpx.Timeout(300, connect=15))
 CASCADE = os.environ.get("CASCADE", "1") != "0"
+CASCADE_TIMEOUT_S = float(os.environ.get("CASCADE_TIMEOUT_S", "30"))  # cheap-tier time budget per agent turn
 TOP = TIER_NAMES[-1]
 _BAD = ("\ufffd", "to=functions", "<|")  # replacement char / leaked tool-format tokens
+
+
+_ELLIPSIS_PATH = re.compile(r"\.\.\.|\u2026|[A-Za-z0-9_]\.\.[\\/]")  # "dir...", "…", "s../": abbreviated, not a real path
+
+
+def _paths(obj):
+    """String values of path-like keys in parsed tool arguments (path, filePath, file_path, dir, cwd, ...)."""
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            if isinstance(v, str) and re.search(r"path|file|dir|cwd", k, re.I):
+                yield v
+            else:
+                yield from _paths(v)
+    elif isinstance(obj, list):
+        for v in obj:
+            yield from _paths(v)
 
 
 def tool_call_problem(body, tool_calls, content):
@@ -45,9 +65,11 @@ def tool_call_problem(body, tool_calls, content):
         if any(b in args or b in name for b in _BAD) or any(ord(c) < 32 and c not in "\n\r\t" for c in args):
             return "garbled tool arguments"
         try:
-            json.loads(args or "{}")
+            parsed = json.loads(args or "{}")
         except json.JSONDecodeError:
             return "tool arguments are not valid JSON"
+        if any(_ELLIPSIS_PATH.search(v) for v in _paths(parsed)):
+            return "abbreviated/garbled file path"
     return None
 
 
@@ -123,7 +145,8 @@ async def chat_completions(request: Request):
 
     stream = bool(body.get("stream"))
     in_est = est_tokens(json.dumps(body.get("messages", [])))
-    cascade = CASCADE and info.get("routed") and bool(body.get("tools")) and tier != TOP
+    target = "escalate" if "escalate" in st.tiers else TOP
+    cascade = CASCADE and info.get("routed") and bool(body.get("tools")) and tier not in (target, TOP)
 
     def upstream(tn):
         t = st.tiers[tn]
@@ -135,9 +158,9 @@ async def chat_completions(request: Request):
 
     def escalate(reason):
         """Cheap tier produced a broken tool call: stick this session to the top tier."""
-        print(f"cascade: {tier} -> {TOP} ({reason})", flush=True)
+        print(f"cascade: {tier} -> {target} ({reason})", flush=True)
         if info.get("session"):
-            st.sessions.put(info["session"], {"tier": TOP, "info": {**info, "escalated": True, "confidence": None}})
+            st.sessions.put(info["session"], {"tier": target, "info": {**info, "escalated": True, "confidence": None}})
 
     c_in, lc_in = st.costs(tier, in_est, 0)
     est_saving = max(0.0, lc_in - c_in)  # streaming: header known before output tokens, so input-only estimate
@@ -153,17 +176,25 @@ async def chat_completions(request: Request):
             st.stats.record(tn, cost, large_cost, info["routed"])
             return r.status_code, data, cost, large_cost
         try:
-            code, data, cost, large_cost = await call(tier)
             served = tier
             if cascade:
+                try:
+                    code, data, cost, large_cost = await asyncio.wait_for(call(tier), CASCADE_TIMEOUT_S)
+                except asyncio.TimeoutError:
+                    escalate(f"cheap tier slower than {CASCADE_TIMEOUT_S:.0f}s")
+                    code, data, cost, large_cost = await call(target)
+                    served = target
+            else:
+                code, data, cost, large_cost = await call(tier)
+            if cascade and served == tier:
                 msg = ((data.get("choices") or [{}])[0].get("message") or {}) if code == 200 else {}
                 tcs = [{"name": (x.get("function") or {}).get("name"), "arguments": (x.get("function") or {}).get("arguments")}
                        for x in msg.get("tool_calls") or []]
                 problem = f"upstream {code}" if code != 200 else tool_call_problem(body, tcs, msg.get("content"))
                 if problem:
                     escalate(problem)
-                    code, data, cost, large_cost = await call(TOP)
-                    served = TOP
+                    code, data, cost, large_cost = await call(target)
+                    served = target
         except httpx.HTTPError as e:
             return oai_error(502, f"upstream '{tier}' unreachable: {type(e).__name__}", "server_error")
         h = {**routing_headers(served, info, max(0.0, large_cost - cost)), **({"x-router-escalated": "1"} if served != tier else {})}
@@ -225,16 +256,22 @@ async def chat_completions(request: Request):
                 yield line
             return
         held = []
-        async for _ in run(tier, held):
-            pass
-        status, calls, content = result[-1]
-        problem = f"upstream {status}" if status != 200 else tool_call_problem(body, calls, content)
+
+        async def consume():
+            async for _ in run(tier, held):
+                pass
+        try:
+            await asyncio.wait_for(consume(), CASCADE_TIMEOUT_S)
+            status, calls, content = result[-1]
+            problem = f"upstream {status}" if status != 200 else tool_call_problem(body, calls, content)
+        except asyncio.TimeoutError:
+            problem = f"cheap tier slower than {CASCADE_TIMEOUT_S:.0f}s"
         if not problem:
             for line in held:
                 yield line
             return
         escalate(problem)
-        async for line in run(TOP, None):
+        async for line in run(target, None):
             yield line
 
     return StreamingResponse(gen(), media_type="text/event-stream", headers=hdrs)

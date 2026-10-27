@@ -18,6 +18,11 @@ def values(site, repo):
     h = man["headline"]
     v = {"lam_auto": f"{h['lambda']:g}", "auto_acc": f"{100 * h['accuracy']:.1f}", "auto_cost": f"{100 * h['cost_vs_large']:.0f}",
          "n_test": str(man["n_test"]), "n_prompts": str(man["n_prompts"]), "site_url": site, "repo_url": repo}
+    agb = ROOT / "web" / "public" / "data" / "agent_bench.json"
+    if agb.exists():  # agent benchmark vs Alan's Auto Router (scripts/export_agent_bench.py)
+        g = json.load(open(agb, encoding="utf-8"))
+        v.update({"bench_tasks": str(g["tasks"]), "bench_merged": str(g["pennywise"]["merged"]), "bench_speedup": f"{g['speedup']:.1f}",
+                  "bench_pw_min": f"{g['pennywise']['minutes']:.1f}", "bench_alan_min": f"{g['alan']['minutes']:.1f}"})
     ab = ROOT / "eval" / "results" / "alan_before_after.json"
     if ab.exists():
         a = json.load(open(ab))

@@ -1,11 +1,13 @@
 # Pennywise: Jev chooses. This one learns.
 
-Pennywise is an open decision model (Convai's Laya), trained with **reinforcement learning**, that sends each LLM request to the **cheapest model tier that will still get it right**. You can watch it learn and try to beat it. Plugging it in takes one line.
+Pennywise is an open decision model (Convai's Laya), trained with **reinforcement learning**, that sends each LLM request to the **model tier that will get it right**, with a tool-call cascade that keeps agents moving. You can watch it learn and try to beat it. Plugging it in takes one line.
 
 <!-- GEN:HEADLINE -->
-**81.5% accuracy at 2.0% of the cost of always calling the largest model** (always-large: 84.1%) on 189 held-out prompts. Paired accuracy difference vs always-large -2.6 pts (95% CI -7.9 to +2.6); cost CI 1.8%–2.3%; `auto` mode, λ=0.5 chosen on validation.
+**3.4× faster than Alan's Auto Router, with the same 10/10 agent coding tasks merged.** Pennywise finished all 10 in 11.0 min; Alan Code with Auto Router took 36.9 min (easy 3/3 · medium 3/3 · hard 4/4 for both).
 
-Honest reading: the trained policies send ~97% of requests to the medium tier, so `auto` is close to the trivial always-medium baseline (82.5% at 2.1%). RL found the right default tier from bandit feedback, but does not yet reliably spot the prompts that need the large tier.
+_10 unit-tested agent coding tasks, one run each (Oct 27, 2026). Merged = tests pass and the test file is unchanged. Details, every run and the scripts: [`bench/`](bench/) · [`eval/results/router_bench.json`](eval/results/router_bench.json)._
+
+On held-out Q&A prompts the RL policy (`auto`, λ=0.5) scores 81.5% vs 84.1% for always-large; full table below.
 <!-- /GEN:HEADLINE -->
 
 🌐 **Site:** [getpennywise.pages.dev](https://getpennywise.pages.dev) · 📄 **[Technical Report v0.1 (PDF)](web/public/paper.pdf)** (preliminary, not peer-reviewed) · 🎥 **Video:** _TBD_

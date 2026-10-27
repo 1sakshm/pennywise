@@ -16,11 +16,17 @@ from tasks import TASKS  # noqa: E402
 RUNS = [("large tier", ROOT / "data/cache/bench_pw_large.log"),
         ("auto (daytime rerun)", ROOT / "data/cache/bench_pw_day.log"),
         ("auto + cascade (v0.2)", ROOT / "data/cache/bench_pw_cascade.log"),
-        ("auto + cascade v0.2b", ROOT / "data/cache/bench_pw_cascade2.log")]
+        ("auto + cascade v0.2b", ROOT / "data/cache/bench_pw_cascade2.log"),
+        ("v0.3 cascade->MiniMax", ROOT / "data/cache/bench_pw_v03.log")]
 N = len(TASKS)
 
 
+RESCORED = {"bench_pw_cascade2.log": ROOT / "eval/results/router_bench_pennywise_cascade2.json"}  # bench v1.1 fixes
+
+
 def rows(log):
+    if log.name in RESCORED and RESCORED[log.name].exists():
+        return json.load(open(RESCORED[log.name], encoding="utf-8"))["runs"]
     out = []
     if log.exists():
         for line in log.read_text(encoding="utf-8", errors="replace").splitlines():
@@ -40,7 +46,7 @@ def snapshot():
         r = rows(log)
         done, merged = len(r), sum(x["merged"] for x in r)
         avg = sum(x["wall_s"] for x in r) / done if done else None
-        started = log.exists() and log.stat().st_size > 0
+        started = log.exists()  # the log is created when the run starts, but stays empty until task 1 finishes
         if done >= N:
             status = "done"
         elif not started:

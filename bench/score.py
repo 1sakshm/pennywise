@@ -97,6 +97,10 @@ def main():
     if cas2.exists():  # v0.2b: cascade also escalates on empty replies and in-stream upstream errors
         rows = [r for r in json.load(open(cas2, encoding="utf-8"))["runs"] if r["arm"] == "pennywise/auto"]
         out["pennywise/auto + cascade (v0.2b)"] = summary(rows, sum(r["cost_usd"] for r in rows), round(sum(r["wall_s"] for r in rows) / 60, 1))
+    v03 = ROOT / "eval" / "results" / "router_bench_pennywise_v03.json"
+    if v03.exists():  # v0.3: cascade escalates to the `escalate` tier (MiniMax M3.1 Flash) incl. a 30 s cheap-tier budget
+        rows = [r for r in json.load(open(v03, encoding="utf-8"))["runs"] if r["arm"] == "pennywise/auto"]
+        out["pennywise/auto + cascade->MiniMax (v0.3)"] = summary(rows, sum(r["cost_usd"] for r in rows), round(sum(r["wall_s"] for r in rows) / 60, 1))
     if any(r["arm"] == "pennywise/large" for r in pw):
         rows = [r for r in pw if r["arm"] == "pennywise/large"]
         out["pennywise/large (reference)"] = summary(rows, sum(r["cost_usd"] for r in rows), round(sum(r["wall_s"] for r in rows) / 60, 1))

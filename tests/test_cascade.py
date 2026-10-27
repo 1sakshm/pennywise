@@ -51,6 +51,17 @@ for stream in (False, True):
 out4 = c.chat.completions.create(model="auto", messages=[{"role": "user", "content": f"EMPTYREPLY read it {uuid.uuid4().hex[:6]}"}], tools=TOOLS)
 check("empty cheap-tier reply escalates", "mock-large" in out4.model, out4.model)
 
+# a cheap tier slower than the budget must escalate (run the proxy with CASCADE_TIMEOUT_S=2 for this test)
+for stream in (False, True):
+    m = [{"role": "user", "content": f"SLOWREPLY read it {uuid.uuid4().hex[:6]}"}]
+    if stream:
+        model = None
+        for ch in c.chat.completions.create(model="auto", messages=m, tools=TOOLS, stream=True):
+            model = ch.model or model
+    else:
+        model = c.chat.completions.create(model="auto", messages=m, tools=TOOLS).model
+    check(f"slow cheap tier escalates ({'stream' if stream else 'non-stream'})", "mock-large" in (model or ""), model)
+
 # a healthy session must NOT escalate
 out3 = c.chat.completions.create(model="auto", messages=[{"role": "user", "content": f"read the file {uuid.uuid4().hex[:6]}"}], tools=TOOLS)
 check("healthy tool call stays on the cheap tier", "mock-large" not in out3.model, out3.model)

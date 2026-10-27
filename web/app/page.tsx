@@ -5,9 +5,27 @@ import Hero from "@/components/Hero";
 import HowItWorks from "@/components/HowItWorks";
 import LiveMode from "@/components/LiveMode";
 import ParetoArena from "@/components/ParetoArena";
-import SavingsCounter from "@/components/SavingsCounter";
 import { Reveal, ScrollProgress, SectionHead, SmoothScroll } from "@/components/fx";
-import { useStore } from "@/components/Store";
+import { useData, useStore } from "@/components/Store";
+
+type Bench = { tasks: number; speedup: number; pennywise: { merged: number; minutes: number }; alan: { minutes: number } };
+
+function SpeedBadge() {
+  const b = useData<Bench>("agent_bench.json");
+  if (!b) return null;
+  return (
+    <a href="#top" className="speed" title={`Pennywise ${b.pennywise.minutes} min vs Alan Auto Router ${b.alan.minutes} min on ${b.tasks} agent coding tasks`}>
+      <span className="led" />
+      <b>{b.speedup.toFixed(1)}× faster</b><span className="long"> than Alan&apos;s router</span> · {b.pennywise.merged}/{b.tasks} ✓
+      <style jsx>{`
+        .speed { display: inline-flex; align-items: center; gap: 8px; font-family: var(--font-mono); font-size: 11.5px; letter-spacing: 0.06em; text-transform: uppercase;
+          color: var(--muted); text-decoration: none; border: 1px solid var(--line-2); border-radius: 3px; padding: 6px 10px; white-space: nowrap; }
+        .speed b { color: var(--accent); font-weight: 500; }
+        @media (max-width: 640px) { .long { display: none; } .speed { font-size: 10px; padding: 5px 8px; } }
+      `}</style>
+    </a>
+  );
+}
 
 const REPO = process.env.NEXT_PUBLIC_REPO_URL || "https://github.com/YOUR-USER/pennywise";
 const NAV = [
@@ -45,7 +63,7 @@ export default function Home() {
               Paper ↗
             </a>
           </div>
-          <SavingsCounter />
+          <SpeedBadge />
         </div>
       </nav>
 

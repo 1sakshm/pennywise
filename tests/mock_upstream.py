@@ -30,6 +30,10 @@ def reply(body):
 @app.post("/v1/chat/completions")
 async def chat(request: Request):
     body = await request.json()
+    first_user = next((m.get("content") or "" for m in body["messages"] if m["role"] == "user"), "")
+    if "SLOWREPLY" in str(first_user) and body["model"] != "mock-large":  # simulate a stalled free endpoint
+        import asyncio
+        await asyncio.sleep(6)
     content, calls = reply(body)
     usage = {"prompt_tokens": 100, "completion_tokens": 20, "total_tokens": 120}
     if not body.get("stream"):

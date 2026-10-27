@@ -23,7 +23,7 @@ Rules: punchy first line, **one** measured number per post, one visual, tag the 
 >
 > {{n_prompts}} prompts, each placed by what the model thinks it means. Colour = which model it would pay for. Watch whole regions flip to cheap as RL kicks in.
 >
-> End state: {{auto_cost}}% of always-large cost on held-out prompts. @HOST_HANDLE @ALAN_HANDLE
+> Then I raced it against Alan's own Auto Router on {{bench_tasks}} agent coding tasks: same {{bench_merged}}/{{bench_tasks}} merged, {{bench_speedup}}× faster ({{bench_pw_min}} vs {{bench_alan_min}} min). @HOST_HANDLE @ALAN_HANDLE
 
 ---
 
@@ -41,8 +41,8 @@ Rules: punchy first line, **one** measured number per post, one visual, tag the 
 ## 4 · Submission quote-post (quote the official Alan launch video)
 **Visual:** the 1–2 min judge cut
 
-> Built for #Openfire: an open decision model, trained with RL, that sends each LLM call to the cheapest model that gets it right.
+> Built for #Openfire: Pennywise, an open decision model trained with RL that routes every LLM call, plus a tool-call cascade that keeps agents moving.
 >
-> On {{n_test}} held-out prompts: {{auto_acc}}% accuracy at {{auto_cost}}% of always-large cost. One base_url change, and Alan's agents run through it.
+> Head-to-head with Alan's Auto Router on {{bench_tasks}} agent coding tasks: {{bench_merged}}/{{bench_tasks}} merged for both, and Pennywise finished {{bench_speedup}}× faster ({{bench_pw_min}} min vs {{bench_alan_min}} min). One base_url change.
 >
 > Live: {{site_url}} · Code + report: {{repo_url}}
