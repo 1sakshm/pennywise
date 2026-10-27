@@ -39,3 +39,17 @@
 #let alan_ratio = "27"
 #let alan_wall_before = "1.9"
 #let alan_wall_after = "65.6"
+#let agent_done = true
+#let ag_n = 10
+#let ag_speedup = "3.4"
+#let ag_pw_min = "11.0"
+#let ag_alan_min = "36.9"
+#let ag_pw_merged = 10
+#let ag_alan_merged = 10
+#let ag_alan_model = "DeepSeek V4.1 Flash"
+#let ag_auto_night = 7
+#let ag_auto_day = 6
+#let ag_v02 = 5
+#let ag_escalated_tasks = 8
+#let ag_med_calls = 45
+#let ag_big_calls = 81

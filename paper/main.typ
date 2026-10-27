@@ -66,7 +66,7 @@
     #set par(justify: true)
     #set text(8.8pt)
     #align(left)[
-      #text(weight: "bold")[Abstract.] Agents send every request to a frontier model, including the many bounded ones a far cheaper model would answer correctly. We treat model-tier selection as a contextual bandit and use an open-weight, non-autoregressive decision model, Laya @laya2026card, as the policy: its distribution over {small, medium, large} _is_ $pi(a|s)$, available from one forward pass. After a supervised warm start on hindsight-optimal labels, we train one policy per cost weight $lambda$ with REINFORCE on $r = "correct"(a) - lambda dot c(a) \/ c_"ref"$, observing only the sampled arm. We build an outcome table of #n_prompts automatically graded prompts answered by three open-weight tiers (#n_calls calls; tier accuracies #acc_small / #acc_medium / #acc_large%, any-tier ceiling #acc_oracle_all%). On a held-out test set of #n_test prompts, the validation-selected `auto` policy ($lambda$ = #lam_auto) reaches *#auto_acc%* accuracy (95% CI #auto_acc_lo–#auto_acc_hi) at *#auto_cost%* of the cost of always calling the largest model (CI #auto_cost_lo–#auto_cost_hi), versus #large_acc% for always-large; the paired accuracy difference is #auto_vs_large points (CI #auto_vs_large_lo to #auto_vs_large_hi). The trained policies mostly learn to default to the medium tier, close to an always-medium baseline (difference #auto_vs_med points, CI #auto_vs_med_lo to #auto_vs_med_hi); we report confidence intervals throughout and compare against strong cheap baselines, including where they win.
+      #text(weight: "bold")[Abstract.] Agents send every request to a frontier model, including the many bounded ones a far cheaper model would answer correctly. We treat model-tier selection as a contextual bandit and use an open-weight, non-autoregressive decision model, Laya @laya2026card, as the policy: its distribution over {small, medium, large} _is_ $pi(a|s)$, available from one forward pass. After a supervised warm start on hindsight-optimal labels, we train one policy per cost weight $lambda$ with REINFORCE on $r = "correct"(a) - lambda dot c(a) \/ c_"ref"$, observing only the sampled arm. We build an outcome table of #n_prompts automatically graded prompts answered by three open-weight tiers (#n_calls calls; tier accuracies #acc_small / #acc_medium / #acc_large%, any-tier ceiling #acc_oracle_all%). On a held-out test set of #n_test prompts, the validation-selected `auto` policy ($lambda$ = #lam_auto) reaches *#auto_acc%* accuracy (95% CI #auto_acc_lo–#auto_acc_hi) at *#auto_cost%* of the cost of always calling the largest model (CI #auto_cost_lo–#auto_cost_hi), versus #large_acc% for always-large; the paired accuracy difference is #auto_vs_large points (CI #auto_vs_large_lo to #auto_vs_large_hi). The trained policies mostly learn to default to the medium tier, close to an always-medium baseline (difference #auto_vs_med points, CI #auto_vs_med_lo to #auto_vs_med_hi); we report confidence intervals throughout and compare against strong cheap baselines, including where they win. On an agent coding benchmark against Alan Code's Auto Router, Pennywise with a tool-call cascade merges #ag_pw_merged/#ag_n unit-tested tasks, the same as Auto Router (#ag_alan_merged/#ag_n), and finishes them #ag_speedup× faster (#ag_pw_min vs. #ag_alan_min minutes).
     ]
   ]
   #if draft [
@@ -86,6 +86,7 @@ A recent class of _decision models_ returns typed answers with probabilities ins
 + A router that uses Laya's option distribution as the policy $pi_theta (a|s)$ over three model tiers, trained with a supervised warm start followed by REINFORCE on a correctness-minus-cost reward, yielding a family of policies indexed by $lambda$ (@sec:method).
 + An outcome table of #n_prompts automatically graded prompts (math, science QA, code, and an agent-style slice of bug-fix and CI-triage tasks built by bug injection), each answered by all three tiers (@sec:data), with bootstrap confidence intervals and cheap embedding baselines, including per-tier correctness predictors swept over the same $lambda$ grid (@sec:results).
 + An open implementation: an OpenAI-compatible proxy with sticky per-session routing and tool-call passthrough, so agent CLIs can use the router by changing one base URL (@sec:system).
++ A tool-call cascade for agent sessions that validates every cheap-tier step and escalates on evidence of failure, and a head-to-head agent benchmark against Alan Code's Auto Router (@sec:agent).
 
 // ------------------------------------------------------------------ 2
 = Related work
@@ -138,6 +139,9 @@ with $a tilde pi_theta (dot|s)$ sampled from the current policy, $r$ the sampled
   ])
 
 #text(weight: "bold")[Proxy modes.] Three modes map to trained $lambda$ values by fixed rules applied to validation results: `auto` is the cheapest RL policy whose accuracy is not significantly below always-large; `auto-quality` the most accurate; `auto-cheap` the cheapest at least as accurate as always-medium. Here `auto` = #lam_auto, `auto-quality` = #lam_quality, `auto-cheap` = #lam_cheap.
+
+== Agent sessions: a tool-call cascade <sec:cascade>
+The router is trained on single-turn prompts, but agent CLIs run multi-turn tool loops. Routing once per session, an agent can land on a tier whose _tool calling_ is unreliable even when its answers are good. For routed requests that carry `tools`, the proxy therefore holds back each cheap-tier turn and checks it before the agent sees it: every tool call must name a tool from the request, its arguments must be valid JSON without garbled characters or abbreviated file paths, the turn must not be empty, the upstream must not report an error, and the turn must finish within a time budget (30 s). If any check fails, that turn is replayed on the top tier and the session stays there. This is cheap-first, escalate-on-evidence cascading in the spirit of FrugalGPT @chen2023frugalgpt, applied per step rather than per query.
 
 // ------------------------------------------------------------------ 5
 = Data and setup <sec:data>
@@ -209,6 +213,20 @@ The validation-selected `auto` policy ($lambda$ = #lam_auto) differs from always
 
 #wide(text(7.6pt, include "generated/source_table.typ"), [Per-source accuracy % / cost % of always-large on the test split.]) <tab:src>
 
+#if agent_done [
+= Agent coding benchmark vs. Alan's Auto Router <sec:agent>
+
+Alan Code, the coding agent built into the Alan desktop app, offers an *Auto Router* that "lets Alan choose the model". We compared it with Pennywise on #ag_n agent coding tasks we wrote for this purpose: 3 easy, 3 medium and 4 hard (e.g. an O(1) LRU cache without library shortcuts, a recursive-descent expression parser without `eval`, a broken Dijkstra, RFC 4180 CSV quoting). Each task is a small repository with a bug or a stub and a pytest suite; a reference solution passes and the starting code fails every suite. A task counts as *merged* when its tests pass and the test file is unchanged. Both systems received the same one-line instruction per task, no hints, one attempt. Pennywise ran in OpenCode, the open coding-agent CLI that Alan drives, with model `pennywise/auto`; Alan Code ran with Auto Router in the Alan desktop app. Every folder was re-scored by the same script with the same tests.
+
+#figure(include "generated/agent_table.typ", scope: "parent", placement: top, caption: [Agent coding benchmark (#ag_n tasks, one run each). Merged = tests pass and the test file is unchanged. Top: the two systems compared; below: Pennywise configurations on the way there.]) <tab:agent>
+
+Pennywise merged #ag_pw_merged of #ag_n tasks, matching Auto Router's #ag_alan_merged, and finished the set in #ag_pw_min minutes versus #ag_alan_min, #ag_speedup× faster (@tab:agent, @fig:agenttime). Auto Router sent every task to the same model (#ag_alan_model). Without the cascade, Pennywise's `auto` policy merged only #ag_auto_night/#ag_n (night) and #ag_auto_day/#ag_n (daytime repeat): its cheap tier frequently broke OpenCode's tool loop with malformed tool names, invalid arguments, empty replies and invented file paths. The cascade turns those failures into escalations; in the measured run #ag_escalated_tasks of #ag_n sessions escalated (#ag_med_calls cheap-tier and #ag_big_calls top-tier calls in total), while easy sessions that ran cleanly stayed on the cheap tier (@fig:agentprog).
+
+#figure(image("figures/agent_time.pdf", width: 100%), scope: "parent", placement: top, caption: [Wall-clock per task (left; letters mark easy, medium, hard) and in total (right) for Pennywise (router + tool-call cascade) and Alan Code's Auto Router. Both merged all #ag_n tasks.]) <fig:agenttime>
+
+#figure(image("figures/agent_progress.pdf", width: 100%), caption: [Tasks merged vs. total time for each configuration. The cascade moves Pennywise from #ag_auto_day–#ag_auto_night merged to #ag_pw_merged while keeping it fast.]) <fig:agentprog>
+]
+
 // ------------------------------------------------------------------ 8
 = System <sec:system>
 
@@ -225,7 +243,7 @@ The router adds one encoder pass, #router_ms ms median on the build machine's GP
 // ------------------------------------------------------------------ 9
 = Limitations and future work
 
-#note[The test set is small (n = #n_test), so intervals are wide; we use a single seed. The setting is offline: although RL uses only the sampled arm, the outcome table was collected with full information, which an online system would not have. Benchmark prompts are not production traffic, and the agent slice consists of synthetic single-function tasks. Costs are list prices of a free-API run, one of them a proxy price. Laya is known to degrade with many options @laya2026card, which is irrelevant at three tiers but limits extension to many models. Jev was not benchmarked.]
+#note[The test set is small (n = #n_test), so intervals are wide; we use a single seed. The setting is offline: although RL uses only the sampled arm, the outcome table was collected with full information, which an online system would not have. Benchmark prompts are not production traffic, and the agent slice consists of synthetic single-function tasks. Costs are list prices of a free-API run, one of them a proxy price. Laya is known to degrade with many options @laya2026card, which is irrelevant at three tiers but limits extension to many models. Jev was not benchmarked. The agent benchmark has #ag_n tasks and one run per system; the cascade's checks were designed after inspecting failures on these same tasks, so its result is optimistic until it is repeated on fresh tasks, while Auto Router received no tuning. We do not compare agent cost: Alan bills with prompt caching, which the free endpoints we used do not report, so the two cost figures are not on the same basis.]
 
 Planned work: partial-feedback online RL with a feedback endpoint; comparison with an exact expected-reward objective (possible offline because all outcomes are known); evaluation on RouterBench @hu2024routerbench; out-of-distribution tests; more tiers; multiple seeds; calibration.
 

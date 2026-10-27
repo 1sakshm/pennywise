@@ -432,4 +432,105 @@ def main(GEN, FIG, allr, sft):
          f'#let worst_src = "{SRC.get(worst, worst)}"', f'#let worst_gap = "{100 * gaps[worst]:+.1f}"', f"#let worst_n = {auto_p['by_source'][worst]['n']}",
          f'#let rl_med_share = "{p1(med_share)}"', f'#let auto_pareto = {str(bool(auto_p["on_pareto_front"])).lower()}']
     L += alan_table(GEN)
+    L += agent_bench(GEN, FIG)
     (GEN / "extra.typ").write_text("\n".join(L) + "\n", encoding="utf-8")
+
+
+# ---------------------------------------------------------------- agent benchmark vs Alan's Auto Router
+ARM_LABEL = {"pennywise/auto": "Pennywise auto (night)", "pennywise/auto (repeat, day)": "Pennywise auto (day)",
+             "pennywise/auto + cascade (v0.2)": "Pennywise + cascade v0.2", "pennywise/auto + cascade (v0.2b)": "Pennywise + cascade v0.2b",
+             "pennywise/auto + cascade->MiniMax (v0.3)": "Pennywise + cascade→MiniMax v0.3", "pennywise/large (reference)": "Pennywise large only",
+             "alan/auto-router": "Alan Auto Router"}
+
+
+def agent_bench(GEN, FIG):
+    """Speed + success of Pennywise (router + tool-call cascade) vs Alan Code's Auto Router on bench/tasks.py."""
+    f = ROOT / "eval" / "results" / "router_bench.json"
+    if not f.exists():
+        (GEN / "agent_table.typ").write_text("[]\n", encoding="utf-8")
+        return ["#let agent_done = false"]
+    res = json.load(open(f, encoding="utf-8"))
+    S = res["summary"]
+    pw_key = "pennywise/auto + cascade (v0.2b)"
+    pw, al = S[pw_key], S["alan/auto-router"]
+    casc = json.load(open(ROOT / "eval" / "results" / "router_bench_pennywise_cascade2.json", encoding="utf-8"))["runs"]
+
+    # table: every arm, success by level + total time (cost deliberately omitted; see limitations)
+    order = ["alan/auto-router", pw_key, "pennywise/large (reference)", "pennywise/auto + cascade->MiniMax (v0.3)",
+             "pennywise/auto + cascade (v0.2)", "pennywise/auto", "pennywise/auto (repeat, day)"]
+    rows = []
+    for k in [k for k in order if k in S]:
+        v = S[k]
+        name = f"*{ARM_LABEL[k]}*" if k in (pw_key, "alan/auto-router") else ARM_LABEL[k]
+        rows.append(f"[{name}], [{v['merged']}/{v['tasks']}], [{v['by_level']['easy']}], [{v['by_level']['medium']}], [{v['by_level']['hard']}], [{v['total_minutes']:.1f}]")
+    (GEN / "agent_table.typ").write_text(
+        "// GENERATED — do not edit\n#table(columns: 6, align: (left, center, center, center, center, right), stroke: none, inset: (x: 3.2pt, y: 2.6pt),\n"
+        "  table.hline(), [*System*], [*Merged*], [*Easy*], [*Medium*], [*Hard*], [*Total min*], table.hline(stroke: 0.4pt),\n  "
+        + rows[0] + ",\n  " + rows[1] + ",\n  table.hline(stroke: 0.3pt + luma(180)),\n  " + ",\n  ".join(rows[2:]) + ",\n  table.hline())\n", encoding="utf-8")
+
+    # figure 1: per-task wall-clock, Pennywise v0.2b vs Alan
+    tasks = list(TASKS_ORDER())
+    a_min = {r["task"]: r["minutes"] for r in res["alan_runs"]}
+    p_min = {r["task"]: r["wall_s"] / 60 for r in casc}
+    fig, (ax, bx) = plt.subplots(1, 2, figsize=(7.0, 2.3), gridspec_kw={"width_ratios": [3.2, 1]})
+    x = np.arange(len(tasks)); w = 0.38
+    ax.bar(x - w / 2, [p_min[t] for t in tasks], w, color=GOLD, label="Pennywise (auto + cascade)", lw=0)
+    ax.bar(x + w / 2, [a_min[t] for t in tasks], w, color="#64748b", label="Alan Auto Router", lw=0)
+    ax.set_xticks(x, [t.replace("_", "\n", 1) for t in tasks], fontsize=6)
+    ax.set_ylabel("wall-clock per task (min)"); ax.grid(axis="x", visible=False)
+    ax.legend(loc="upper left")
+    for i, t in enumerate(tasks):
+        lvl = TASK_LEVEL()[t][0].upper()
+        ax.text(i, -0.12, lvl, transform=ax.get_xaxis_transform(), ha="center", fontsize=6, color=GREY)
+    bx.barh([1, 0], [pw["total_minutes"], al["total_minutes"]], color=[GOLD, "#64748b"], height=0.55, lw=0)
+    for yv, v in ((1, pw["total_minutes"]), (0, al["total_minutes"])):
+        bx.text(v + 0.8, yv, f"{v:.1f}", va="center", fontsize=7)
+    bx.set_yticks([1, 0], ["Pennywise", "Alan"]); bx.set_xlabel("total (min)"); bx.grid(axis="y", visible=False)
+    bx.set_xlim(0, al["total_minutes"] * 1.25)
+    fig.tight_layout(w_pad=1.2)
+    fig.savefig(FIG / "agent_time.pdf"); plt.close(fig)
+
+    # figure 2: how each Pennywise configuration moved success vs time
+    fig, ax = plt.subplots(figsize=(3.35, 2.3))
+    for k in [k for k in order if k in S]:
+        v = S[k]
+        alan_pt = k == "alan/auto-router"
+        ax.scatter(v["total_minutes"], v["merged"], s=36 if k in (pw_key,) or alan_pt else 18, marker="s" if alan_pt else "o",
+                   color="#64748b" if alan_pt else (GOLD if k == pw_key else INK), zorder=3)
+    ax.set_xlabel("total wall-clock for 10 tasks (min)"); ax.set_ylabel("tasks merged (of 10)")
+    ax.set_ylim(4, 11.6); ax.set_xlim(0, max(v["total_minutes"] for v in S.values()) * 1.6)
+    # 10/10 points cluster: stack their labels above the line with leader lines; others label to the right
+    tens = sorted([k for k in order if k in S and S[k]["merged"] == 10], key=lambda k: S[k]["total_minutes"])
+    for j, k in enumerate(tens):
+        v = S[k]
+        ax.annotate(ARM_LABEL[k], (v["total_minutes"], 10), xytext=(v["total_minutes"] + 4 + 9 * j, 10.25 + 0.36 * (j % 3)), fontsize=5.8,
+                    arrowprops=dict(arrowstyle="-", lw=0.4, color=GREY, shrinkA=0, shrinkB=2))
+    for k in [k for k in order if k in S and S[k]["merged"] < 10]:
+        v = S[k]
+        ax.annotate(ARM_LABEL[k], (v["total_minutes"], v["merged"]), xytext=(5, 2), textcoords="offset points", fontsize=5.8)
+    fig.savefig(FIG / "agent_progress.pdf"); plt.close(fig)
+
+    med_calls = sum(r["tier_calls"].get("medium", 0) for r in casc)
+    big_calls = sum(r["tier_calls"].get("large", 0) for r in casc)
+    escalated_tasks = sum(1 for r in casc if r["tier_calls"].get("large", 0) > 0)
+    return ["#let agent_done = true", f"#let ag_n = {pw['tasks']}", f'#let ag_speedup = "{al["total_minutes"] / pw["total_minutes"]:.1f}"',
+            f'#let ag_pw_min = "{pw["total_minutes"]:.1f}"', f'#let ag_alan_min = "{al["total_minutes"]:.1f}"',
+            f"#let ag_pw_merged = {pw['merged']}", f"#let ag_alan_merged = {al['merged']}",
+            f'#let ag_alan_model = "{", ".join(sorted({r["routed_model"] for r in res["alan_runs"] if r.get("routed_model")}))}"',
+            f"#let ag_auto_night = {S['pennywise/auto']['merged']}", f"#let ag_auto_day = {S.get('pennywise/auto (repeat, day)', {}).get('merged', 0)}",
+            f"#let ag_v02 = {S.get('pennywise/auto + cascade (v0.2)', {}).get('merged', 0)}",
+            f"#let ag_escalated_tasks = {escalated_tasks}", f"#let ag_med_calls = {med_calls}", f"#let ag_big_calls = {big_calls}"]
+
+
+def TASKS_ORDER():
+    import sys as _s
+    _s.path.insert(0, str(ROOT / "bench"))
+    from tasks import TASKS
+    return TASKS.keys()
+
+
+def TASK_LEVEL():
+    import sys as _s
+    _s.path.insert(0, str(ROOT / "bench"))
+    from tasks import TASKS
+    return {k: v["level"] for k, v in TASKS.items()}
