@@ -10,7 +10,7 @@ function Game() {
   return (
     <>
       <ScaledCard label={`You ${you} – ${laya} Laya`}><Card><GameBody you={you} laya={laya} /></Card></ScaledCard>
-      <a className="btn primary" href="/#game">Play Beat the Router</a>
+      <a className="btn primary" href="/#alan">See Pennywise in Alan</a>
     </>
   );
 }

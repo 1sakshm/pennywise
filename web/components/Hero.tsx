@@ -68,7 +68,7 @@ export default function Hero() {
               </p>
               <div className="cta">
                 <button className="btn accent" onClick={playGalaxy}>▶ Watch it learn</button>
-                <a className="btn" href="#game">Beat the router <span className="arrow">→</span></a>
+                <a className="btn" href="#alan">Use it in Alan <span className="arrow">→</span></a>
                 <a className="btn" href="#live">Try it live <span className="arrow">→</span></a>
                 <a className="btn" href="/paper.pdf" target="_blank" rel="noreferrer">Report (PDF) ↗</a>
               </div>

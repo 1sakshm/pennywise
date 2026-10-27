@@ -1,7 +1,6 @@
 "use client";
 import AgentRace from "@/components/AgentRace";
 import AlanConnector from "@/components/AlanConnector";
-import BeatTheRouter from "@/components/BeatTheRouter";
 import PolicyGalaxy from "@/components/galaxy/PolicyGalaxy";
 import Hero from "@/components/Hero";
 import HowItWorks from "@/components/HowItWorks";
@@ -32,12 +31,11 @@ function SpeedBadge() {
 const REPO = process.env.NEXT_PUBLIC_REPO_URL || "https://github.com/YOUR-USER/pennywise";
 const NAV = [
   ["01", "race", "Race"],
-  ["02", "alan", "In Alan"],
-  ["03", "galaxy", "Galaxy"],
-  ["04", "game", "Game"],
-  ["05", "pareto", "Pareto"],
-  ["06", "live", "Live"],
-  ["07", "how", "Method"],
+  ["02", "galaxy", "Galaxy"],
+  ["03", "alan", "In Alan"],
+  ["04", "pareto", "Pareto"],
+  ["05", "live", "Live"],
+  ["06", "how", "Method"],
 ] as const;
 
 export default function Home() {
@@ -86,25 +84,10 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="block" id="alan">
-        <div className="wrap">
-          <SectionHead
-            n="02"
-            kicker="In Alan"
-            meta="npm · MCP connector · runs on your CPU"
-            title={<>One connector. Pennywise <em>inside</em> Alan.</>}
-            lede="pennywise-mcp is on npm. Add it as a custom Command connector and every Alan agent can call the RL-trained router as a tool: route a request to small, medium or large, or answer it with the routed open model. No Python, no server to host."
-          />
-          <Reveal delay={0.1}>
-            <AlanConnector />
-          </Reveal>
-        </div>
-      </section>
-
       <section className="block" id="galaxy">
         <div className="wrap">
           <SectionHead
-            n="03"
+            n="02"
             kicker="Policy galaxy"
             meta="UMAP · checkpoints every 40 steps"
             title={<>Watch reinforcement learning <em>reshape</em> the policy</>}
@@ -116,17 +99,17 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="block" id="game">
+      <section className="block" id="alan">
         <div className="wrap">
           <SectionHead
-            n="04"
-            kicker="Beat the router"
-            meta="held-out prompts · real graded outcomes"
-            title={<>Can you pick the <em>cheapest</em> model that gets it right?</>}
-            lede="Real held-out prompts, real graded outcomes from all three models. Laya has seen none of them."
+            n="03"
+            kicker="In Alan"
+            meta="npm · MCP connector · runs on your CPU"
+            title={<>One connector. Pennywise <em>inside</em> Alan.</>}
+            lede="pennywise-mcp is on npm. Add it as a custom Command connector and every Alan agent can call the RL-trained router as a tool: route a request to small, medium or large, or answer it with the routed open model. No Python, no server to host."
           />
           <Reveal delay={0.1}>
-            <BeatTheRouter />
+            <AlanConnector />
           </Reveal>
         </div>
       </section>
@@ -134,7 +117,7 @@ export default function Home() {
       <section className="block" id="pareto">
         <div className="wrap">
           <SectionHead
-            n="05"
+            n="04"
             kicker="Pareto arena"
             meta="test split · 95% bootstrap CIs"
             title={<>One knob from <em>cheap</em> to <em>careful</em></>}
@@ -148,7 +131,7 @@ export default function Home() {
 
       <section className="block" id="live">
         <div className="wrap">
-          <SectionHead n="06" kicker="Live" meta="openai-compatible proxy" title={<>Route your <em>own</em> request</>} />
+          <SectionHead n="05" kicker="Live" meta="openai-compatible proxy" title={<>Route your <em>own</em> request</>} />
           <Reveal delay={0.1}>
             <LiveMode />
           </Reveal>
@@ -157,7 +140,7 @@ export default function Home() {
 
       <section className="block" id="how">
         <div className="wrap">
-          <SectionHead n="07" kicker="Method" meta="contextual bandit · REINFORCE" title={<>Request → decision → outcome → <em>reward</em></>} />
+          <SectionHead n="06" kicker="Method" meta="contextual bandit · REINFORCE" title={<>Request → decision → outcome → <em>reward</em></>} />
           <Reveal delay={0.1}>
             <HowItWorks />
           </Reveal>
