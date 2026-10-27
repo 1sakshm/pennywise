@@ -190,12 +190,17 @@ pre.code .k { color:#818cf8; } pre.code .s { color:var(--accent); } pre.code .c 
 </div>
 
 <div class="scene" id="alan1">
-  <div class="title"><div class="kick">Now, Alan</div><h2>Pennywise plugs into <span class="serif acc">Alan&rsquo;s agents</span></h2></div>
-  <div class="card" id="cA" style="left:130px;top:360px;width:330px"><div class="t">Alan</div><div class="v">runs coding agents</div><div class="s">Claude Code · Codex · OpenCode…</div></div>
-  <div class="card" id="cO" style="left:540px;top:360px;width:300px"><div class="t">agent CLI</div><div class="v">OpenCode</div><div class="s">model: pennywise/auto</div></div>
-  <pre class="code" id="code2" style="left:930px;top:330px;width:860px;font-size:23px"></pre>
-  <div class="card" id="cM" style="left:930px;top:700px;width:860px"><div class="t">MCP server · add as an Alan connector</div><div class="v" style="font-size:34px"><span class="mono acc">route</span> · <span class="mono acc">ask_routed</span></div></div>
-  <svg id="alanArrows" width="1920" height="1080" style="position:absolute;left:0;top:0"></svg>
+  <div class="title"><div class="kick">Now, Alan</div><h2>Pennywise is <span class="serif acc">one connector</span> away</h2></div>
+  <div class="card" id="cNpm" style="left:120px;top:360px;width:600px"><div class="t">npm · pennywise-mcp</div><pre class="mono" id="npmCmd" style="font-size:34px;margin-top:16px;color:var(--text)"></pre><div class="s">RL router runs on your CPU · no server</div></div>
+  <div class="card" id="cTools" style="left:120px;top:640px;width:600px"><div class="t">every Alan agent gets</div><div class="v" style="font-size:40px"><span class="mono acc">route</span> · <span class="mono acc">ask_routed</span></div></div>
+  <div class="frame" id="fr3" style="left:780px;top:320px;width:1020px"><div class="bar"><i style="background:#f87171"></i><i style="background:#fbbf24"></i><i style="background:#4ade80"></i>&nbsp;Alan · Settings · Plugins · MCP</div><div class="view" id="v3" style="height:530px"><img id="im4" src="assets/alan_plugins.png"></div></div>
+  <div class="ring" id="rg3"></div><div class="callout" id="co3">Connected</div>
+</div>
+
+<div class="scene" id="alanmcp">
+  <div class="title" style="top:90px"><div class="kick">Inside Alan · a live tool call</div><h2>An Alan agent <span class="serif acc">calls Pennywise</span></h2></div>
+  <div class="frame" id="fr4" style="left:260px;top:290px;width:1400px"><div class="bar"><i style="background:#f87171"></i><i style="background:#fbbf24"></i><i style="background:#4ade80"></i>&nbsp;Alan · Alan Code · pennywise.route</div><div class="view" id="v4" style="height:590px"><img id="im5" src="assets/alan_route.png"></div></div>
+  <div class="ring" id="rg4"></div><div class="callout" id="co4">tier: medium</div><div class="callout" id="co5">345 ms · on-device</div>
 </div>
 
 <div class="scene" id="alan2">
@@ -254,11 +259,11 @@ const back = x => { const c1 = 1.70158, c3 = c1 + 1; return 1 + c3 * Math.pow(x 
 function mulberry(a) { return () => { a |= 0; a = a + 0x6D2B79F5 | 0; let t = Math.imul(a ^ a >>> 15, 1 | a); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
 const hash = n => mulberry(Math.floor(n * 1000) + 17)() * 2 - 1;
 function WT(id, word, nth = 0) { const h = L[id].words.filter(w => w.w.toLowerCase().startsWith(word.toLowerCase())); return h.length > nth ? h[nth].t : L[id].start; }
-const ORDER = ['intro', 'hook', 'jev', 'laya', 'problem', 'what', 'data', 'train', 'galaxy', 'serve', 'cascade', 'alan1', 'alan2', 'race', 'faster', 'report', 'site', 'close'];
+const ORDER = ['intro', 'hook', 'jev', 'laya', 'problem', 'what', 'data', 'train', 'galaxy', 'serve', 'cascade', 'alan1', 'alanmcp', 'alan2', 'race', 'faster', 'report', 'site', 'close'];
 const startOf = { hook: L.hook.start, jev: L.jev.start, laya: L.laya.start, problem: L.problem.start, what: L.what.start, data: L.data.start, train: L.train.start, galaxy: L.galaxy.start,
-  serve: L.serve.start, cascade: L.cascade.start, alan1: L.alan1.start, alan2: L.alan2.start, race: L.go.start, faster: L.faster.start, report: L.report.start, site: L.site.start, close: L.close.start };
+  serve: L.serve.start, cascade: L.cascade.start, alan1: L.alan1.start, alanmcp: L.alanmcp.start, alan2: L.alan2.start, race: L.go.start, faster: L.faster.start, report: L.report.start, site: L.site.start, close: L.close.start };
 const W = {}; ORDER.forEach((id, i) => { const a = id === 'intro' ? 0 : startOf[id] - .25; const b = i + 1 < ORDER.length ? startOf[ORDER[i + 1]] - .25 : TOTAL + 1; W[id] = [a, b]; });
-const CHAP = { problem: 'THE PROBLEM', what: 'MEET PENNYWISE', data: '01 · DATA', train: '02 · LEARNING', galaxy: '02 · LEARNING', serve: '03 · USING IT', cascade: '04 · AGENTS', alan1: 'ALAN', alan2: 'ALAN', race: 'ALAN · HEAD-TO-HEAD', faster: 'ALAN · HEAD-TO-HEAD', report: 'TECHNICAL REPORT', site: 'LIVE' };
+const CHAP = { problem: 'THE PROBLEM', what: 'MEET PENNYWISE', data: '01 · DATA', train: '02 · LEARNING', galaxy: '02 · LEARNING', serve: '03 · USING IT', cascade: '04 · AGENTS', alan1: 'ALAN · CONNECTOR', alanmcp: 'ALAN · CONNECTOR', alan2: 'ALAN', race: 'ALAN · HEAD-TO-HEAD', faster: 'ALAN · HEAD-TO-HEAD', report: 'TECHNICAL REPORT', site: 'LIVE' };
 const IMPACTS = TL.cues.filter(c => c.sfx === 'impact').map(c => c.t), GLITCH = TL.cues.filter(c => c.sfx === 'glitch' || c.sfx === 'boop').map(c => c.t), WHOOSH = TL.cues.filter(c => c.sfx === 'whoosh').map(c => c.t);
 function words(el, text) { el.innerHTML = text.split(' ').map(w => `<span class="w">${w}</span>`).join(' '); return [...el.querySelectorAll('.w')]; }
 function slam(ws, t, t0, step = .07, dur = .32) { ws.forEach((w, i) => { const k = p(t, t0 + i * step, t0 + i * step + dur), e = eo5(k); w.style.opacity = k > 0 ? Math.min(1, k * 3) : 0; w.style.transform = `translateY(${(1 - e) * 60}px) scale(${1.5 - .5 * e})`; w.style.filter = `blur(${(1 - e) * 12}px)`; }); }
@@ -365,17 +370,26 @@ function renderServe(t) { const a = L.serve.start, tb = WT('serve', 'base'); con
   SG.forEach((g, i) => { const k = back(p(t, WT('serve', 'sits') + i * .12, WT('serve', 'sits') + .45 + i * .12)); g.setAttribute('opacity', cl(k)); g.setAttribute('transform', `translate(0 ${(1 - cl(k)) * 30})`); });
   sl.setAttribute('stroke-dashoffset', 1 - eio(p(t, WT('serve', 'routes') - .3, WT('serve', 'routes') + .4))); hdr.setAttribute('opacity', eo(p(t, WT('serve', 'call') - .2, WT('serve', 'call') + .3))); }
 
-/* alan1 */
-const CODE2 = `<span class="c">// ~/.config/opencode/opencode.json</span>
-{ <span class="k">"provider"</span>: { <span class="k">"pennywise"</span>: {
-    <span class="k">"options"</span>: { <span class="k">"baseURL"</span>: <span class="s">"https://your-pennywise/v1"</span> },
-    <span class="k">"models"</span>: { <span class="s">"auto"</span>: {}, <span class="s">"auto-quality"</span>: {} } } } }`;
-const aa = $('alanArrows'); const arr1 = mk('path', { d: 'M460 450 H540', stroke: '#facc15', 'stroke-width': 4, fill: 'none', pathLength: 1, 'stroke-dasharray': 1, 'stroke-dashoffset': 1 }, aa);
-const arr2 = mk('path', { d: 'M840 450 H930', stroke: '#facc15', 'stroke-width': 4, fill: 'none', pathLength: 1, 'stroke-dasharray': 1, 'stroke-dashoffset': 1 }, aa);
-function renderAlan1(t) { const a = L.alan1.start; pop($('cA'), t, a + .1); pop($('cO'), t, WT('alan1', 'OpenCode') - .1); arr1.setAttribute('stroke-dashoffset', 1 - eo(p(t, WT('alan1', 'OpenCode') - .3, WT('alan1', 'OpenCode'))));
-  const tp = WT('alan1', 'provider'); arr2.setAttribute('stroke-dashoffset', 1 - eo(p(t, tp - .9, tp - .5))); pop($('code2'), t, tp - .9, 30);
-  const n = Math.floor(cl((t - tp + .9) / 1.6) * CODE2.length); let vis = CODE2.slice(0, n); const open = (vis.match(/<span/g) || []).length - (vis.match(/<\/span>/g) || []).length; if (vis.lastIndexOf('<') > vis.lastIndexOf('>')) vis = vis.slice(0, vis.lastIndexOf('<'));
-  $('code2').innerHTML = vis + '</span>'.repeat(Math.max(0, open)) + (n < CODE2.length ? '▍' : ''); pop($('cM'), t, WT('alan1', 'MCP') - .1); $('cM').style.borderColor = t > WT('alan1', 'connector') ? 'rgba(250,204,21,.6)' : 'rgba(148,163,184,.16)'; }
+/* alan1: npm + real Alan connector screen */
+function kb(fx, fy, im, iw, vw, tx, ty, s1, u) { const s0 = vw / iw, s = s0 + (s1 - s0) * u, vh = im.parentElement.clientHeight;
+  const ox = -(tx * s - vw * .5) * u, oy = -(ty * s - vh * .5) * u; im.style.width = iw + 'px'; im.style.transform = `translate(${ox}px, ${oy}px) scale(${s})`;
+  return { X: x => fx + ox + x * s, Y: y => fy + 40 + oy + y * s, s }; }
+function ringAt(rg, g, x, y, w, h, k) { rg.style.left = (g.X(x) - 10) + 'px'; rg.style.top = (g.Y(y) - 10) + 'px'; rg.style.width = (w * g.s + 20) + 'px'; rg.style.height = (h * g.s + 20) + 'px'; rg.style.opacity = k; rg.style.transform = `scale(${1.3 - .3 * k})`; }
+const NPM = '$ npx -y pennywise-mcp';
+function renderAlan1(t) { const a = L.alan1.start, tn = WT('alan1', 'npm'), tc = WT('alan1', 'connector'), tt = WT('alan1', 'tool');
+  pop($('cNpm'), t, a + .2); const n = Math.floor(cl((t - tn + .3) / .9) * NPM.length); $('npmCmd').textContent = NPM.slice(0, n) + (n < NPM.length || Math.floor(t * 3) % 2 ? '▍' : '');
+  pop($('fr3'), t, tc - .6, 50); const g = kb(780, 320, $('im4'), 874, 1020, 300, 218, 1.8, eio(p(t, tc - .1, tc + .9)));
+  const rk = eo5(p(t, tc + .7, tc + 1.0)) * (1 - eo(p(t, tt - .7, tt - .35))); ringAt($('rg3'), g, 232, 204, 143, 28, rk);
+  const co = $('co3'); co.style.left = (g.X(330) - 40) + 'px'; co.style.top = (g.Y(204) - 95) + 'px'; pop(co, t, tc + .85, 20); co.style.opacity = Math.min(+co.style.opacity, 1 - eo(p(t, tt - .7, tt - .35)));
+  pop($('cTools'), t, tt - .5, 40); $('cTools').style.borderColor = t > tt ? 'rgba(250,204,21,.6)' : 'rgba(148,163,184,.16)'; }
+
+/* alanmcp: real tool call inside Alan */
+function renderAlanMcp(t) { const a = L.alanmcp.start, tm = WT('alanmcp', 'Medium'), td = WT('alanmcp', 'third');
+  pop($('fr4'), t, a - .1, 50); const u = eio(p(t, a + .2, tm - .1)); const g = kb(260, 290, $('im5'), 1165, 1400, 470, 300, 2.3, u);
+  const onMed = t < td - .15; const k = onMed ? eo5(p(t, tm - .1, tm + .2)) : eo5(p(t, td - .1, td + .2));
+  if (onMed) ringAt($('rg4'), g, 305, 252, 125, 19, k); else ringAt($('rg4'), g, 305, 328, 135, 19, k);
+  const c4 = $('co4'); c4.style.left = (g.X(440) + 30) + 'px'; c4.style.top = (g.Y(250) - 20) + 'px'; pop(c4, t, tm + .05, 20); c4.style.opacity = Math.min(+c4.style.opacity, onMed ? 1 : .0);
+  const c5 = $('co5'); c5.style.left = (g.X(450) + 30) + 'px'; c5.style.top = (g.Y(326) - 20) + 'px'; pop(c5, t, td + .05, 20); }
 
 /* alan2: real Alan app footage, ken-burns + callout */
 function renderAlan2(t) { const a = L.alan2.start, im = $('im1'); pop($('fr1'), t, a - .1, 50);
@@ -446,7 +460,7 @@ function renderFX(t) { fc.clearRect(0, 0, 1920, 1080);
   fc.globalAlpha = 1; }
 const gr = $('grain'), grc = gr.getContext('2d'); const GN = [...Array(4)].map((_, k) => { const img = grc.createImageData(960, 540), r = mulberry(k + 1); for (let i = 0; i < img.data.length; i += 4) { const v = r() * 255; img.data[i] = img.data[i + 1] = img.data[i + 2] = v; img.data[i + 3] = 255; } return img; });
 
-const RENDER = { problem: renderProblem, data: renderData, train: renderTrain, galaxy: renderGalaxy, serve: renderServe, alan1: renderAlan1, alan2: renderAlan2, race: renderRace, faster: renderFaster, cascade: renderCascade, report: renderReport, site: renderSite };
+const RENDER = { problem: renderProblem, data: renderData, train: renderTrain, galaxy: renderGalaxy, serve: renderServe, alan1: renderAlan1, alanmcp: renderAlanMcp, alan2: renderAlan2, race: renderRace, faster: renderFaster, cascade: renderCascade, report: renderReport, site: renderSite };
 window.renderAt = function (t) {
   for (const id of ORDER) { const [a, b] = W[id], el = $(id), on = t >= a - .01 && t <= b + .01; el.style.display = on ? 'block' : 'none'; if (!on) continue;
     const kin = eo5(p(t, a, a + .5)), kout = eio(p(t, b - .4, b)); el.style.opacity = Math.min(kin, 1 - kout); el.style.transform = `scale(${(.9 + .1 * kin) * (1 + .35 * kout)})`; el.style.filter = `blur(${(1 - kin) * 14 + kout * 18}px)`;

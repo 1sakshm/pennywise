@@ -51,8 +51,12 @@
  },
  {
   "id": "alan1",
-  "text": "Now, Alan. Alan runs coding agents like OpenCode, and Pennywise plugs into OpenCode as a provider, with an MCP server Alan can add as a connector.",
+  "text": "Now, Alan. Pennywise is on npm. One custom connector, and every Alan agent can call the router as a tool.",
   "dur": 9.05
+ },
+ {
+  "id": "alanmcp",
+  "text": "Here's an Alan agent calling it, live. Medium tier, decided in a third of a second, right on the laptop."
  },
  {
   "id": "alan2",
@@ -81,7 +85,7 @@
  },
  {
   "id": "site",
-  "text": "It's live, it's open source, and it takes one line to try.",
+  "text": "It's live, it's open source, and it's one npx command away.",
   "dur": 3.79
  },
  {

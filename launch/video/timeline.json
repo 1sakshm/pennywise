@@ -1,5 +1,5 @@
 {
- "total": 99.77,
+ "total": 104.07,
  "intro": 2.3,
  "lines": [
   {
@@ -664,437 +664,497 @@
   },
   {
    "id": "alan1",
-   "text": "Now, Alan. Alan runs coding agents like OpenCode, and Pennywise plugs into OpenCode as a provider, with an MCP server Alan can add as a connector.",
+   "text": "Now, Alan. Pennywise is on npm. One custom connector, and every Alan agent can call the router as a tool.",
    "start": 59.869,
-   "end": 68.496,
+   "end": 66.437,
    "words": [
     {
      "w": "Now",
-     "t": 59.857
+     "t": 59.858
     },
     {
      "w": "Alan",
-     "t": 60.237
-    },
-    {
-     "w": "Alan",
-     "t": 60.884
-    },
-    {
-     "w": "runs",
-     "t": 61.163
-    },
-    {
-     "w": "coding",
-     "t": 61.409
-    },
-    {
-     "w": "agents",
-     "t": 61.721
-    },
-    {
-     "w": "like",
-     "t": 62.023
-    },
-    {
-     "w": "OpenCode",
-     "t": 62.246
-    },
-    {
-     "w": "and",
-     "t": 63.183
+     "t": 60.192
     },
     {
      "w": "Pennywise",
-     "t": 63.362
+     "t": 60.84
     },
     {
-     "w": "plugs",
-     "t": 63.853
+     "w": "is",
+     "t": 61.286
     },
     {
-     "w": "into",
-     "t": 64.177
+     "w": "on",
+     "t": 61.398
     },
     {
-     "w": "OpenCode",
-     "t": 64.478
+     "w": "npm",
+     "t": 61.666
     },
     {
-     "w": "as",
-     "t": 65.17
+     "w": "One",
+     "t": 62.536
     },
     {
-     "w": "a",
-     "t": 65.281
-    },
-    {
-     "w": "provider",
-     "t": 65.326
-    },
-    {
-     "w": "with",
-     "t": 66.029
-    },
-    {
-     "w": "an",
-     "t": 66.152
-    },
-    {
-     "w": "MCP",
-     "t": 66.286
-    },
-    {
-     "w": "server",
-     "t": 66.844
-    },
-    {
-     "w": "Alan",
-     "t": 67.19
-    },
-    {
-     "w": "can",
-     "t": 67.458
-    },
-    {
-     "w": "add",
-     "t": 67.636
-    },
-    {
-     "w": "as",
-     "t": 67.938
-    },
-    {
-     "w": "a",
-     "t": 68.016
+     "w": "custom",
+     "t": 62.782
     },
     {
      "w": "connector",
-     "t": 68.049
+     "t": 63.094
+    },
+    {
+     "w": "and",
+     "t": 63.942
+    },
+    {
+     "w": "every",
+     "t": 64.244
+    },
+    {
+     "w": "Alan",
+     "t": 64.512
+    },
+    {
+     "w": "agent",
+     "t": 64.791
+    },
+    {
+     "w": "can",
+     "t": 65.047
+    },
+    {
+     "w": "call",
+     "t": 65.159
+    },
+    {
+     "w": "the",
+     "t": 65.315
+    },
+    {
+     "w": "router",
+     "t": 65.393
+    },
+    {
+     "w": "as",
+     "t": 65.963
+    },
+    {
+     "w": "a",
+     "t": 66.074
+    },
+    {
+     "w": "tool",
+     "t": 66.108
+    }
+   ]
+  },
+  {
+   "id": "alanmcp",
+   "text": "Here's an Alan agent calling it, live. Medium tier, decided in a third of a second, right on the laptop.",
+   "start": 67.037,
+   "end": 72.098,
+   "words": [
+    {
+     "w": "Here's",
+     "t": 67.023
+    },
+    {
+     "w": "an",
+     "t": 67.146
+    },
+    {
+     "w": "Alan",
+     "t": 67.213
+    },
+    {
+     "w": "agent",
+     "t": 67.469
+    },
+    {
+     "w": "calling",
+     "t": 67.726
+    },
+    {
+     "w": "it",
+     "t": 68.061
+    },
+    {
+     "w": "live",
+     "t": 68.172
+    },
+    {
+     "w": "Medium",
+     "t": 68.954
+    },
+    {
+     "w": "tier",
+     "t": 69.333
+    },
+    {
+     "w": "decided",
+     "t": 69.757
+    },
+    {
+     "w": "in",
+     "t": 70.114
+    },
+    {
+     "w": "a",
+     "t": 70.181
+    },
+    {
+     "w": "third",
+     "t": 70.226
+    },
+    {
+     "w": "of",
+     "t": 70.505
+    },
+    {
+     "w": "a",
+     "t": 70.538
+    },
+    {
+     "w": "second",
+     "t": 70.572
+    },
+    {
+     "w": "right",
+     "t": 71.253
+    },
+    {
+     "w": "on",
+     "t": 71.409
+    },
+    {
+     "w": "the",
+     "t": 71.476
+    },
+    {
+     "w": "laptop",
+     "t": 71.532
     }
    ]
   },
   {
    "id": "alan2",
    "text": "So we opened the Alan desktop app, and raced Alan Code's built-in Auto Router.",
-   "start": 69.196,
-   "end": 73.171,
+   "start": 72.798,
+   "end": 76.772,
    "words": [
     {
      "w": "So",
-     "t": 69.178
+     "t": 72.779
     },
     {
      "w": "we",
-     "t": 69.267
+     "t": 72.869
     },
     {
      "w": "opened",
-     "t": 69.368
+     "t": 72.969
     },
     {
      "w": "the",
-     "t": 69.558
+     "t": 73.159
     },
     {
      "w": "Alan",
-     "t": 69.624
+     "t": 73.226
     },
     {
      "w": "desktop",
-     "t": 69.881
+     "t": 73.482
     },
     {
      "w": "app",
-     "t": 70.316
+     "t": 73.918
     },
     {
      "w": "and",
-     "t": 70.953
+     "t": 74.554
     },
     {
      "w": "raced",
-     "t": 71.12
+     "t": 74.721
     },
     {
      "w": "Alan",
-     "t": 71.466
+     "t": 75.067
     },
     {
      "w": "Code's",
-     "t": 71.734
+     "t": 75.335
     },
     {
      "w": "built-in",
-     "t": 72.102
+     "t": 75.703
     },
     {
      "w": "Auto",
-     "t": 72.649
+     "t": 76.25
     },
     {
      "w": "Router",
-     "t": 72.928
+     "t": 76.529
     }
    ]
   },
   {
    "id": "go",
    "text": "Same ten coding tasks. Same tests. Go.",
-   "start": 73.621,
-   "end": 76.766,
+   "start": 77.222,
+   "end": 80.368,
    "words": [
     {
      "w": "Same",
-     "t": 73.601
+     "t": 77.202
     },
     {
      "w": "ten",
-     "t": 73.891
+     "t": 77.492
     },
     {
      "w": "coding",
-     "t": 74.136
+     "t": 77.738
     },
     {
      "w": "tasks",
-     "t": 74.415
+     "t": 78.017
     },
     {
      "w": "Same",
-     "t": 75.386
+     "t": 78.988
     },
     {
      "w": "tests",
-     "t": 75.632
+     "t": 79.233
     },
     {
      "w": "Go",
-     "t": 76.48
+     "t": 80.081
     }
    ]
   },
   {
    "id": "result",
    "text": "Pennywise: eleven minutes. Auto Router: thirty-seven. Both, ten for ten.",
-   "start": 77.016,
-   "end": 81.898,
+   "start": 80.618,
+   "end": 85.499,
    "words": [
     {
      "w": "Pennywise",
-     "t": 76.995
+     "t": 80.596
     },
     {
      "w": "eleven",
-     "t": 77.631
+     "t": 81.232
     },
     {
      "w": "minutes",
-     "t": 77.954
+     "t": 81.556
     },
     {
      "w": "Auto",
-     "t": 78.769
+     "t": 82.37
     },
     {
      "w": "Router",
-     "t": 79.015
+     "t": 82.616
     },
     {
      "w": "thirty-seven",
-     "t": 79.729
+     "t": 83.33
     },
     {
      "w": "Both",
-     "t": 80.756
+     "t": 84.357
     },
     {
      "w": "ten",
-     "t": 81.236
+     "t": 84.837
     },
     {
      "w": "for",
-     "t": 81.481
+     "t": 85.082
     },
     {
      "w": "ten",
-     "t": 81.604
+     "t": 85.205
     }
    ]
   },
   {
    "id": "faster",
    "text": "Three point four times faster.",
-   "start": 82.748,
-   "end": 84.348,
+   "start": 86.349,
+   "end": 87.949,
    "words": [
     {
      "w": "Three",
-     "t": 82.727
+     "t": 86.328
     },
     {
      "w": "point",
-     "t": 82.916
+     "t": 86.518
     },
     {
      "w": "four",
-     "t": 83.173
+     "t": 86.774
     },
     {
      "w": "times",
-     "t": 83.508
+     "t": 87.109
     },
     {
      "w": "faster",
-     "t": 83.798
+     "t": 87.399
     }
    ]
   },
   {
    "id": "report",
    "text": "Every number is in a nine-page technical report. Confidence intervals included.",
-   "start": 85.448,
-   "end": 89.686,
+   "start": 89.049,
+   "end": 93.287,
    "words": [
     {
      "w": "Every",
-     "t": 85.447
+     "t": 89.048
     },
     {
      "w": "number",
-     "t": 85.625
+     "t": 89.227
     },
     {
      "w": "is",
-     "t": 86.194
+     "t": 89.796
     },
     {
      "w": "in",
-     "t": 86.273
+     "t": 89.874
     },
     {
      "w": "a",
-     "t": 86.328
+     "t": 89.93
     },
     {
      "w": "nine-page",
-     "t": 86.373
+     "t": 89.974
     },
     {
      "w": "technical",
-     "t": 87.087
+     "t": 90.689
     },
     {
      "w": "report",
-     "t": 87.5
+     "t": 91.102
     },
     {
      "w": "Confidence",
-     "t": 88.27
+     "t": 91.872
     },
     {
      "w": "intervals",
-     "t": 88.773
+     "t": 92.374
     },
     {
      "w": "included",
-     "t": 89.141
+     "t": 92.742
     }
    ]
   },
   {
    "id": "site",
-   "text": "It's live, it's open source, and it takes one line to try.",
-   "start": 90.386,
-   "end": 93.544,
+   "text": "It's live, it's open source, and it's one npx command away.",
+   "start": 93.987,
+   "end": 97.852,
    "words": [
     {
      "w": "It's",
-     "t": 90.381
+     "t": 93.983
     },
     {
      "w": "live",
-     "t": 90.481
+     "t": 94.073
     },
     {
      "w": "it's",
-     "t": 91.128
+     "t": 94.798
     },
     {
      "w": "open",
-     "t": 91.262
+     "t": 94.921
     },
     {
      "w": "source",
-     "t": 91.541
+     "t": 95.2
     },
     {
      "w": "and",
-     "t": 92.334
+     "t": 95.959
     },
     {
-     "w": "it",
-     "t": 92.412
-    },
-    {
-     "w": "takes",
-     "t": 92.479
+     "w": "it's",
+     "t": 96.07
     },
     {
      "w": "one",
-     "t": 92.702
+     "t": 96.16
     },
     {
-     "w": "line",
-     "t": 92.881
+     "w": "npx",
+     "t": 96.841
     },
     {
-     "w": "to",
-     "t": 93.048
+     "w": "command",
+     "t": 97.253
     },
     {
-     "w": "try",
-     "t": 93.082
+     "w": "away",
+     "t": 97.521
     }
    ]
   },
   {
    "id": "close",
    "text": "Pennywise. Built for Alan's router. Your move, Alan.",
-   "start": 94.244,
-   "end": 97.566,
+   "start": 98.552,
+   "end": 101.875,
    "words": [
     {
      "w": "Pennywise",
-     "t": 94.227
+     "t": 98.535
     },
     {
      "w": "Built",
-     "t": 95.187
+     "t": 99.495
     },
     {
      "w": "for",
-     "t": 95.354
+     "t": 99.662
     },
     {
      "w": "Alan's",
-     "t": 95.533
+     "t": 99.841
     },
     {
      "w": "router",
-     "t": 95.834
+     "t": 100.142
     },
     {
      "w": "Your",
-     "t": 96.56
+     "t": 100.868
     },
     {
      "w": "move",
-     "t": 96.649
+     "t": 100.957
     },
     {
      "w": "Alan",
-     "t": 97.263
+     "t": 101.571
     }
    ]
   }
@@ -1197,70 +1257,86 @@
    "sfx": "impact"
   },
   {
-   "t": 65.326,
+   "t": 61.666,
    "sfx": "tick"
   },
   {
-   "t": 66.286,
+   "t": 63.094,
    "sfx": "tick"
   },
   {
-   "t": 68.896,
+   "t": 66.108,
+   "sfx": "ding"
+  },
+  {
+   "t": 66.787,
    "sfx": "whoosh"
   },
   {
-   "t": 75.58,
+   "t": 68.954,
+   "sfx": "tick"
+  },
+  {
+   "t": 70.226,
+   "sfx": "ding"
+  },
+  {
+   "t": 72.498,
+   "sfx": "whoosh"
+  },
+  {
+   "t": 79.181,
    "sfx": "riser"
   },
   {
-   "t": 76.46,
+   "t": 80.061,
    "sfx": "impact"
   },
   {
-   "t": 81.948,
+   "t": 85.549,
    "sfx": "riser"
   },
   {
-   "t": 82.718,
+   "t": 86.319,
    "sfx": "impact"
   },
   {
-   "t": 85.248,
+   "t": 88.849,
    "sfx": "whoosh"
   },
   {
-   "t": 85.698,
+   "t": 89.299,
    "sfx": "whoosh"
   },
   {
-   "t": 85.918,
+   "t": 89.519,
    "sfx": "whoosh"
   },
   {
-   "t": 86.138,
+   "t": 89.739,
    "sfx": "whoosh"
   },
   {
-   "t": 86.358,
+   "t": 89.959,
    "sfx": "whoosh"
   },
   {
-   "t": 90.136,
+   "t": 93.737,
    "sfx": "whoosh"
   },
   {
-   "t": 93.244,
+   "t": 97.552,
    "sfx": "riser"
   },
   {
-   "t": 94.224,
+   "t": 98.532,
    "sfx": "impact"
   },
   {
-   "t": 97.716,
+   "t": 102.025,
    "sfx": "impact"
   }
  ],
  "bpm": 120,
- "drop": 82.748
+ "drop": 86.349
 }

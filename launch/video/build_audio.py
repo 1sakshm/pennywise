@@ -157,7 +157,7 @@ vo, lead = {}, {}
 for l in lines:
     vo[l["id"]], lead[l["id"]] = trim(decode(HERE / "audio" / f"vo_{l['id']}.mp3"))
 GAPS = {"hook": 0.8, "laya": 0.8, "problem": 0.8, "what": 0.8, "data": 0.7, "train": 0.7, "galaxy": 0.8, "serve": 0.7, "cascade": 0.9,
-        "alan1": 0.7, "alan2": 0.45, "go": 0.25, "result": 0.85, "faster": 1.1, "report": 0.7, "site": 0.7, "close": 0}
+        "alan1": 0.6, "alanmcp": 0.7, "alan2": 0.45, "go": 0.25, "result": 0.85, "faster": 1.1, "report": 0.7, "site": 0.7, "close": 0}
 INTRO = 2.3
 t = INTRO
 TL = []
@@ -255,8 +255,12 @@ cue("whoosh", whoosh(0.5), L["cascade"]["start"] - 0.25, 0.9, -0.3)
 cue("boop", boop(), WT("cascade", "fumbles"), 0.8)  # the fumble
 cue("ding", ding(), WT("cascade", "escalates"), 1.0)  # escalated, fixed
 cue("impact", impact(), L["alan1"]["start"] - 0.05, 0.75)
-cue("tick", tick(), WT("alan1", "provider"), 1.0)
-cue("tick", tick(), WT("alan1", "MCP"), 1.0)
+cue("tick", tick(), WT("alan1", "npm"), 1.0)
+cue("tick", tick(), WT("alan1", "connector"), 1.0)
+cue("ding", ding(), WT("alan1", "tool"), 0.6)
+cue("whoosh", whoosh(0.5), L["alanmcp"]["start"] - 0.25, 0.8, -0.3)
+cue("tick", tick(), WT("alanmcp", "Medium"), 1.0)
+cue("ding", ding(), WT("alanmcp", "third"), 0.7)
 cue("whoosh", whoosh(0.6), L["alan2"]["start"] - 0.3, 0.9, 0.3)
 cue("riser", riser(0.9), WT("go", "Go") - 0.9, 0.5)
 cue("impact", impact(), WT("go", "Go") - 0.02, 0.9)  # race starts
