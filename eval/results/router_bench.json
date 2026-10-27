@@ -1,0 +1,293 @@
+{
+ "label": "Router benchmark, n = 10 agent coding tasks (easy/medium/hard). Small live comparison, not a benchmark suite. Costs are list prices from measured tokens; the two routers use different model pools.",
+ "summary": {
+  "pennywise/auto": {
+   "tasks": 10,
+   "merged": 7,
+   "by_level": {
+    "easy": "3/3",
+    "medium": "2/3",
+    "hard": "2/4"
+   },
+   "total_cost_usd": 0.012888,
+   "usd_per_merged_pr": 0.0018411428571428572,
+   "total_minutes": 66.1
+  },
+  "alan/auto-router": {
+   "tasks": 10,
+   "merged": 10,
+   "by_level": {
+    "easy": "3/3",
+    "medium": "3/3",
+    "hard": "4/4"
+   },
+   "total_cost_usd": 0.12530000000000002,
+   "usd_per_merged_pr": 0.012530000000000003,
+   "total_minutes": 36.9
+  }
+ },
+ "alan_runs": [
+  {
+   "task": "off_by_one",
+   "level": "easy",
+   "arm": "alan/auto-router",
+   "tests_pass": true,
+   "tests_untouched": true,
+   "merged": true,
+   "routed_model": "DeepSeek V4.1 Flash",
+   "minutes": 2.9
+  },
+  {
+   "task": "slugify",
+   "level": "easy",
+   "arm": "alan/auto-router",
+   "tests_pass": true,
+   "tests_untouched": true,
+   "merged": true,
+   "routed_model": "DeepSeek V4.1 Flash",
+   "minutes": 3.3
+  },
+  {
+   "task": "palindrome",
+   "level": "easy",
+   "arm": "alan/auto-router",
+   "tests_pass": true,
+   "tests_untouched": true,
+   "merged": true,
+   "routed_model": "DeepSeek V4.1 Flash",
+   "minutes": 4.2
+  },
+  {
+   "task": "parse_kv",
+   "level": "medium",
+   "arm": "alan/auto-router",
+   "tests_pass": true,
+   "tests_untouched": true,
+   "merged": true,
+   "routed_model": "DeepSeek V4.1 Flash",
+   "minutes": 4.6
+  },
+  {
+   "task": "merge_intervals",
+   "level": "medium",
+   "arm": "alan/auto-router",
+   "tests_pass": true,
+   "tests_untouched": true,
+   "merged": true,
+   "routed_model": "DeepSeek V4.1 Flash",
+   "minutes": 10.4
+  },
+  {
+   "task": "roman",
+   "level": "medium",
+   "arm": "alan/auto-router",
+   "tests_pass": true,
+   "tests_untouched": true,
+   "merged": true,
+   "routed_model": "DeepSeek V4.1 Flash",
+   "minutes": 6.2
+  },
+  {
+   "task": "lru_cache",
+   "level": "hard",
+   "arm": "alan/auto-router",
+   "tests_pass": true,
+   "tests_untouched": true,
+   "merged": true,
+   "routed_model": "DeepSeek V4.1 Flash",
+   "minutes": 0.7
+  },
+  {
+   "task": "expr_eval",
+   "level": "hard",
+   "arm": "alan/auto-router",
+   "tests_pass": true,
+   "tests_untouched": true,
+   "merged": true,
+   "routed_model": "DeepSeek V4.1 Flash",
+   "minutes": 1.0
+  },
+  {
+   "task": "dijkstra_bug",
+   "level": "hard",
+   "arm": "alan/auto-router",
+   "tests_pass": true,
+   "tests_untouched": true,
+   "merged": true,
+   "routed_model": "DeepSeek V4.1 Flash",
+   "minutes": 2.9
+  },
+  {
+   "task": "csv_quotes",
+   "level": "hard",
+   "arm": "alan/auto-router",
+   "tests_pass": true,
+   "tests_untouched": true,
+   "merged": true,
+   "routed_model": "DeepSeek V4.1 Flash",
+   "minutes": 0.7
+  }
+ ],
+ "pennywise_runs": [
+  {
+   "task": "off_by_one",
+   "level": "easy",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.000822,
+   "tier_calls": {
+    "small": 0,
+    "medium": 7,
+    "large": 0
+   },
+   "wall_s": 147.0,
+   "status": "exit 0"
+  },
+  {
+   "task": "slugify",
+   "level": "easy",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.001845,
+   "tier_calls": {
+    "small": 0,
+    "medium": 14,
+    "large": 0
+   },
+   "wall_s": 483.2,
+   "status": "exit 0"
+  },
+  {
+   "task": "palindrome",
+   "level": "easy",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.000708,
+   "tier_calls": {
+    "small": 0,
+    "medium": 7,
+    "large": 0
+   },
+   "wall_s": 435.5,
+   "status": "exit 0"
+  },
+  {
+   "task": "parse_kv",
+   "level": "medium",
+   "arm": "pennywise/auto",
+   "merged": false,
+   "tests_pass": false,
+   "tests_untouched": true,
+   "cost_usd": 0.001094,
+   "tier_calls": {
+    "small": 0,
+    "medium": 9,
+    "large": 0
+   },
+   "wall_s": 311.1,
+   "status": "exit 0"
+  },
+  {
+   "task": "merge_intervals",
+   "level": "medium",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.001041,
+   "tier_calls": {
+    "small": 0,
+    "medium": 8,
+    "large": 0
+   },
+   "wall_s": 194.9,
+   "status": "exit 0"
+  },
+  {
+   "task": "roman",
+   "level": "medium",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.001763,
+   "tier_calls": {
+    "small": 0,
+    "medium": 13,
+    "large": 0
+   },
+   "wall_s": 1022.7,
+   "status": "exit 0"
+  },
+  {
+   "task": "lru_cache",
+   "level": "hard",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.001611,
+   "tier_calls": {
+    "small": 0,
+    "medium": 12,
+    "large": 0
+   },
+   "wall_s": 240.3,
+   "status": "exit 0"
+  },
+  {
+   "task": "expr_eval",
+   "level": "hard",
+   "arm": "pennywise/auto",
+   "merged": false,
+   "tests_pass": false,
+   "tests_untouched": true,
+   "cost_usd": 0.002958,
+   "tier_calls": {
+    "small": 0,
+    "medium": 19,
+    "large": 0
+   },
+   "wall_s": 559.6,
+   "status": "exit 0"
+  },
+  {
+   "task": "dijkstra_bug",
+   "level": "hard",
+   "arm": "pennywise/auto",
+   "merged": false,
+   "tests_pass": false,
+   "tests_untouched": true,
+   "cost_usd": 0.000289,
+   "tier_calls": {
+    "small": 0,
+    "medium": 3,
+    "large": 0
+   },
+   "wall_s": 154.9,
+   "status": "exit 0"
+  },
+  {
+   "task": "csv_quotes",
+   "level": "hard",
+   "arm": "pennywise/auto",
+   "merged": true,
+   "tests_pass": true,
+   "tests_untouched": true,
+   "cost_usd": 0.000757,
+   "tier_calls": {
+    "small": 0,
+    "medium": 7,
+    "large": 0
+   },
+   "wall_s": 416.4,
+   "status": "exit 0"
+  }
+ ]
+}

@@ -1,0 +1,5 @@
+﻿{
+  "_source": "Alan Settings > Usage > Usage by model (last 14d), captured 2026-10-27 06:07 IST. The UI shows rounded values (K/M); numbers below are those rounded values, not exact counts.",
+  "_summary_tiles": {"tokens_14d": "2.2M", "sessions_14d": 10, "cache_hit": "62.7%", "from_cache": "1.4M", "avg_session": "4m", "alan_code_allowance_spent": "3%"},
+  "DeepSeek V4.1 Flash": {"input": 817000, "output": 12000, "cached": 1400000, "total": 2200000, "_as_shown": {"input": "817K", "output": "12K", "cached": "1.4M", "total": "2.2M", "share": "100.0%"}}
+}

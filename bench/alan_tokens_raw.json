@@ -1,0 +1,4 @@
+﻿{
+  "_note": "after - before. Before was zero (\"No model usage in this period yet\"), so this equals the after view. Values are the UI's rounded figures (817K, 12K, 1.4M, 2.2M), so precision is roughly +/-1 in the last shown digit. 'cached' = cached input tokens as Alan reports them; Alan's total (2.2M) appears to be input + output + cached.",
+  "DeepSeek V4.1 Flash": {"input": 817000, "output": 12000, "cached": 1400000, "total": 2200000}
+}

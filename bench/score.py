@@ -31,7 +31,8 @@ def openrouter_prices():
     try:
         import httpx
         data = httpx.get("https://openrouter.ai/api/v1/models", timeout=30).json()["data"]
-        return {m["id"]: (float(m["pricing"]["prompt"]) * 1e6, float(m["pricing"]["completion"]) * 1e6) for m in data}
+        return {m["id"]: (float(m["pricing"]["prompt"]) * 1e6, float(m["pricing"]["completion"]) * 1e6,
+                          float(m["pricing"].get("input_cache_read") or m["pricing"]["prompt"]) * 1e6) for m in data}
     except Exception as e:  # offline: cost left blank, never guessed
         print("price lookup failed:", e)
         return {}
@@ -57,9 +58,11 @@ def main():
     tok_path = Path(a.alan_tokens)
     if tok_path.exists():
         toks, prices = json.load(open(tok_path, encoding="utf-8")), openrouter_prices()
-        missing = [m for m in toks if m not in prices]
+        missing = [m for m in toks if not m.startswith("_") and m not in prices]
         if not missing:
-            alan_cost = sum(v["input"] * prices[m][0] / 1e6 + v["output"] * prices[m][1] / 1e6 for m, v in toks.items())
+            # cached input tokens (if reported) are priced at the provider's cache-read rate
+            alan_cost = sum((v["input"] * prices[m][0] + v["output"] * prices[m][1] + v.get("cached", 0) * prices[m][2]) / 1e6
+                            for m, v in toks.items() if not m.startswith("_"))
         else:
             print("no public list price for:", missing, "— Alan cost left blank")
 
