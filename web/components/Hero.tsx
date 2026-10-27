@@ -101,7 +101,7 @@ export default function Hero() {
                 ))}
               </div>
             )}
-            <div className="lam mono">selected <span className="lc">λ</span> = {lambda} · drag it in §03</div>
+            <div className="lam mono">selected <span className="lc">λ</span> = {lambda} · drag it in §04</div>
           </motion.aside>
         </div>
         <div className="fig"><motion.div initial={{ opacity: 0, y: 24 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.9, duration: 0.9, ease }}>

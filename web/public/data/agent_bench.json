@@ -25,5 +25,87 @@
  },
  "speedup": 3.4,
  "scope": "10 agent coding tasks (3 easy, 3 medium, 4 hard), unit-tested; one run each; OpenCode CLI for Pennywise, Alan desktop app for Auto Router; Oct 27, 2026.",
- "merged_means": "tests pass and the test file is unchanged"
+ "merged_means": "tests pass and the test file is unchanged",
+ "per_task": [
+  {
+   "task": "off_by_one",
+   "level": "easy",
+   "pennywise_min": 0.76,
+   "pennywise_merged": true,
+   "alan_min": 2.9,
+   "alan_merged": true
+  },
+  {
+   "task": "slugify",
+   "level": "easy",
+   "pennywise_min": 0.67,
+   "pennywise_merged": true,
+   "alan_min": 3.3,
+   "alan_merged": true
+  },
+  {
+   "task": "palindrome",
+   "level": "easy",
+   "pennywise_min": 0.92,
+   "pennywise_merged": true,
+   "alan_min": 4.2,
+   "alan_merged": true
+  },
+  {
+   "task": "parse_kv",
+   "level": "medium",
+   "pennywise_min": 1.45,
+   "pennywise_merged": true,
+   "alan_min": 4.6,
+   "alan_merged": true
+  },
+  {
+   "task": "merge_intervals",
+   "level": "medium",
+   "pennywise_min": 0.89,
+   "pennywise_merged": true,
+   "alan_min": 10.4,
+   "alan_merged": true
+  },
+  {
+   "task": "roman",
+   "level": "medium",
+   "pennywise_min": 1.03,
+   "pennywise_merged": true,
+   "alan_min": 6.2,
+   "alan_merged": true
+  },
+  {
+   "task": "lru_cache",
+   "level": "hard",
+   "pennywise_min": 0.91,
+   "pennywise_merged": true,
+   "alan_min": 0.7,
+   "alan_merged": true
+  },
+  {
+   "task": "expr_eval",
+   "level": "hard",
+   "pennywise_min": 1.94,
+   "pennywise_merged": true,
+   "alan_min": 1.0,
+   "alan_merged": true
+  },
+  {
+   "task": "dijkstra_bug",
+   "level": "hard",
+   "pennywise_min": 0.69,
+   "pennywise_merged": true,
+   "alan_min": 2.9,
+   "alan_merged": true
+  },
+  {
+   "task": "csv_quotes",
+   "level": "hard",
+   "pennywise_min": 1.72,
+   "pennywise_merged": true,
+   "alan_min": 0.7,
+   "alan_merged": true
+  }
+ ]
 }

@@ -1,4 +1,5 @@
 "use client";
+import AgentRace from "@/components/AgentRace";
 import BeatTheRouter from "@/components/BeatTheRouter";
 import PolicyGalaxy from "@/components/galaxy/PolicyGalaxy";
 import Hero from "@/components/Hero";
@@ -29,11 +30,12 @@ function SpeedBadge() {
 
 const REPO = process.env.NEXT_PUBLIC_REPO_URL || "https://github.com/YOUR-USER/pennywise";
 const NAV = [
-  ["01", "galaxy", "Galaxy"],
-  ["02", "game", "Game"],
-  ["03", "pareto", "Pareto"],
-  ["04", "live", "Live"],
-  ["05", "how", "Method"],
+  ["01", "race", "Race"],
+  ["02", "galaxy", "Galaxy"],
+  ["03", "game", "Game"],
+  ["04", "pareto", "Pareto"],
+  ["05", "live", "Live"],
+  ["06", "how", "Method"],
 ] as const;
 
 export default function Home() {
@@ -69,10 +71,25 @@ export default function Home() {
 
       <Hero />
 
-      <section className="block" id="galaxy">
+      <section className="block" id="race">
         <div className="wrap">
           <SectionHead
             n="01"
+            kicker="Head-to-head"
+            meta="measured timings · same tasks · same tests"
+            title={<>Pennywise vs. Alan&apos;s <em>Auto Router</em></>}
+            lede="Both systems got the same 10 agent coding tasks, from an off-by-one fix to an O(1) LRU cache and a hand-written expression parser, with the same one-line instruction and no hints. This replays what actually happened, task by task, sped up."
+          />
+          <Reveal delay={0.1}>
+            <AgentRace />
+          </Reveal>
+        </div>
+      </section>
+
+      <section className="block" id="galaxy">
+        <div className="wrap">
+          <SectionHead
+            n="02"
             kicker="Policy galaxy"
             meta="UMAP · checkpoints every 40 steps"
             title={<>Watch reinforcement learning <em>reshape</em> the policy</>}
@@ -87,7 +104,7 @@ export default function Home() {
       <section className="block" id="game">
         <div className="wrap">
           <SectionHead
-            n="02"
+            n="03"
             kicker="Beat the router"
             meta="held-out prompts · real graded outcomes"
             title={<>Can you pick the <em>cheapest</em> model that gets it right?</>}
@@ -102,7 +119,7 @@ export default function Home() {
       <section className="block" id="pareto">
         <div className="wrap">
           <SectionHead
-            n="03"
+            n="04"
             kicker="Pareto arena"
             meta="test split · 95% bootstrap CIs"
             title={<>One knob from <em>cheap</em> to <em>careful</em></>}
@@ -116,7 +133,7 @@ export default function Home() {
 
       <section className="block" id="live">
         <div className="wrap">
-          <SectionHead n="04" kicker="Live" meta="openai-compatible proxy" title={<>Route your <em>own</em> request</>} />
+          <SectionHead n="05" kicker="Live" meta="openai-compatible proxy" title={<>Route your <em>own</em> request</>} />
           <Reveal delay={0.1}>
             <LiveMode />
           </Reveal>
@@ -125,7 +142,7 @@ export default function Home() {
 
       <section className="block" id="how">
         <div className="wrap">
-          <SectionHead n="05" kicker="Method" meta="contextual bandit · REINFORCE" title={<>Request → decision → outcome → <em>reward</em></>} />
+          <SectionHead n="06" kicker="Method" meta="contextual bandit · REINFORCE" title={<>Request → decision → outcome → <em>reward</em></>} />
           <Reveal delay={0.1}>
             <HowItWorks />
           </Reveal>

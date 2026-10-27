@@ -3,7 +3,7 @@ import Architecture from "@/components/Architecture";
 
 const COLS = [
   {
-    k: "5.1",
+    k: "6.1",
     tag: "policy",
     title: <>A decision model&apos;s output is a <em>policy</em></>,
     body: (
@@ -15,7 +15,7 @@ const COLS = [
     ),
   },
   {
-    k: "5.2",
+    k: "6.2",
     tag: "reward",
     title: <>Reward = right answer, minus what it <em>cost</em></>,
     body: (
@@ -27,7 +27,7 @@ const COLS = [
     ),
   },
   {
-    k: "5.3",
+    k: "6.3",
     tag: "limits",
     title: <>What it <em>isn&apos;t</em></>,
     body: (
