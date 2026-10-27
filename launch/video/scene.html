@@ -1,0 +1,333 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<title>Pennywise launch video</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500&family=Instrument+Serif:ital@0;1&display=block" rel="stylesheet">
+<script src="assets/data.js"></script>
+<style>
+  :root { --bg:#06070a; --text:#eef1f6; --muted:#8a93a6; --dim:#5a6274; --line:rgba(148,163,184,.14); --accent:#facc15;
+          --small:#2dd4bf; --medium:#818cf8; --large:#f472b6; --ok:#4ade80; --bad:#f87171; }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html,body { width:1920px; height:1080px; overflow:hidden; background:var(--bg); }
+  body { font-family:'Geist',system-ui,sans-serif; color:var(--text); -webkit-font-smoothing:antialiased; }
+  #stage { position:relative; width:1920px; height:1080px; overflow:hidden;
+    background-image: linear-gradient(to right, rgba(148,163,184,.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(148,163,184,.05) 1px, transparent 1px);
+    background-size:96px 96px; }
+  .scene { position:absolute; inset:0; opacity:0; will-change:opacity, transform; }
+  .mono { font-family:'Geist Mono',monospace; }
+  .serif { font-family:'Instrument Serif',serif; font-style:italic; font-weight:400; }
+  .c { position:absolute; left:0; right:0; text-align:center; }
+  .kick { font-family:'Geist Mono',monospace; font-size:22px; letter-spacing:.22em; text-transform:uppercase; color:var(--muted); }
+  .acc { color:var(--accent); }
+  /* HUD */
+  #hud { position:absolute; inset:0; pointer-events:none; }
+  #brand { position:absolute; left:64px; top:52px; font-family:'Geist Mono',monospace; font-size:20px; letter-spacing:.16em; display:flex; gap:14px; align-items:center; opacity:0; }
+  #brand i { width:18px; height:18px; border:1.5px solid var(--accent); display:inline-block; }
+  #tag { position:absolute; right:64px; top:52px; font-family:'Geist Mono',monospace; font-size:18px; letter-spacing:.14em; color:var(--dim); opacity:0; }
+  #bar { position:absolute; left:0; bottom:0; height:4px; background:var(--accent); transform-origin:0 50%; }
+  /* S1 */
+  #s1 .dear { top:330px; font-size:30px; color:var(--muted); letter-spacing:.06em; }
+  #s1 .l1 { top:400px; font-size:150px; font-weight:600; letter-spacing:-.05em; line-height:1; }
+  #s1 .l2 { top:560px; font-size:170px; line-height:1; color:var(--accent); }
+  #s1 .sub { top:800px; font-size:30px; color:var(--muted); }
+  /* S2 */
+  .tweet { position:absolute; width:720px; background:#0d0f15; border:1px solid var(--line); border-radius:18px; padding:30px 34px; }
+  .tweet .h { display:flex; gap:16px; align-items:center; margin-bottom:16px; }
+  .tweet .av { width:58px; height:58px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:24px; }
+  .tweet .nm { font-weight:600; font-size:24px; } .tweet .hd { color:var(--dim); font-size:20px; }
+  .tweet p { font-size:28px; line-height:1.35; }
+  .tweet .meta { margin-top:16px; color:var(--dim); font-size:19px; font-family:'Geist Mono',monospace; }
+  #s2 .big1 { top:300px; font-size:160px; font-weight:600; letter-spacing:-.05em; }
+  #s2 .big2 { top:470px; font-size:190px; color:var(--accent); }
+  #s2 .sub { top:760px; font-size:32px; color:var(--muted); }
+  /* S3 */
+  #s3 svg { position:absolute; left:0; top:0; }
+  #s3 .ttl { top:96px; }
+  /* S4 */
+  #gal { position:absolute; left:0; top:0; }
+  #s4 .ttl { top:96px; } #s4 .ctr { position:absolute; right:110px; bottom:120px; text-align:right; }
+  #s4 .ctr b { font-family:'Geist Mono',monospace; font-size:96px; font-weight:500; color:var(--accent); display:block; letter-spacing:-.03em; }
+  #s4 .leg { position:absolute; left:110px; bottom:126px; font-family:'Geist Mono',monospace; font-size:22px; color:var(--muted); display:flex; gap:28px; }
+  .dot { width:14px; height:14px; border-radius:50%; display:inline-block; margin-right:10px; vertical-align:-1px; }
+  /* S5 */
+  #s5 .ttl { top:110px; } #s5 h2 { font-size:76px; font-weight:600; letter-spacing:-.04em; }
+  #clock { position:absolute; right:150px; top:250px; font-family:'Geist Mono',monospace; font-size:64px; color:var(--text); }
+  #clock small { display:block; font-size:18px; color:var(--dim); letter-spacing:.16em; text-align:right; }
+  .lane { position:absolute; left:150px; width:1620px; }
+  .lane .nm { font-size:34px; font-weight:600; margin-bottom:6px; } .lane .sb { font-family:'Geist Mono',monospace; font-size:18px; color:var(--dim); margin-bottom:16px; }
+  .lane .trk { position:relative; height:64px; display:flex; gap:4px; }
+  .seg { position:relative; height:100%; background:rgba(148,163,184,.08); border:1px solid var(--line); border-radius:4px; overflow:hidden; }
+  .seg .f { position:absolute; inset:0; transform-origin:0 50%; transform:scaleX(0); }
+  .seg .k { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#06070a; font-weight:700; font-size:24px; opacity:0; }
+  .lane .st { position:absolute; right:0; top:0; font-family:'Geist Mono',monospace; font-size:34px; }
+  .done { font-family:'Geist Mono',monospace; font-size:22px; color:var(--ok); margin-top:12px; opacity:0; }
+  #stamp { position:absolute; left:0; right:0; top:785px; text-align:center; opacity:0; }
+  #stamp b { font-family:'Geist Mono',monospace; font-weight:500; font-size:112px; color:var(--accent); letter-spacing:-.04em; }
+  #stamp span { display:block; font-size:26px; color:var(--muted); margin-top:4px; }
+  #s5 .fine { position:absolute; left:150px; bottom:28px; font-family:'Geist Mono',monospace; font-size:17px; color:var(--dim); }
+  /* S6 */
+  #s6 .ttl { top:150px; } #s6 h2 { font-size:72px; font-weight:600; letter-spacing:-.04em; }
+  .chip { position:absolute; top:520px; width:250px; height:150px; border:1.5px solid var(--line); border-radius:14px; background:#0c0e14; padding:22px; opacity:0; }
+  .chip .t { font-family:'Geist Mono',monospace; font-size:19px; color:var(--dim); letter-spacing:.1em; text-transform:uppercase; }
+  .chip .v { font-size:32px; font-weight:600; margin-top:12px; }
+  .chip .s { font-family:'Geist Mono',monospace; font-size:17px; color:var(--muted); margin-top:8px; }
+  #esc { position:absolute; opacity:0; font-family:'Geist Mono',monospace; font-size:22px; color:var(--accent); }
+  #s6 .sub { top:820px; font-size:30px; color:var(--muted); }
+  /* S7 */
+  #s7 .pg { position:absolute; width:520px; border-radius:6px; box-shadow:0 30px 80px rgba(0,0,0,.6); background:#fff; opacity:0; }
+  #s7 .txt { position:absolute; left:120px; top:300px; width:620px; }
+  #s7 .txt h2 { font-size:92px; font-weight:600; letter-spacing:-.045em; line-height:1; }
+  #s7 .txt .chips { margin-top:40px; display:flex; flex-direction:column; gap:16px; }
+  #s7 .txt .chips span { font-family:'Geist Mono',monospace; font-size:24px; color:var(--muted); opacity:0; }
+  #s7 .txt .chips b { color:var(--accent); font-weight:500; }
+  /* S8 */
+  #s8 .w { top:290px; font-size:200px; font-weight:600; letter-spacing:-.06em; }
+  #s8 .t2 { top:530px; font-size:84px; }
+  #s8 .t3 { top:680px; font-family:'Geist Mono',monospace; font-size:28px; color:var(--muted); letter-spacing:.06em; }
+  #s8 .t4 { top:760px; font-family:'Geist Mono',monospace; font-size:30px; color:var(--text); }
+  #s8 .t5 { top:880px; font-size:46px; color:var(--accent); }
+</style></head>
+<body><div id="stage">
+
+<!-- S1 hook -->
+<div class="scene" id="s1">
+  <div class="c dear mono">Dear Alan AI team,</div>
+  <div class="c l1">Your Auto Router</div>
+  <div class="c l2 serif">just lost a race.</div>
+  <div class="c sub">Same 10 coding tasks. Same tests. Here&rsquo;s what beat it.</div>
+</div>
+
+<!-- S2 X context -->
+<div class="scene" id="s2">
+  <div class="tweet" id="tw1" style="left:180px;top:240px">
+    <div class="h"><div class="av" style="background:#1e293b;color:#e2e8f0">J</div><div><div class="nm">Jev</div><div class="hd">decision model · closed</div></div></div>
+    <p>Typed choices with probabilities, not text. Tech X couldn&rsquo;t stop talking about decision models.</p>
+    <div class="meta">Sep 15, 2026 · launch</div>
+  </div>
+  <div class="tweet" id="tw2" style="left:1020px;top:420px">
+    <div class="h"><div class="av" style="background:#2a2312;color:var(--accent)">L</div><div><div class="nm">Laya</div><div class="hd">Convai Innovations · open weights</div></div></div>
+    <p>An open decision model. 421M params. One forward pass &rarr; a probability for every option.</p>
+    <div class="meta">Apache-2.0 · ModernBERT-large</div>
+  </div>
+  <div class="c big1">Jev chooses.</div>
+  <div class="c big2 serif">This one learns.</div>
+  <div class="c sub">Pennywise: Laya, trained with reinforcement learning to route every LLM call.</div>
+</div>
+
+<!-- S3 RL loop -->
+<div class="scene" id="s3">
+  <div class="c ttl kick">How it learns · one REINFORCE step</div>
+  <svg id="loop" width="1920" height="1080"></svg>
+</div>
+
+<!-- S4 galaxy -->
+<div class="scene" id="s4">
+  <canvas id="gal" width="1920" height="1080"></canvas>
+  <div class="c ttl kick" id="galt">948 graded prompts · RL reshapes the policy</div>
+  <div class="leg"><span><i class="dot" style="background:var(--small)"></i>small</span><span><i class="dot" style="background:var(--medium)"></i>medium</span><span><i class="dot" style="background:var(--large)"></i>large</span></div>
+  <div class="ctr"><span class="kick">RL step</span><b id="stepn">000</b></div>
+</div>
+
+<!-- S5 race -->
+<div class="scene" id="s5">
+  <div class="c ttl"><div class="kick" style="margin-bottom:14px">Head-to-head · 10 agent coding tasks</div><h2>Pennywise vs. Alan&rsquo;s <span class="serif acc">Auto Router</span></h2></div>
+  <div id="clock">00:00<small>REAL TIME</small></div>
+  <div class="lane" id="lpw" style="top:390px"><div class="nm acc">Pennywise</div><div class="sb">router + tool-call cascade</div><div class="trk"></div><div class="st">0/10</div><div class="done">DONE · 11.0 min · 10/10 merged</div></div>
+  <div class="lane" id="lal" style="top:630px"><div class="nm" style="color:#cbd5e1">Alan Auto Router</div><div class="sb">Alan Code</div><div class="trk"></div><div class="st">0/10</div><div class="done">DONE · 36.9 min · 10/10 merged</div></div>
+  <div id="stamp"><b id="sx">3.4× faster</b><span>same 10/10 merged · measured, not simulated</span></div>
+  <div class="fine">10 unit-tested agent coding tasks (3 easy · 3 medium · 4 hard) · one run each · Oct 27, 2026 · merged = tests pass, tests untouched</div>
+</div>
+
+<!-- S6 cascade -->
+<div class="scene" id="s6">
+  <div class="c ttl"><div class="kick" style="margin-bottom:14px">Inside every agent session</div><h2>A tool-call cascade that <span class="serif acc">never stalls</span></h2></div>
+  <div class="chip" id="c1" style="left:150px"><div class="t">step 1</div><div class="v">read file</div><div class="s">fast tier ✓</div></div>
+  <div class="chip" id="c2" style="left:440px"><div class="t">step 2</div><div class="v">glob</div><div class="s">fast tier ✓</div></div>
+  <div class="chip" id="c3" style="left:730px"><div class="t">step 3</div><div class="v">edit</div><div class="s">malformed tool call</div></div>
+  <div class="chip" id="c4" style="left:1100px"><div class="t">step 3 · retried</div><div class="v">edit</div><div class="s">strong tier ✓</div></div>
+  <div class="chip" id="c5" style="left:1390px"><div class="t">step 4</div><div class="v">pytest</div><div class="s">12 passed ✓</div></div>
+  <div id="esc" style="left:900px;top:430px">⤴ escalate</div>
+  <div class="c sub">Every step verified: tool names · JSON args · file paths · empty replies · a 30 s budget.</div>
+</div>
+
+<!-- S7 report -->
+<div class="scene" id="s7">
+  <img class="pg" id="p1" src="assets/page1.png"><img class="pg" id="p2" src="assets/page2.png"><img class="pg" id="p3" src="assets/page8.png"><img class="pg" id="p4" src="assets/page3.png">
+  <div class="txt"><div class="kick" style="margin-bottom:22px">Technical report v0.1</div><h2>Every number <span class="serif acc">earned.</span></h2>
+    <div class="chips"><span><b>9</b> pages · two-column</span><span><b>15</b> figures · vector diagrams</span><span><b>948</b> graded prompts · <b>6</b> RL policies</span><span>CIs everywhere · generated from real runs</span></div></div>
+</div>
+
+<!-- S8 close -->
+<div class="scene" id="s8">
+  <div class="c w">Penny<span class="acc">wise</span></div>
+  <div class="c t2 serif">Built for Alan&rsquo;s router.</div>
+  <div class="c t3">ONE base_url · OPEN WEIGHTS · OPEN SOURCE</div>
+  <div class="c t4">getpennywise.pages.dev &nbsp;·&nbsp; github.com/1sakshm/pennywise</div>
+  <div class="c t5 serif">Your move, Alan.</div>
+</div>
+
+<div id="hud"><div id="brand"><i></i>PENNYWISE</div><div id="tag">#OPENFIRE · BUILT FOR ALAN</div><div id="bar"></div></div>
+</div>
+
+<script>
+const D = window.DATA, B = D.bench, TOTAL = 43.0;
+const cl = (x, a = 0, b = 1) => Math.max(a, Math.min(b, x));
+const p = (t, a, b) => cl((t - a) / (b - a));
+const eo = x => 1 - Math.pow(1 - x, 3);
+const eo5 = x => 1 - Math.pow(1 - x, 5);
+const eio = x => x < .5 ? 4 * x * x * x : 1 - Math.pow(-2 * x + 2, 3) / 2;
+const $ = id => document.getElementById(id);
+const S = { s1: [0, 3.6], s2: [3.6, 8.7], s3: [8.7, 14.3], s4: [14.3, 19.3], s5: [19.3, 28.9], s6: [28.9, 33.4], s7: [33.4, 38.3], s8: [38.3, 43.0] };
+function sceneAlpha(t, [a, b]) { return Math.min(eo(p(t, a, a + .45)), 1 - eo(p(t, b - .4, b))) * (t >= a && t <= b ? 1 : 0); }
+function show(el, k, dy = 30, sc = 1) { el.style.opacity = k; el.style.transform = `translateY(${(1 - k) * dy}px) scale(${sc + (1 - sc) * k})`; }
+
+/* ---------- S3 loop diagram ---------- */
+const NS = 'http://www.w3.org/2000/svg';
+const svg = $('loop');
+function el(tag, attrs, parent = svg) { const e = document.createElementNS(NS, tag); for (const k in attrs) e.setAttribute(k, attrs[k]); parent.appendChild(e); return e; }
+const nodes = [
+  { x: 150, y: 470, w: 250, h: 150, t: 'REQUEST', v: '“Fix the bug…”', c: '#cbd5e1' },
+  { x: 480, y: 420, w: 300, h: 250, t: 'LAYA · 421M', v: '28 layers', c: '#facc15', layers: true },
+  { x: 860, y: 420, w: 300, h: 250, t: 'π(a | s)', v: '', c: '#facc15', bars: true },
+  { x: 1240, y: 360, w: 250, h: 110, t: 'SMALL', v: '', c: '#2dd4bf' },
+  { x: 1240, y: 490, w: 250, h: 110, t: 'MEDIUM', v: '', c: '#818cf8' },
+  { x: 1240, y: 620, w: 250, h: 110, t: 'LARGE', v: '', c: '#f472b6' },
+  { x: 1570, y: 440, w: 220, h: 210, t: 'GRADER', v: '✓ correct', c: '#4ade80' },
+];
+const NG = nodes.map(n => {
+  const g = el('g', { opacity: 0 });
+  el('rect', { x: n.x, y: n.y, width: n.w, height: n.h, rx: 14, fill: '#0c0e14', stroke: n.c, 'stroke-opacity': .55, 'stroke-width': 2 }, g);
+  const tt = el('text', { x: n.x + 22, y: n.y + 40, fill: n.c, 'font-family': 'Geist Mono', 'font-size': 20, 'letter-spacing': 3 }, g); tt.textContent = n.t;
+  if (n.v) { const v = el('text', { x: n.x + 22, y: n.y + n.h - 26, fill: '#eef1f6', 'font-family': 'Geist', 'font-size': 26, 'font-weight': 600 }, g); v.textContent = n.v; }
+  if (n.layers) n.L = [...Array(8)].map((_, i) => el('rect', { x: n.x + 22, y: n.y + 62 + i * 15, width: n.w - 44, height: 10, rx: 2, fill: i < 6 ? '#334155' : '#facc15', opacity: .35 }, g));
+  if (n.bars) n.B = ['#2dd4bf', '#818cf8', '#f472b6'].map((c, i) => el('rect', { x: n.x + 30 + i * 85, y: n.y + 200, width: 60, height: 0, rx: 4, fill: c }, g));
+  return { n, g };
+});
+const fwd = el('path', { d: 'M400 545 L480 545 M780 545 L860 545 M1160 545 L1240 545 M1490 545 L1570 545', stroke: '#5a6274', 'stroke-width': 2.5, fill: 'none', 'stroke-dasharray': 1200, 'stroke-dashoffset': 1200 });
+const ret = el('path', { d: 'M1680 650 C1680 880, 640 880, 630 680', stroke: '#facc15', 'stroke-width': 3, fill: 'none', 'stroke-dasharray': '14 10' });
+const retLen = 1400; ret.setAttribute('stroke-dasharray', retLen); ret.setAttribute('stroke-dashoffset', retLen);
+const rlab = el('text', { x: 960, y: 900, 'text-anchor': 'middle', fill: '#facc15', 'font-family': 'Instrument Serif', 'font-style': 'italic', 'font-size': 44, opacity: 0 }); rlab.textContent = 'r = correct − λ·cost   →   REINFORCE: ∇θ log π(a|s) · (r − b)';
+const pulse = el('circle', { r: 11, fill: '#facc15', opacity: 0 });
+const cap3 = el('text', { x: 960, y: 1000, 'text-anchor': 'middle', fill: '#8a93a6', 'font-family': 'Geist Mono', 'font-size': 24, 'letter-spacing': 2, opacity: 0 }); cap3.textContent = 'one forward pass · the distribution IS the policy · trained on real graded outcomes';
+const fpath = [[400, 545], [480, 545], [780, 545], [860, 545], [1160, 545], [1240, 545], [1365, 545], [1490, 545], [1570, 545]];
+function along(pts, u) { const L = []; let tot = 0; for (let i = 1; i < pts.length; i++) { const d = Math.hypot(pts[i][0] - pts[i - 1][0], pts[i][1] - pts[i - 1][1]); L.push(d); tot += d; } let r = u * tot; for (let i = 0; i < L.length; i++) { if (r <= L[i]) { const k = r / L[i]; return [pts[i][0] + (pts[i + 1][0] - pts[i][0]) * k, pts[i][1] + (pts[i + 1][1] - pts[i][1]) * k]; } r -= L[i]; } return pts[pts.length - 1]; }
+function renderS3(t) {
+  const a = S.s3[0];
+  NG.forEach((o, i) => { const k = eo(p(t, a + .3 + i * .16, a + .8 + i * .16)); o.g.setAttribute('opacity', k); o.g.setAttribute('transform', `translate(0 ${(1 - k) * 24})`); });
+  fwd.setAttribute('stroke-dashoffset', 1200 * (1 - eio(p(t, a + 1.2, a + 2.2))));
+  const u = p(t, a + 2.0, a + 3.6);
+  const [px, py] = along(fpath, eio(u)); pulse.setAttribute('cx', px); pulse.setAttribute('cy', py); pulse.setAttribute('opacity', u > 0 && u < 1 ? 1 : 0);
+  const lay = NG[1].n; lay.L.forEach((r, i) => r.setAttribute('opacity', .35 + .65 * cl(1 - Math.abs(u * 3.2 - .4 - i * .1) * 3)));
+  const bars = NG[2].n, probs = [.12, .79, .09], gk = eo(p(t, a + 2.6, a + 3.3));
+  bars.B.forEach((r, i) => { const h = 150 * probs[i] * gk + 6; r.setAttribute('y', bars.y + 222 - h); r.setAttribute('height', h); });
+  NG[4].g.querySelector('rect').setAttribute('stroke-opacity', t > a + 3.0 ? .55 + .45 * Math.abs(Math.sin((t - a) * 6)) : .55);
+  ret.setAttribute('stroke-dashoffset', retLen * (1 - eio(p(t, a + 3.6, a + 4.6))));
+  rlab.setAttribute('opacity', eo(p(t, a + 4.0, a + 4.6)));
+  cap3.setAttribute('opacity', eo(p(t, a + 4.4, a + 5.0)));
+  if (t > a + 3.6 && t < a + 4.8) lay.L.forEach((r, i) => i >= 6 && r.setAttribute('opacity', .5 + .5 * Math.abs(Math.sin((t - a) * 12))));
+}
+
+/* ---------- S4 galaxy ---------- */
+const gal = $('gal'), gx = gal.getContext('2d');
+const xs = D.xy.map(q => q[0]), ys = D.xy.map(q => q[1]);
+const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+const PTS = D.xy.map(([x, y]) => [(x - x0) / (x1 - x0) - .5, (y - y0) / (y1 - y0) - .5]);
+const COL = ['#2dd4bf', '#818cf8', '#f472b6'];
+function renderS4(t) {
+  const a = S.s4[0], u = p(t, a + .5, a + 4.2);
+  gx.clearRect(0, 0, 1920, 1080);
+  const ang = (t - a) * .06, sc = 760 + 60 * eo(p(t, a, a + 5));
+  const K = D.ckpts.length - 1, f = u * K, i0 = Math.min(K - 1, Math.floor(f)), fr = f - i0;
+  PTS.forEach(([x, y], j) => {
+    const xr = x * Math.cos(ang) - y * Math.sin(ang), yr = x * Math.sin(ang) + y * Math.cos(ang);
+    const appear = eo(p(t, a + j / PTS.length * .5, a + .4 + j / PTS.length * .5));
+    const A = D.ckpts[i0].action[j], Bc = D.ckpts[i0 + 1].action[j];
+    const c = fr < .5 ? COL[A] : COL[Bc];
+    const flip = A !== Bc ? Math.max(0, 1 - Math.abs(fr - .5) * 6) : 0;
+    gx.globalAlpha = .85 * appear;
+    gx.fillStyle = flip > .3 ? '#ffffff' : c;
+    gx.beginPath(); gx.arc(960 + xr * sc * 1.25, 560 + yr * sc * .95, 4.2 + flip * 4, 0, 6.283); gx.fill();
+  });
+  gx.globalAlpha = 1;
+  const step = Math.round(D.ckpts[0].step + (D.ckpts[K].step - D.ckpts[0].step) * u);
+  $('stepn').textContent = String(step).padStart(3, '0');
+}
+
+/* ---------- S5 race ---------- */
+const PT = B.per_task, RT = Math.max(PT.reduce((s, x) => s + x.alan_min, 0), PT.reduce((s, x) => s + x.pennywise_min, 0));
+function build(id, key, color) {
+  const trk = document.querySelector(`#${id} .trk`); const segs = [];
+  PT.forEach(x => { const d = document.createElement('div'); d.className = 'seg'; d.style.width = `${x[key] / RT * 100}%`; d.innerHTML = `<div class="f" style="background:${color}"></div><div class="k">✓</div>`; trk.appendChild(d); segs.push(d); });
+  return segs;
+}
+const SEG = { pw: build('lpw', 'pennywise_min', '#facc15'), al: build('lal', 'alan_min', '#94a3b8') };
+function renderS5(t) {
+  const a = S.s5[0], sim = RT * eio(p(t, a + 1.0, a + 8.0)) ;
+  $('clock').firstChild.nodeValue = `${String(Math.floor(sim)).padStart(2, '0')}:${String(Math.floor((sim % 1) * 60)).padStart(2, '0')}`;
+  [['pw', 'pennywise_min', 'lpw'], ['al', 'alan_min', 'lal']].forEach(([k, key, id]) => {
+    let acc = 0, done = 0;
+    PT.forEach((x, i) => { const st = acc; acc += x[key]; const fr = cl((sim - st) / x[key]); const s = SEG[k][i];
+      s.querySelector('.f').style.transform = `scaleX(${fr})`; s.querySelector('.k').style.opacity = fr >= 1 && x[key] / RT > .025 ? 1 : 0; if (fr >= 1) done++; });
+    document.querySelector(`#${id} .st`).textContent = `${done}/10`;
+    const fin = sim >= acc - 1e-6; const dn = document.querySelector(`#${id} .done`); dn.style.opacity = fin ? 1 : 0;
+  });
+  const lanes = eo(p(t, a + .2, a + .9)); show($('lpw'), lanes, 40); show($('lal'), eo(p(t, a + .35, a + 1.05)), 40);
+  const sk = eo5(p(t, a + 8.1, a + 8.6)); $('stamp').style.opacity = sk; $('stamp').style.transform = `scale(${1.6 - .6 * sk})`;
+}
+
+/* ---------- main render ---------- */
+window.renderAt = function (t) {
+  for (const [id, r] of Object.entries(S)) $(id).style.opacity = sceneAlpha(t, r);
+  $('bar').style.transform = `scaleX(${t / TOTAL})`;
+  const hud = Math.min(eo(p(t, 3.4, 4.0)), 1 - eo(p(t, 38.0, 38.5))); $('brand').style.opacity = hud; $('tag').style.opacity = hud * .9;
+  // S1
+  if (t < S.s1[1] + .1) { const a = 0;
+    show(document.querySelector('#s1 .dear'), eo(p(t, a + .15, a + .7)), 20);
+    show(document.querySelector('#s1 .l1'), eo5(p(t, a + .5, a + 1.2)), 70);
+    const l2 = eo5(p(t, a + 1.15, a + 1.9)); const e2 = document.querySelector('#s1 .l2'); e2.style.opacity = l2; e2.style.transform = `translateY(${(1 - l2) * 70}px) scale(${1.25 - .25 * l2}) rotate(${(1 - l2) * -3}deg)`;
+    show(document.querySelector('#s1 .sub'), eo(p(t, a + 2.2, a + 2.8)), 20);
+  }
+  // S2
+  if (t > S.s2[0] - .1 && t < S.s2[1] + .1) { const a = S.s2[0];
+    const c1 = eo5(p(t, a + .2, a + .9)), c2 = eo5(p(t, a + .7, a + 1.4)), out = eo(p(t, a + 2.5, a + 3.0));
+    $('tw1').style.opacity = c1 * (1 - out); $('tw1').style.transform = `translateX(${(1 - c1) * -160}px) rotate(${-2 + c1 * 1}deg) scale(${1 - out * .1})`;
+    $('tw2').style.opacity = c2 * (1 - out); $('tw2').style.transform = `translateX(${(1 - c2) * 160}px) rotate(${2 - c2 * 1}deg) scale(${1 - out * .1})`;
+    show(document.querySelector('#s2 .big1'), eo5(p(t, a + 2.9, a + 3.4)), 50);
+    const b2 = eo5(p(t, a + 3.35, a + 3.95)); const e = document.querySelector('#s2 .big2'); e.style.opacity = b2; e.style.transform = `translateY(${(1 - b2) * 60}px) scale(${1.3 - .3 * b2})`;
+    show(document.querySelector('#s2 .sub'), eo(p(t, a + 4.0, a + 4.5)), 20);
+  }
+  if (t > S.s3[0] - .1 && t < S.s3[1] + .1) renderS3(t);
+  if (t > S.s4[0] - .1 && t < S.s4[1] + .1) renderS4(t);
+  if (t > S.s5[0] - .1 && t < S.s5[1] + .1) renderS5(t);
+  // S6
+  if (t > S.s6[0] - .1 && t < S.s6[1] + .1) { const a = S.s6[0];
+    ['c1', 'c2', 'c3'].forEach((id, i) => show($(id), eo5(p(t, a + .4 + i * .35, a + .9 + i * .35)), 50));
+    const bad = p(t, a + 1.5, a + 1.8); const c3 = $('c3'); c3.style.borderColor = bad > 0 ? '#f87171' : ''; c3.querySelector('.s').style.color = bad > 0 ? '#f87171' : '';
+    if (t > a + 1.5 && t < a + 2.0) c3.style.transform = `translateX(${Math.sin((t - a) * 70) * 10}px)`;
+    const ek = eo(p(t, a + 2.0, a + 2.4)); $('esc').style.opacity = ek; $('esc').style.transform = `translateY(${(1 - ek) * 20}px)`;
+    show($('c4'), eo5(p(t, a + 2.3, a + 2.8)), 50); $('c4').style.borderColor = t > a + 2.6 ? '#4ade80' : '';
+    show($('c5'), eo5(p(t, a + 2.75, a + 3.25)), 50); $('c5').style.borderColor = t > a + 3.1 ? '#4ade80' : '';
+    show(document.querySelector('#s6 .sub'), eo(p(t, a + 3.0, a + 3.5)), 20);
+  }
+  // S7
+  if (t > S.s7[0] - .1 && t < S.s7[1] + .1) { const a = S.s7[0];
+    const pos = [[1060, 170, -9], [1230, 210, -2], [1400, 250, 5], [1330, 330, 11]];
+    ['p1', 'p2', 'p3', 'p4'].forEach((id, i) => { const k = eo5(p(t, a + .3 + i * .28, a + 1.1 + i * .28)); const [x, y, r] = pos[i]; const e = $(id);
+      e.style.opacity = k; e.style.left = x + 'px'; e.style.top = y + 'px'; e.style.zIndex = i; e.style.transform = `translate(${(1 - k) * 500}px, ${(1 - k) * 80}px) rotate(${r * k + (1 - k) * 25}deg) scale(${.8 + .2 * k})`; });
+    show(document.querySelector('#s7 .txt'), eo(p(t, a + .2, a + .8)), 30);
+    document.querySelectorAll('#s7 .chips span').forEach((s, i) => show(s, eo(p(t, a + 1.4 + i * .3, a + 1.9 + i * .3)), 16));
+  }
+  // S8
+  if (t > S.s8[0] - .1) { const a = S.s8[0];
+    const w = eo5(p(t, a + .2, a + 1.0)); const e = document.querySelector('#s8 .w'); e.style.opacity = w; e.style.transform = `scale(${1.25 - .25 * w})`; e.style.letterSpacing = `${-.06 + (1 - w) * .2}em`;
+    show(document.querySelector('#s8 .t2'), eo(p(t, a + .9, a + 1.5)), 30);
+    show(document.querySelector('#s8 .t3'), eo(p(t, a + 1.5, a + 2.0)), 20);
+    show(document.querySelector('#s8 .t4'), eo(p(t, a + 1.9, a + 2.4)), 20);
+    show(document.querySelector('#s8 .t5'), eo5(p(t, a + 2.6, a + 3.2)), 30, 1.2);
+  }
+};
+window.TOTAL = TOTAL;
+window.ready = document.fonts.ready.then(() => Promise.all([...document.images].map(i => i.complete ? 1 : new Promise(r => { i.onload = r; i.onerror = r; }))));
+renderAt(0);
+</script>
+</body></html>
