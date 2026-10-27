@@ -1,0 +1,24 @@
+{
+  "name": "pennywise-mcp",
+  "version": "0.1.1",
+  "description": "Pennywise as an MCP server: an RL-trained open decision model (Laya) that routes each request to the right model tier. Add it to Alan (custom connector → Command) or any MCP client with `npx -y pennywise-mcp`; on Windows use `cmd /c npx -y pennywise-mcp`.",
+  "type": "module",
+  "bin": { "pennywise-mcp": "bin/pennywise-mcp.js" },
+  "main": "src/server.js",
+  "files": ["bin/", "src/", "assets/", "README.md"],
+  "engines": { "node": ">=18.17" },
+  "scripts": {
+    "test": "node test/parity.test.js && node test/mcp.test.js"
+  },
+  "keywords": ["mcp", "model-context-protocol", "llm", "router", "alan", "laya", "decision-model", "reinforcement-learning", "openai-compatible"],
+  "license": "Apache-2.0",
+  "author": "Saksham Sharma",
+  "homepage": "https://getpennywise.pages.dev",
+  "repository": { "type": "git", "url": "git+https://github.com/1sakshm/pennywise.git", "directory": "integrations/npm/pennywise-mcp" },
+  "dependencies": {
+    "@huggingface/tokenizers": "0.2.0",
+    "@modelcontextprotocol/sdk": "1.32.1",
+    "onnxruntime-node": "1.30.0",
+    "zod": "3.25.76"
+  }
+}

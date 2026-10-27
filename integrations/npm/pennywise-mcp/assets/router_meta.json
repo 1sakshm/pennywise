@@ -1,0 +1,78 @@
+{
+ "head_ids": [
+  50281,
+  22122,
+  1953,
+  27,
+  6758,
+  310,
+  253,
+  45869,
+  14980,
+  1566,
+  326,
+  588,
+  1335,
+  3662,
+  436,
+  2748,
+  9113,
+  32,
+  50282,
+  50284,
+  1355,
+  27,
+  247,
+  1355,
+  3809,
+  1566,
+  310,
+  2217,
+  50284,
+  4646,
+  27,
+  3198,
+  247,
+  4646,
+  1566,
+  50284,
+  1781,
+  27,
+  3198,
+  253,
+  19508,
+  1566,
+  50282
+ ],
+ "markers": [
+  19,
+  28,
+  35
+ ],
+ "sep_token_id": 50282,
+ "mask_token": "[MASK]",
+ "max_len": 512,
+ "actions": [
+  "small",
+  "medium",
+  "large"
+ ],
+ "lambdas": [
+  0.0,
+  0.5
+ ],
+ "route_question": {
+  "t": "choice",
+  "ins": "Which is the cheapest AI model that will still answer this request correctly?",
+  "crit": {
+   "small": "a small fast model is enough",
+   "medium": "needs a medium model",
+   "large": "needs the strongest model"
+  }
+ },
+ "modes": {
+  "auto": 0.5,
+  "auto-quality": 0.0,
+  "auto-cheap": 0.5
+ }
+}

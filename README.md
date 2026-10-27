@@ -40,7 +40,12 @@ Coding agents send every call to a frontier model: classification, summaries, on
 Alan drives coding-agent CLIs, so the router goes in at the CLI layer:
 1. **Cost layer (OpenCode):** [`examples/alan/opencode.json`](examples/alan/opencode.json) adds the proxy as an OpenAI-compatible provider (`pennywise/auto`, etc.). Works with OpenCode directly (`opencode run -m pennywise/auto`, verified). Inside Alan, **Rescan models** does not list custom OpenCode providers (tested 2026-10-26, reported in [`docs/ALAN_FEEDBACK.md`](docs/ALAN_FEEDBACK.md)), so in Alan use route 3 below. The proxy routes **once per agent session** (sticky) and passes tool calls through unchanged, so sessions don't break mid-run. Steps and status are in [`examples/alan/README.md`](examples/alan/README.md); the checks are in [`docs/ALAN_NOTES.md`](docs/ALAN_NOTES.md).
 2. **Built with Alan:** not part of this release; see [`docs/DECISIONS.md`](docs/DECISIONS.md).
-3. **Agents call the router as a tool:** the [MCP server](integrations/mcp/) (`route`, `ask_routed`) installs in OpenCode next to Alan's own MCP entry, or in Alan itself via **MCP → Add custom connector** (`python -m integrations.mcp.server --http` → `http://127.0.0.1:8765/mcp`).
+3. **Agents call the router as a tool, inside Alan (working):** the router ships on npm as [`pennywise-mcp`](https://www.npmjs.com/package/pennywise-mcp), a stdio MCP server that runs the RL-trained ONNX router on CPU. Its 2 GB of weights are fetched once from [Hugging Face](https://huggingface.co/SuckSome/pennywise-router) and sha256-verified. In Alan go to **Settings → Plugins → MCP → Add custom connector → Command**:
+   - **Windows:** Command `cmd`, arguments one per line `/c` `npx` `-y` `pennywise-mcp`. A bare `npx` can't launch: it's a `.cmd` script, Alan starts commands without a shell, and the Command field rejects full paths.
+   - **macOS / Linux:** Command `npx`, arguments `-y` `pennywise-mcp`.
+   - **Environment:** `NVIDIA_API_KEY` = `${NVIDIA_API_KEY}`, then click **Enter API key**. Only `ask_routed` needs the key.
+
+   Verified 2026-10-27 in the Alan desktop app: an Alan Code agent lists and calls `route` and `ask_routed` and gets real router output and routed answers. The Node port matches the Python router exactly (31/31 token ids, 62/62 decisions). Setup notes, failure modes and evidence: [`docs/ALAN_MCP_CONNECTOR.md`](docs/ALAN_MCP_CONNECTOR.md); package source: [`integrations/npm/pennywise-mcp/`](integrations/npm/pennywise-mcp/). The older Python MCP server ([`integrations/mcp/`](integrations/mcp/)) still works as an HTTP connector against a running proxy.
 4. **Alan-style workloads in the data:** 198 auto-graded agent sub-tasks (bug-fix edits graded by unit tests, CI-failure triage graded by construction), reported separately.
 
 ### Before/after on agent tasks (small live demo)
@@ -108,6 +113,7 @@ Jev: not run (no JEV_API_KEY). Full findings, including where the router loses: 
 
 ## Honest limitations
 - **Small test set:** CIs are wide, and every number above comes with one.
+- **Weak per-prompt discrimination.** Each trained policy behaves close to a fixed tier. On 12 varied prompts (from "hi" to a lock-free C++ hash map), `auto` chose medium for all 12 and `auto-quality` chose large for 11. The agent speed-up comes from the whole system (a fast medium default plus the tool-call cascade that escalates bad calls to large), not from fine-grained per-prompt routing.
 - **Offline bandit:** RL only uses the sampled arm, but the outcome table was collected with full information.
 - **Benchmark prompts ≠ production traffic.** The agent slice is synthetic single-function tasks.
 - **Single seed.** Multiple seeds are listed as future work.

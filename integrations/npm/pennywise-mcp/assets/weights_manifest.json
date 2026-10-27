@@ -1,0 +1,14 @@
+{
+ "lower.onnx": {
+  "bytes": 1383626892,
+  "sha256": "8b8e28e8d98ba7fd981b0fda61f1eaa5ced5f65b89ed47a6b7a2bd5e119ec298"
+ },
+ "upper_lam0.5.onnx": {
+  "bytes": 301273160,
+  "sha256": "5a60f75688124fc25dd305775faca57397d4a111b38a8e38971135357fcfc96b"
+ },
+ "upper_lam0.onnx": {
+  "bytes": 301273160,
+  "sha256": "bae4ed91c0a6a1533cfd9d28a2c66866c80fa3e4ba62bee3ea9f54434cffa54c"
+ }
+}

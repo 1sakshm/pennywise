@@ -231,7 +231,7 @@ Pennywise merged #ag_pw_merged of #ag_n tasks, matching Auto Router's #ag_alan_m
 // ------------------------------------------------------------------ 8
 = System <sec:system>
 
-#figure(system-diagram(width: 100%), caption: [Serving path. Agents point an OpenAI SDK at the proxy; Laya routes once per conversation and the chosen tier answers; routing metadata is returned in response headers. An MCP server exposes the same router as tools.]) <fig:system>
+#figure(system-diagram(width: 100%), caption: [Serving path. Agents point an OpenAI SDK at the proxy; Laya routes once per conversation and the chosen tier answers; routing metadata is returned in response headers. An MCP server exposes the same router as tools; it is published on npm as `pennywise-mcp` (Node + ONNX Runtime, identical decisions to the Python router on our 31-prompt parity set) and runs inside the Alan desktop app as a custom connector.]) <fig:system>
 
 The router adds one encoder pass, #router_ms ms median on the build machine's GPU for `auto`. The proxy is OpenAI-compatible: it routes once per conversation (keyed by the system prompt and first user message, or an `x-session-id` header) and keeps that tier for the session so agent tool loops are never re-routed mid-task; tools, tool choice and tool messages pass through unchanged, including when streaming (@fig:system).
 

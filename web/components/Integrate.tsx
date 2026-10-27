@@ -53,16 +53,18 @@ const r = await client.chat.completions.create({
   MCP: {
     lang: "json",
     file: "mcp.json",
-    code: `{
+    code: `// npm: pennywise-mcp — runs the router locally (Alan: Plugins → MCP → Command)
+{
   "mcpServers": {
     "pennywise": {
-      "command": "python",
-      "args": ["-m", "integrations.mcp.server"],
-      "env": { "PENNYWISE_URL": "${PROXY_URL.replace(/\/v1$/, "")}" }
+      "command": "npx",
+      "args": ["-y", "pennywise-mcp"],
+      "env": { "NVIDIA_API_KEY": "\${NVIDIA_API_KEY}" }
     }
   }
 }
-// tools: route(prompt) · ask_routed(prompt, mode)`,
+// Windows: "command": "cmd", "args": ["/c", "npx", "-y", "pennywise-mcp"]
+// tools: route(prompt, mode) · ask_routed(prompt, mode)`,
   },
   Skill: {
     lang: "sh",

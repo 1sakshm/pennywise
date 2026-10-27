@@ -82,7 +82,7 @@ body { font-family:'Geist',sans-serif; color:var(--text); -webkit-font-smoothing
 .seg .f { position:absolute; inset:0; transform-origin:0 50%; transform:scaleX(0); }
 .seg .k { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; color:#05060a; font-weight:800; font-size:26px; opacity:0; }
 .lane .ct { position:absolute; right:0; top:0; font-family:'Geist Mono',monospace; font-size:38px; }
-.lane .dn { position:absolute; right:0; top:150px; font-family:'Geist Mono',monospace; font-size:24px; color:var(--ok); opacity:0; }
+.lane .dn { position:absolute; right:0; top:54px; font-family:'Geist Mono',monospace; font-size:24px; color:var(--ok); opacity:0; }
 #speed { position:absolute; inset:0; pointer-events:none; }
 #race .fine { position:absolute; left:150px; bottom:200px; font-family:'Geist Mono',monospace; font-size:18px; color:var(--dim); }
 /* faster */
@@ -193,7 +193,7 @@ body { font-family:'Geist',sans-serif; color:var(--text); -webkit-font-smoothing
     <img class="pg" id="pg1" src="assets/page1.png"><img class="pg" id="pg2" src="assets/page2.png"><img class="pg" id="pg3" src="assets/page8.png"><img class="pg" id="pg4" src="assets/page3.png">
     <div class="txt"><div class="kick" style="margin-bottom:22px">Technical report v0.1</div><h2>9 pages.<br><span class="serif acc">Every number earned.</span></h2>
       <div class="chips"><span id="rc1"><b>15</b> figures · vector diagrams</span><span id="rc2"><b>948</b> graded prompts · <b>6</b> RL policies</span><span id="rc3">confidence intervals <b>included</b></span></div>
-      <div class="nerd" id="nerd">(yes, we&rsquo;re those people)</div></div>
+</div>
   </div>
 
   <div class="scene" id="close"><div class="center">
@@ -388,7 +388,6 @@ function renderReport(t) { const a = L.report.start;
     e.style.transform = `perspective(1400px) translate(${(1 - k) * 700}px, ${(1 - k) * -120}px) rotateY(${(1 - k) * -60}deg) rotate(${r * k + (1 - k) * 30}deg)`; });
   const tk = eo5(p(t, a, a + .5)); document.querySelector('#report .txt').style.opacity = tk; document.querySelector('#report .txt').style.transform = `translateX(${(1 - tk) * -100}px)`;
   [['rc1', 1.1], ['rc2', 1.5], ['rc3', 2.3]].forEach(([id, d]) => { const k = eo5(p(t, a + d, a + d + .35)); $(id).style.opacity = k; $(id).style.transform = `translateX(${(1 - k) * -40}px)`; });
-  const nk = back(p(t, a + 3.4, a + 3.8)); $('nerd').style.opacity = cl(nk); $('nerd').style.transform = `scale(${nk}) rotate(-3deg)`;
 }
 
 /* ---------- particles ---------- */
@@ -414,7 +413,7 @@ const gr = $('grain'), grc = gr.getContext('2d'); const GN = [...Array(4)].map((
 window.renderAt = function (t) {
   // scenes + zoom-through transitions
   for (const [id, [a, b]] of Object.entries(W)) { const el = $(id); const on = t >= a - .01 && t <= b + .01; el.style.display = on ? 'block' : 'none'; if (!on) continue;
-    const kin = eo5(p(t, a, a + .32)), kout = eio(p(t, b - .28, b)); el.style.opacity = Math.min(kin, 1 - kout);
+    const kin = eo5(p(t, a, a + .5)), kout = eio(p(t, b - .4, b)); el.style.opacity = Math.min(kin, 1 - kout);
     el.style.transform = `scale(${(.9 + .1 * kin) * (1 + .35 * kout)})`; el.style.filter = `blur(${(1 - kin) * 14 + kout * 18}px)`; }
   // camera: slow push + impact shake + whoosh whip
   let shake = 0; IMPACTS.forEach(ti => { const dt = t - ti; if (dt > 0 && dt < .7) shake += 26 * Math.exp(-dt / .14); });
